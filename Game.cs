@@ -1,0 +1,140 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Drawing;
+using System.Diagnostics;
+using System.Xml;
+
+namespace PrograVJ
+{
+    class Game
+    {
+        Window window;
+        Graphics g;
+        bool loop;
+        bool up, down;
+        float frameTime, sleepTime;
+        float fps;
+
+        float ballX, ballY;
+        float ballDirX, ballDirY;
+        float ballSpeed;
+        float ballSize;
+
+        float p1X, p1Y, p2X, p2Y;
+        float p1Speed, p2Speed;
+        float p1w, p1h, p2w, p2h;
+        int score1, score2;
+
+        public Game(int w, int h, float fps) {
+            window = new Window(w, h, fps);
+            g = window.CreateGraphics();
+            this.fps = fps;
+            loop = true;
+
+            ballSize = 20f;
+            ballX = window.Width / 2 + ballSize;
+            ballY = window.Height / 2 + ballSize;
+            ballSpeed = 6f;
+            ballDirX = -1; ballDirY = 1;
+
+            p1w = 20f; p1h = 100f;
+            p1X = 20f; p1Y = window.ClientSize.Height / 2 - p1h / 2;
+            p1Speed = 10f;
+            score1 = 0;
+
+            p2w = 20f; p2h = 100f;
+            p2X = window.ClientSize.Width - p2w -20f; p2Y = window.ClientSize.Height / 2 - p2h / 2;
+            p2Speed = 5f;
+            score2 = 0;
+        }
+
+        public void StartGame()
+        {
+            window.Show();
+            Thread t = new Thread(Loop);
+            t.Start();
+        }
+
+        private void Loop()
+        {
+            while (loop)
+            {
+                if (!loop) break;
+
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+                ProcessInput();
+                Update();
+                Render(g);
+                sw.Stop();
+
+                frameTime = sw.ElapsedMilliseconds;
+                sleepTime = 1000/fps - frameTime;
+                if (sleepTime < 0) sleepTime = 1;
+                Thread.Sleep((int)sleepTime);
+                sw.Reset();
+            }
+
+            Environment.Exit(0);
+        }
+
+        private void ProcessInput()
+        {
+            bool esc = window.IsPressedKey(Keys.Escape);
+            if (esc) loop = false;
+
+            up = window.IsPressedKey(Keys.Up);
+            down = window.IsPressedKey(Keys.Down);
+        }
+
+        private void Update()
+        {
+            ballX += ballDirX * ballSpeed;
+            ballY += ballDirY * ballSpeed;
+
+            if (ballX + ballSize > window.ClientSize.Width) ballDirX = -1;
+            if (ballX < 0)
+            {
+                Console.WriteLine("Score P2");
+                score2++;
+            }
+
+            if (ballY + ballSize > window.ClientSize.Height) ballDirY = -1;
+            if (ballY < 0) score1++;
+
+            if (down && p1Y + p1h < window.ClientSize.Height) p1Y += p1Speed; 
+            if (up && p1Y > 0) p1Y -= p1Speed;
+
+            if (ballY + ballSize / 2 > p2Y + p2h / 2 && p2Y + p2h < window.ClientSize.Height) p2Y += p2Speed;
+            if (ballY + ballSize / 2 < p2Y + p2h / 2 && p2Y > 0) p2Y -= p2Speed;
+
+            bool bouncedP1 = false;
+            bool inBoundsP1 = ballY + ballSize > p1Y && ballY < p1Y + p1h;
+            if (ballX < p1X + p1w && inBoundsP1 && !bouncedP1) {
+                ballDirX = 1; bouncedP1 = true;
+            }
+            if (ballX > p1X + p1w * 2) bouncedP1 = false;
+
+            bool bouncedP2 = false;
+            bool inBoundsP2 = ballY + ballSize > p2Y && ballY < p2Y + p2h;
+            if (ballX + ballSize > p2X && inBoundsP2 && !bouncedP2) {
+                ballDirX = -1; bouncedP2 = true;
+            }
+            if (ballX + ballSize < p2X - p2w) bouncedP2 = false;
+        }
+
+        private void Render(Graphics g) {
+            g.Clear(Color.Black);
+            //g.FillEllipse(new SolidBrush(Color.Red), ballX, ballY, ballSize, ballSize);
+            g.DrawEllipse(new Pen(new SolidBrush(Color.White)), ballX, ballY, ballSize, ballSize);
+            g.DrawRectangle(new Pen(new SolidBrush(Color.White)), p1X, p1Y, p1w, p1h);
+            g.DrawRectangle(new Pen(new SolidBrush(Color.White)), p2X, p2Y, p2w, p2h);
+
+        }
+    }
+}
