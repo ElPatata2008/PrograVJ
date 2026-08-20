@@ -36,6 +36,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -45,7 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Game.cs" />
+    <Compile Include="Engine\Figures\Square.cs" />
+    <Compile Include="Engine\Game.cs" />
+    <Compile Include="Engine\GameLoader.cs" />
+    <Compile Include="Engine\GameObject.cs" />
+    <Compile Include="Games\Arkanoid\Arkanoid.cs" />
+    <Compile Include="Games\Pong\Pong.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Window.cs">
