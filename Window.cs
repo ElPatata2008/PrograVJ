@@ -14,6 +14,9 @@ namespace PrograVJ
         List<Keys> pressedKeys;
         float fps;
 
+        BufferedGraphicsContext GraphicsManager;
+        BufferedGraphics managedBackBuffer;
+
         public Window(int w, int h, float fps)
         {
             ClientSize = new Size(w, h);
@@ -21,10 +24,22 @@ namespace PrograVJ
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
 
+            GraphicsManager = BufferedGraphicsManager.Current;
+            GraphicsManager.MaximumBuffer = new Size(w, h);
+            managedBackBuffer = GraphicsManager.Allocate(CreateGraphics(), ClientRectangle);
+
             pressedKeys = new List<Keys>();
             KeyDown += _KeyDownLogic;
             KeyUp += _KeyUpLogic;
         }
+
+        public Graphics GetGraphics()
+        {
+            managedBackBuffer.Graphics.Clear(Color.Black);
+            return managedBackBuffer.Graphics;
+        }
+
+        public void Render() => managedBackBuffer.Render(); // Swap Buffer
 
         private void _KeyDownLogic(object sender, KeyEventArgs e)
         {

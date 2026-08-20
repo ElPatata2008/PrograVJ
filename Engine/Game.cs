@@ -84,7 +84,8 @@ namespace PrograVJ
                 sw.Start();
                 ProcessInput();
                 Update();
-                Render(g);
+                RenderGraphics(g);
+                //Render(g);
                 sw.Stop();
 
                 frameTime = sw.ElapsedMilliseconds;
@@ -113,8 +114,8 @@ namespace PrograVJ
 
             if (ballX + ballSize > window.ClientSize.Width)
             {
-                Console.WriteLine("Score P1!");
-                Console.WriteLine($"P1 [{score1} - {score2}] P2");
+                //Console.WriteLine("Score P1!");
+                //Console.WriteLine($"P1 [{score1} - {score2}] P2");
                 score1++;
 
                 ballX = window.Width / 2 + ballSize / 2;
@@ -131,8 +132,8 @@ namespace PrograVJ
             }
             if (ballX < 0)
             {
-                Console.WriteLine("Score P2!");
-                Console.WriteLine($"P1 [{score1} - {score2}] P2");
+                //Console.WriteLine("Score P2!");
+                //Console.WriteLine($"P1 [{score1} - {score2}] P2");
                 score2++;
 
                 ballX = window.Width / 2 + ballSize / 2;
@@ -182,8 +183,6 @@ namespace PrograVJ
             if (p2Speed < -p2MaxSpeed) p2Speed = -p2MaxSpeed;
             if (p2Speed > p2MaxSpeed) p2Speed = p2MaxSpeed;
 
-            Console.WriteLine($"Speed: {p2Speed}");
-
             bool bouncedP1 = false;
             bool inBoundsP1 = ballY + ballSize > p1Y && ballY < p1Y + p1h;
             if (ballX < p1X + p1w && inBoundsP1 && !bouncedP1) {
@@ -201,6 +200,7 @@ namespace PrograVJ
 
         private void Render(Graphics g) {
             g.Clear(Color.Black);
+
             //g.FillEllipse(new SolidBrush(Color.Red), ballX, ballY, ballSize, ballSize);
             g.DrawEllipse(new Pen(new SolidBrush(Color.White)), ballX, ballY, ballSize, ballSize);
             g.DrawRectangle(new Pen(new SolidBrush(Color.White)), p1X, p1Y, p1w, p1h);
@@ -214,6 +214,12 @@ namespace PrograVJ
                 g.DrawRectangle(new Pen(new SolidBrush(Color.White)), window.ClientSize.Width / 2 - 5, 9 + 29 * i, 10, 20);
             }
 
+        }
+
+        private void RenderGraphics(Graphics g)
+        {
+            Render(window.GetGraphics());
+            window.Render();
         }
     }
 }
