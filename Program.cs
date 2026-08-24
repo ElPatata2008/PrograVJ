@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PrograVJ.Games;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +12,7 @@ namespace PrograVJ
     {
         static void Main(string[] args)
         {
-            Game game = new Game(800, 600, 60);
+            Game game = new Pong(800, 600, 60);
             game.StartGame();
 
             Application.Run();

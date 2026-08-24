@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PrograVJ.Games.Arkanoid
 {
-    class Arkanoid : GameLoader
+    class Arkanoid : Game
     {
         public Arkanoid(int w, int h, float fps) : base(w, h, fps)
         {

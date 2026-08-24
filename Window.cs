@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 
 namespace PrograVJ
 {
-    class Window : Form
+    public class Window : Form
     {
         List<Keys> pressedKeys;
         float fps;
