@@ -25,13 +25,13 @@ namespace PrograVJ.Games
 
         bool up, down;
 
-        public Pad(Vector3 position, Vector3 rotation, Vector3 size, Color color, 
-            int playerNumber, float accel, float maxSpeed, float vlimit) : base(position, rotation, size, color)
+        public Pad(Vector3 position, Vector3 rotation, Vector3 size, Color color, bool isActive,
+            int playerNumber, float accel, float maxSpeed, float vlimit) : base(position, rotation, size, color, isActive)
         {
             this.playerNumber = playerNumber;
             this.accel = accel;
             this.maxSpeed = maxSpeed;
-            this.vLimits = vlimit;
+            vLimits = vlimit;
 
             bounced = false;
         }

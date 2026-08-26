@@ -29,6 +29,7 @@ namespace PrograVJ.Games
                 new Vector3(1, 1, 1),
                 new Vector3(20f, 20f, 1f),
                 Color.White,
+                true,
                 6f
             );
 
@@ -37,6 +38,7 @@ namespace PrograVJ.Games
                 new Vector3(1, 1, 1),
                 new Vector3(20f, 100f, 1f),
                 Color.White,
+                true,
                 1,
                 2.5f,
                 10f,
@@ -48,6 +50,7 @@ namespace PrograVJ.Games
                 new Vector3(1, 1, 1),
                 new Vector3(20f, 100f, 1f),
                 Color.White,
+                true,
                 2,
                 0.2f,
                 6f,

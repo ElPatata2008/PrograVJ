@@ -12,7 +12,7 @@ namespace PrograVJ.Engine.Figures
 {
     class Square : GameObject
     {
-        public Square(Vector3 position, Vector3 rotation, Vector3 size, Color color) : base(position, rotation, size, color)
+        public Square(Vector3 position, Vector3 rotation, Vector3 size, Color color, bool isActive) : base(position, rotation, size, color, isActive)
         {
         }
 

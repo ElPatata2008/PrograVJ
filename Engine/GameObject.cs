@@ -16,12 +16,13 @@ namespace PrograVJ.GameObjects
         public Color color;
         public bool isActive;
 
-        public GameObject(Vector3 position, Vector3 rotation, Vector3 size, Color color)
+        public GameObject(Vector3 position, Vector3 rotation, Vector3 size, Color color, bool isActive)
         {
             this.position = position;
             this.rotation = rotation;
             this.size = size;
             this.color = color;
+            this.isActive = isActive;
         }
 
         public abstract void Update();

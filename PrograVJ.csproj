@@ -51,6 +51,9 @@
     <Compile Include="Engine\Game.cs" />
     <Compile Include="Engine\GameObject.cs" />
     <Compile Include="Games\Arkanoid\Arkanoid.cs" />
+    <Compile Include="Games\Arkanoid\Ball.cs" />
+    <Compile Include="Games\Arkanoid\Block.cs" />
+    <Compile Include="Games\Arkanoid\Pad.cs" />
     <Compile Include="Games\Pong\Ball.cs" />
     <Compile Include="Games\Pong\Pad.cs" />
     <Compile Include="Games\Pong\Pong.cs" />
