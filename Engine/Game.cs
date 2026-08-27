@@ -1,9 +1,11 @@
-﻿using PrograVJ.GameObjects;
+﻿using PrograVJ.Engine;
+using PrograVJ.GameObjects;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
@@ -20,6 +22,8 @@ namespace PrograVJ
         protected float fps, frameTime, sleepTime;
         protected List<GameObject> gameObjects = new List<GameObject>();
 
+        protected Camera c;
+
         public Game(int w, int h, float fps)
         {
             window = new Window(w, h, fps);
@@ -27,6 +31,12 @@ namespace PrograVJ
 
             this.fps = fps;
             loop = true;
+
+            c = new Camera( CameraType.Perspective,
+                new Vector3(0f, 0f, 0f), 
+                new Vector3(0f,0f,0f), 
+                new Vector3(800f,600f,0f)
+            );
         }
 
         public void StartGame()

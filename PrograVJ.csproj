@@ -46,7 +46,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Engine\Camera.cs" />
+    <Compile Include="Engine\Figures\Cube.cs" />
     <Compile Include="Engine\Figures\Square.cs" />
+    <Compile Include="Engine\Manager\InputManager.cs" />
     <Compile Include="Engine\OldGame.cs" />
     <Compile Include="Engine\Game.cs" />
     <Compile Include="Engine\GameObject.cs" />

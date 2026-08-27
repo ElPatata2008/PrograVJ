@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Runtime.CompilerServices;
+using PrograVJ.Engine.Manager;
 
 namespace PrograVJ
 {
@@ -31,6 +32,8 @@ namespace PrograVJ
             pressedKeys = new List<Keys>();
             KeyDown += _KeyDownLogic;
             KeyUp += _KeyUpLogic;
+            MouseUp += _MouseUp;
+            MouseDown *= _MouseDown;
         }
 
         public Graphics GetGraphics()
@@ -43,16 +46,26 @@ namespace PrograVJ
 
         private void _KeyDownLogic(object sender, KeyEventArgs e)
         {
-            if(!pressedKeys.Contains(e.KeyCode))
-                pressedKeys.Add(e.KeyCode);
+            InputManager.KeyDown(e.KeyCode);
+            //if(!pressedKeys.Contains(e.KeyCode))
+            //    pressedKeys.Add(e.KeyCode);
         }
 
         private void _KeyUpLogic(object sender, KeyEventArgs e) { 
-        
-            if(pressedKeys.Contains(e.KeyCode))
-                pressedKeys.Remove(e.KeyCode); 
+            
+            InputManager.KeyUp(e.KeyCode);
+            //if(pressedKeys.Contains(e.KeyCode))
+            //    pressedKeys.Remove(e.KeyCode); 
         }
 
-        public bool IsPressedKey(Keys key) => pressedKeys.Contains(key);
+        public void _MouseDown(object sender, MouseEventArgs e) => InputManager.MouseDown(e.Button);
+
+        public void _MouseUp(object sender, MouseEventArgs e) => InputManager.MouseUp(e.Button);
+
+        public void _MouseMove(object sender, MouseEventArgs e)
+        {
+            //Input
+        }
+        //public bool IsPressedKey(Keys key) => pressedKeys.Contains(key);
     }
 }

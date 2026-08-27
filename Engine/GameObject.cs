@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Numerics;
 using System.Drawing;
+using PrograVJ.Engine;
 
 namespace PrograVJ.GameObjects
 {
@@ -26,7 +27,7 @@ namespace PrograVJ.GameObjects
         }
 
         public abstract void Update();
-        public abstract void Draw(Graphics g);
+        public abstract void Draw(Graphics g, Camera c);
 
         public Vector3 RotatePoint(Vector3 point)
         {

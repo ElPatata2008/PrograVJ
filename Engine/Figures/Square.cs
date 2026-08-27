@@ -31,25 +31,18 @@ namespace PrograVJ.Engine.Figures
                 new Vector3( halfX,  halfY, 0),
                 new Vector3(-halfX,  halfY, 0),
             };
-            Vector3[] worldPoints = new Vector3[4];
-            for (int i = 0; i < 4; i++) {
-                // Rotation
-                Vector3 rotated = RotatePoint(localVertices[i]);
 
-                // Translation
-                Vector3 worldPoint = position + rotated;
-                worldPoints[i] = worldPoint;
+            PointF[] screenPoints = new PointF[4];
+            for (int i = 0; i < localVertices.Length; i++) {
+                Vector3 scalePoint = MathUtils.Scale(localVertices[i], size);
+                Vector3 rotationPoint = MathUtils.Rotate(scalePoint, rotation);
+                Vector3 worldPoint = MathUtils.Translate(rotationPoint, position);
+                Vector3 viewPoint = c.TransformPoint(worldPoint);
+
+                screenPoints[i] = c.ProjectedPoint(viewPoint, );
             }
 
-            PointF[] screenPoint = new PointF[4]
-            {
-                new PointF(worldPoints[0].X, worldPoints[0].Y),
-                new PointF(worldPoints[1].X, worldPoints[1].Y),
-                new PointF(worldPoints[2].X, worldPoints[2].Y),
-                new PointF(worldPoints[3].X, worldPoints[3].Y)
-            };
-
-            g.DrawPolygon(new Pen(new SolidBrush(color)), screenPoint);
+            g.DrawPolygon(new Pen(new SolidBrush(color), 2f), screenPoints);
 
 
 
@@ -57,7 +50,7 @@ namespace PrograVJ.Engine.Figures
 
         public override void Update()
         {
-            throw new NotImplementedException();
+            
         }
     }
 }
