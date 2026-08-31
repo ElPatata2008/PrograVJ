@@ -15,10 +15,11 @@ namespace PrograVJ.Engine
     }
     public class Camera
     {
-        CameraType type;
+        public CameraType type;
         public Vector3 position;
         public Vector3 rotation;
         public Vector3 size;
+
         public float zoom;
         public float focalLength;
 
@@ -28,6 +29,7 @@ namespace PrograVJ.Engine
             this.position = position;
             this.rotation = rotation;
             this.size = size;
+            focalLength = 100.0f;
             zoom = 1.0f;
         }
 
@@ -39,17 +41,17 @@ namespace PrograVJ.Engine
             //return RotateInverse(relativePosition, rotation);
         }
 
-        public PointF ProjectPoint(Vector3 point, Vector3 screenResolution)
+        public PointF ProjectPoint(Vector3 point, Vector2 screenResolution)
         {
             switch(type)
             {
-                case CameraType.Orthographic: ProjectPointOrthographic(point, screenResolution); break;
-                case CameraType.Perspective: ProjectPointPrespective(point, screenResolution); break;
+                case CameraType.Orthographic: return ProjectPointOrthographic(point, screenResolution); 
+                case CameraType.Perspective: return ProjectPointPrespective(point, screenResolution); 
                 default: return new PointF(point.X, point.Y);
             }
         }
 
-        public PointF ProjectPointOrthographic(Vector3 point, Vector3 screenResolution) {
+        public PointF ProjectPointOrthographic(Vector3 point, Vector2 screenResolution) {
             float pixelPerUnitX = (screenResolution.X / size.X) * zoom;
             float pixelPerUnitY = (screenResolution.Y / size.Y) * zoom;
 
@@ -59,12 +61,12 @@ namespace PrograVJ.Engine
             return new PointF(projectedX, projectedY);
         }
 
-        public PointF ProjectPointPrespective(Vector3 point, Vector3 screenResolution) {
+        public PointF ProjectPointPrespective(Vector3 point, Vector2 screenResolution) {
 
             float fovScale = (focalLength * zoom) / point.Z;
 
             float projectedX = (screenResolution.X / 2) + (point.X * fovScale);
-            float projectedY = (screenResolution.Y / 2) + (point.Y * fovScale);
+            float projectedY = (screenResolution.Y / 2) - (point.Y * fovScale);
 
             return new PointF(projectedX, projectedY);
         }
@@ -78,11 +80,14 @@ namespace PrograVJ.Engine
                     viewDir = MathUtils.Rotate(new Vector3(0, 0, 1), rotation);
                     break;
                 case CameraType.Perspective:
+                    //viewDir = MathUtils.Rotate(new Vector3(0, 0, 2), rotation);
                     viewDir = worldPoints;
                     break;
-                default: viewDir = new Vector3(); break;
+                default: viewDir = new Vector3(0, 0, 0); break;
             }
             return viewDir;
         }
+
+
     }
 }

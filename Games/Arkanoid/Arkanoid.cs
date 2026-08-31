@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Numerics;
 using System.Windows.Forms;
 using PrograVJ.GameObjects;
+using PrograVJ.Engine.Manager;
 
 namespace PrograVJ.Games.Arkanoid
 {
@@ -84,9 +85,9 @@ namespace PrograVJ.Games.Arkanoid
 
         protected override void ProcessInput()
         {
-            space = window.IsPressedKey(Keys.Space);
-            left = window.IsPressedKey(Keys.Left) || window.IsPressedKey(Keys.A);
-            right = window.IsPressedKey(Keys.Right) || window.IsPressedKey(Keys.D);
+            space = InputManager.IsKeyPressed(Keys.Space);
+            left = InputManager.IsKeyPressed(Keys.Left) || InputManager.IsKeyPressed(Keys.A);
+            right = InputManager.IsKeyPressed(Keys.Right) || InputManager.IsKeyPressed(Keys.D);
         }
 
         protected override void Update()
@@ -221,7 +222,7 @@ namespace PrograVJ.Games.Arkanoid
 
             if (lives == 0 || allDestroyed) g.DrawString("Press [Space] to continue", scoreFont, new SolidBrush(Color.White), window.ClientSize.Width / 2 - 200f, window.ClientSize.Height / 2 + 100f);
 
-                foreach (GameObject obj in  gameObjects) obj.Draw(g);
+                foreach (GameObject obj in  gameObjects) obj.Draw(g, c);
         }
     }
 }

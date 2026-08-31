@@ -12,11 +12,14 @@ namespace PrograVJ.Engine.Figures
 {
     class Square : GameObject
     {
-        public Square(Vector3 position, Vector3 rotation, Vector3 size, Color color, bool isActive) : base(position, rotation, size, color, isActive)
+        Color fillColor;
+        public Square(Vector3 position, Vector3 rotation, Vector3 size, Color color, bool isActive,
+            Color fillColor) : base(position, rotation, size, color, isActive)
         {
+            this.fillColor = fillColor;
         }
 
-        public override void Draw(Graphics g)
+        public override void Draw(Graphics g, Camera c)
         {
 
             // S * R * T
@@ -26,10 +29,10 @@ namespace PrograVJ.Engine.Figures
             float halfY = size.Y / 2;
             Vector3[] localVertices = new Vector3[4]
             {
-                new Vector3(-halfX, -halfY, 0),
-                new Vector3( halfX, -halfY, 0),
-                new Vector3( halfX,  halfY, 0),
-                new Vector3(-halfX,  halfY, 0),
+                new Vector3(-halfX, -halfY, 0f),
+                new Vector3( halfX, -halfY, 0f),
+                new Vector3( halfX,  halfY, 0f),
+                new Vector3(-halfX,  halfY, 0f),
             };
 
             PointF[] screenPoints = new PointF[4];
@@ -37,14 +40,15 @@ namespace PrograVJ.Engine.Figures
                 Vector3 scalePoint = MathUtils.Scale(localVertices[i], size);
                 Vector3 rotationPoint = MathUtils.Rotate(scalePoint, rotation);
                 Vector3 worldPoint = MathUtils.Translate(rotationPoint, position);
-                Vector3 viewPoint = c.TransformPoint(worldPoint);
 
-                screenPoints[i] = c.ProjectedPoint(viewPoint, );
+                //screenPoints[i] = new PointF(worldPoint.X, worldPoint.Y);
+
+                Vector3 viewPoint = c.TransformPoint(worldPoint);
+                screenPoints[i] = c.ProjectPoint(viewPoint, Program.resolution);
             }
 
+            g.FillPolygon(new SolidBrush(fillColor), screenPoints);
             g.DrawPolygon(new Pen(new SolidBrush(color), 2f), screenPoints);
-
-
 
         }
 
@@ -52,5 +56,7 @@ namespace PrograVJ.Engine.Figures
         {
             
         }
+
+        //public void SetWindow(Window w) => this.w = w;
     }
 }

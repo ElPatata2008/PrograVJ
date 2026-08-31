@@ -33,9 +33,9 @@ namespace PrograVJ
             loop = true;
 
             c = new Camera( CameraType.Perspective,
+                new Vector3(0f, 0f, -50f), 
                 new Vector3(0f, 0f, 0f), 
-                new Vector3(0f,0f,0f), 
-                new Vector3(800f,600f,0f)
+                new Vector3(w, h, 0f)
             );
         }
 
@@ -74,6 +74,8 @@ namespace PrograVJ
         protected abstract void Update();
         protected abstract void Render(Graphics g);
 
+        public void Instantiate(GameObject obj) => gameObjects.Add(obj);
+       
         private void UpdateGameObjects()
         {
             foreach (GameObject obj in gameObjects) obj.Update();

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Numerics;
+using PrograVJ.Engine.Manager;
 
 namespace PrograVJ.Games
 {
@@ -67,11 +68,11 @@ namespace PrograVJ.Games
 
         protected override void ProcessInput()
         {
-            bool esc = window.IsPressedKey(Keys.Escape);
+            bool esc = InputManager.IsKeyPressed(Keys.Escape);
             if (esc) loop = false;
 
-            up = window.IsPressedKey(Keys.Up) || window.IsPressedKey(Keys.W);
-            down = window.IsPressedKey(Keys.Down) || window.IsPressedKey(Keys.S);
+            up = InputManager.IsKeyPressed(Keys.Up) || InputManager.IsKeyPressed(Keys.W);
+            down = InputManager.IsKeyPressed(Keys.Down) || InputManager.IsKeyPressed(Keys.S);
         }
 
         protected override void Update()
@@ -114,9 +115,9 @@ namespace PrograVJ.Games
         {
             g.Clear(Color.Black);
 
-            ball.Draw(g);
-            P1.Draw(g);
-            P2.Draw(g);
+            ball.Draw(g, c);
+            P1.Draw(g, c);
+            P2.Draw(g, c);
 
             g.DrawString($"{P1.GetScore()}", scoreFont, new SolidBrush(Color.White), (window.ClientSize.Width / 3) - 50, 50);
             g.DrawString($"{P2.GetScore()}", scoreFont, new SolidBrush(Color.White), (window.ClientSize.Width / 3) * 2, 50);

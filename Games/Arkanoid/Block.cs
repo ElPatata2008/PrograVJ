@@ -1,4 +1,5 @@
-﻿using PrograVJ.GameObjects;
+﻿using PrograVJ.Engine;
+using PrograVJ.GameObjects;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -23,7 +24,7 @@ namespace PrograVJ.Games.Arkanoid
             bouncedY = false;
         }
 
-        public override void Draw(Graphics g)
+        public override void Draw(Graphics g, Camera c)
         {
             if (isActive) g.FillRectangle(new SolidBrush(color), position.X, position.Y, size.X, size.Y);
         }

@@ -33,7 +33,7 @@ namespace PrograVJ
             KeyDown += _KeyDownLogic;
             KeyUp += _KeyUpLogic;
             MouseUp += _MouseUp;
-            MouseDown *= _MouseDown;
+            MouseDown += _MouseDown;
         }
 
         public Graphics GetGraphics()

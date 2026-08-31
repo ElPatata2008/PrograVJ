@@ -50,7 +50,7 @@
     <Compile Include="Engine\Figures\Cube.cs" />
     <Compile Include="Engine\Figures\Square.cs" />
     <Compile Include="Engine\Manager\InputManager.cs" />
-    <Compile Include="Engine\OldGame.cs" />
+    <Compile Include="Engine\MathUtils.cs" />
     <Compile Include="Engine\Game.cs" />
     <Compile Include="Engine\GameObject.cs" />
     <Compile Include="Games\Arkanoid\Arkanoid.cs" />
@@ -60,6 +60,7 @@
     <Compile Include="Games\Pong\Ball.cs" />
     <Compile Include="Games\Pong\Pad.cs" />
     <Compile Include="Games\Pong\Pong.cs" />
+    <Compile Include="Games\Test.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Window.cs">
