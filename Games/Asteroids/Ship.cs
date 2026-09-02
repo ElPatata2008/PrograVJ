@@ -16,13 +16,14 @@ namespace PrograVJ.Games.Asteroids
     {
 
         float speed = 0, maxSpeed = 5f;
-        float rotSpeed = 1f;
         float accel;
+        float rotSpeed = 1f;
 
+        public float dirX, dirY;
         bool move;
 
-        public Ship(Vector3 position, Vector3 rotation, Vector3 size, Color color, bool isActive,
-            float accel, float maxSpeed, float rotSpeed) : base(position, rotation, size, color, isActive)
+        public Ship(Vector3 position, Vector3 rotation, Vector3 size, Color color, bool isActive, Color fillColor,
+            float accel, float maxSpeed, float rotSpeed) : base(position, rotation, size, color, isActive, fillColor)
         {
             this.accel = accel;
             this.maxSpeed = maxSpeed;
@@ -38,12 +39,21 @@ namespace PrograVJ.Games.Asteroids
 
             Vector2 dir = MathUtils.GetAngle2D(rotation.Z);
 
-            position.X += dir.X * speed;
-            position.Y += dir.Y * speed;
+            dirX = dir.X; dirY = dir.Y;
+
+            position.X += dirX * speed;
+            position.Y += dirY * speed;
         }
 
         public void StartMoving(bool keyPressed) => move = keyPressed;
         public void RotateShipLeft() => rotation.Z += rotSpeed;
         public void RotateShipRight() => rotation.Z -= rotSpeed;
+
+        public void Restore()
+        {
+            position = Vector3.Zero;
+            isActive = true;
+            speed = 0;
+        }
     }
 }

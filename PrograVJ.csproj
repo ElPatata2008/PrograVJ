@@ -61,6 +61,7 @@
     <Compile Include="Games\Asteroids\Asteroid.cs" />
     <Compile Include="Games\Asteroids\Asteroids.cs" />
     <Compile Include="Games\Asteroids\Bullet.cs" />
+    <Compile Include="Games\Asteroids\PowerUp.cs" />
     <Compile Include="Games\Asteroids\Ship.cs" />
     <Compile Include="Games\Pong\Ball.cs" />
     <Compile Include="Games\Pong\Pad.cs" />

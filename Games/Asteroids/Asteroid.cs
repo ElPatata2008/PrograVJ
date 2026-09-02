@@ -13,13 +13,17 @@ namespace PrograVJ.Games.Asteroids
 {
     public class Asteroid : Square
     {
-        float speed;
+        public float speed;
         Random random = new Random();
 
         public float dirX, dirY;
+        public int type = 0;
 
-        public Asteroid(Vector3 position, Vector3 rotation, Vector3 size, Color color, bool isActive, Color fillColor) : base(position, rotation, size, color, isActive, fillColor)
+        public Asteroid(Vector3 position, Vector3 rotation, Vector3 size, Color color, bool isActive, Color fillColor, 
+            int type) : base(position, rotation, size, color, isActive, fillColor)
         {
+            this.type = type;
+
             speed = random.Next(1, 3) * 1.75f;
             Vector2 dir = MathUtils.GetAngle2D(rotation.Z);
 
@@ -43,5 +47,7 @@ namespace PrograVJ.Games.Asteroids
 
             return false;
         }
+
+        public void SetSpeed(float speed) => this.speed = speed;
     }
 }

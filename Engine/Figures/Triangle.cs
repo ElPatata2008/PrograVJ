@@ -11,8 +11,10 @@ namespace PrograVJ.Engine.Figures
 {
     public class Triangle : GameObject
     {
-        public Triangle(Vector3 position, Vector3 rotation, Vector3 size, Color color, bool isActive) : base(position, rotation, size, color, isActive)
+        Color fillColor;
+        public Triangle(Vector3 position, Vector3 rotation, Vector3 size, Color color, bool isActive, Color fillColor) : base(position, rotation, size, color, isActive)
         {
+            this.fillColor = fillColor;
         }
 
         public override void Draw(Graphics g, Camera c)
@@ -45,7 +47,7 @@ namespace PrograVJ.Engine.Figures
                 screenPoints[i] = c.ProjectPoint(viewPoint, Program.resolution);
             }
 
-            //g.FillPolygon(new SolidBrush(fillColor), screenPoints);
+            g.FillPolygon(new SolidBrush(fillColor), screenPoints);
             g.DrawPolygon(new Pen(new SolidBrush(color), 2f), screenPoints);
         }
 
