@@ -8,6 +8,7 @@ using System.Numerics;
 using System.Windows.Forms;
 using PrograVJ.GameObjects;
 using PrograVJ.Engine.Manager;
+using PrograVJ.Engine;
 
 namespace PrograVJ.Games.Arkanoid
 {
@@ -26,7 +27,7 @@ namespace PrograVJ.Games.Arkanoid
         List<Block> blocks = new List<Block>();
         bool allDestroyed = false;
 
-        public Arkanoid(int w, int h, float fps) : base(w, h, fps)
+        public Arkanoid(int w, int h, float fps, CameraType type) : base(w, h, fps, type)
         {
 
             scoreFont = new Font("Arial", 25, FontStyle.Bold);

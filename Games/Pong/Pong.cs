@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Numerics;
 using PrograVJ.Engine.Manager;
+using PrograVJ.Engine;
 
 namespace PrograVJ.Games
 {
@@ -21,7 +22,7 @@ namespace PrograVJ.Games
         Ball ball;
         Pad P1, P2;
 
-        public Pong(int w, int h, float fps) : base(w, h, fps)
+        public Pong(int w, int h, float fps, CameraType type) : base(w, h, fps, type)
         {
             scoreFont = new Font("Arial", 50, FontStyle.Bold);
 

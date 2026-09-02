@@ -70,11 +70,11 @@ namespace PrograVJ.Engine.Manager
         {
             if (buttons == MouseButtons.Left && MBL)
             {
-                MBL = true;
+                MBL = false;
             }
             if (buttons == MouseButtons.Right && MBR)
             {
-                MBR = true;
+                MBR = false;
             }
         }
 

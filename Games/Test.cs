@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Numerics;
 using System.Windows.Forms;
 using PrograVJ.Engine.Manager;
+using PrograVJ.Engine;
 
 namespace PrograVJ.Games
 {
@@ -20,7 +21,7 @@ namespace PrograVJ.Games
         bool up, down, left, right;
         bool a, d, w, s;
         bool q, e;
-        public Test(int w, int h, float fps) : base(w, h, fps)
+        public Test(int w, int h, float fps, CameraType type) : base(w, h, fps, type)
         {
             speed = 1f;
             rotationSpeed = 2f;

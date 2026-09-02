@@ -24,7 +24,7 @@ namespace PrograVJ
 
         protected Camera c;
 
-        public Game(int w, int h, float fps)
+        public Game(int w, int h, float fps, CameraType type)
         {
             window = new Window(w, h, fps);
             g = window.CreateGraphics();
@@ -32,7 +32,7 @@ namespace PrograVJ
             this.fps = fps;
             loop = true;
 
-            c = new Camera( CameraType.Perspective,
+            c = new Camera( type,
                 new Vector3(0f, 0f, -50f), 
                 new Vector3(0f, 0f, 0f), 
                 new Vector3(w, h, 0f)
@@ -75,6 +75,7 @@ namespace PrograVJ
         protected abstract void Render(Graphics g);
 
         public void Instantiate(GameObject obj) => gameObjects.Add(obj);
+        public void Deinstantiate(GameObject obj) => gameObjects.Remove(obj);
        
         private void UpdateGameObjects()
         {

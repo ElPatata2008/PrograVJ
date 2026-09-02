@@ -5,6 +5,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace PrograVJ.Engine
 {
@@ -49,5 +50,14 @@ namespace PrograVJ.Engine
 
         public static Vector3 Translate(Vector3 src, Vector3 translate) => src + translate;
 
+        public static Vector2 GetAngle2D(float rotationZ)
+        {
+            double radians = rotationZ * (Math.PI / 180);
+
+            double x = Math.Cos(radians);
+            double y = Math.Sin(radians);
+
+            return new Vector2((float)x, (float)y);
+        }
     }
 }

@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -10,33 +9,32 @@ using System.Threading.Tasks;
 
 namespace PrograVJ.Engine.Figures
 {
-    public class Square : GameObject
+    public class Triangle : GameObject
     {
-        Color fillColor;
-        public Square(Vector3 position, Vector3 rotation, Vector3 size, Color color, bool isActive,
-            Color fillColor) : base(position, rotation, size, color, isActive)
+        public Triangle(Vector3 position, Vector3 rotation, Vector3 size, Color color, bool isActive) : base(position, rotation, size, color, isActive)
         {
-            this.fillColor = fillColor;
         }
 
         public override void Draw(Graphics g, Camera c)
         {
-
             // S * R * T
 
             // Scale
             float halfX = size.X / 2;
             float halfY = size.Y / 2;
-            Vector3[] localVertices = new Vector3[4]
+            Vector3[] localVertices = new Vector3[3]
             {
                 new Vector3(-halfX, -halfY, 0f),
-                new Vector3( halfX, -halfY, 0f),
-                new Vector3( halfX,  halfY, 0f),
-                new Vector3(-halfX,  halfY, 0f),
+                new Vector3(halfX, 0, 0f),
+                new Vector3(-halfX, halfY, 0f),
+                //new Vector3( halfX, -halfY, 0f),
+                //new Vector3( halfX,  halfY, 0f),
+                //new Vector3(-halfX,  halfY, 0f),
             };
 
-            PointF[] screenPoints = new PointF[4];
-            for (int i = 0; i < localVertices.Length; i++) {
+            PointF[] screenPoints = new PointF[3];
+            for (int i = 0; i < localVertices.Length; i++)
+            {
                 Vector3 scalePoint = MathUtils.Scale(localVertices[i], size);
                 Vector3 rotationPoint = MathUtils.Rotate(scalePoint, rotation);
                 Vector3 worldPoint = MathUtils.Translate(rotationPoint, position);
@@ -47,16 +45,13 @@ namespace PrograVJ.Engine.Figures
                 screenPoints[i] = c.ProjectPoint(viewPoint, Program.resolution);
             }
 
-            g.FillPolygon(new SolidBrush(fillColor), screenPoints);
+            //g.FillPolygon(new SolidBrush(fillColor), screenPoints);
             g.DrawPolygon(new Pen(new SolidBrush(color), 2f), screenPoints);
-
         }
 
         public override void Update()
         {
             
         }
-
-        
     }
 }

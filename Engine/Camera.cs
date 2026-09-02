@@ -88,6 +88,6 @@ namespace PrograVJ.Engine
             return viewDir;
         }
 
-
+        public Vector3 GetCameraPosition() => TransformPoint(position);
     }
 }

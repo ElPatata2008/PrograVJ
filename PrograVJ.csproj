@@ -49,6 +49,7 @@
     <Compile Include="Engine\Camera.cs" />
     <Compile Include="Engine\Figures\Cube.cs" />
     <Compile Include="Engine\Figures\Square.cs" />
+    <Compile Include="Engine\Figures\Triangle.cs" />
     <Compile Include="Engine\Manager\InputManager.cs" />
     <Compile Include="Engine\MathUtils.cs" />
     <Compile Include="Engine\Game.cs" />
@@ -57,6 +58,10 @@
     <Compile Include="Games\Arkanoid\Ball.cs" />
     <Compile Include="Games\Arkanoid\Block.cs" />
     <Compile Include="Games\Arkanoid\Pad.cs" />
+    <Compile Include="Games\Asteroids\Asteroid.cs" />
+    <Compile Include="Games\Asteroids\Asteroids.cs" />
+    <Compile Include="Games\Asteroids\Bullet.cs" />
+    <Compile Include="Games\Asteroids\Ship.cs" />
     <Compile Include="Games\Pong\Ball.cs" />
     <Compile Include="Games\Pong\Pad.cs" />
     <Compile Include="Games\Pong\Pong.cs" />
