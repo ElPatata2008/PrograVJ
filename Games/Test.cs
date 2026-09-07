@@ -25,6 +25,7 @@ namespace PrograVJ.Games
         {
             speed = 1f;
             rotationSpeed = 2f;
+            TextureManager.Load("image.jpg", "img");
 
             square = new Square(
                 new Vector3(0f, 0f, 0f),
@@ -32,7 +33,8 @@ namespace PrograVJ.Games
                 new Vector3(10f, 10f, 10f),
                 Color.Black,
                 true,
-                Color.Blue
+                Color.White,
+                2f, TextureManager.Get("img")
             );
             Instantiate(square);
         }
@@ -82,6 +84,9 @@ namespace PrograVJ.Games
         protected override void Render(Graphics g)
         {
             g.Clear(Color.White);
+
+            //var img = TextureManager.Get("img");
+            //g.DrawImage(img, 0, 0, window.ClientSize.Width, window.ClientSize.Height);
 
             square.Draw(g, c);
         }
