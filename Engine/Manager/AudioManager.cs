@@ -38,26 +38,29 @@ namespace PrograVJ.Engine.Manager
         }
 
 
-        private static Dictionary<string, string> music;
+        private static Dictionary<string, string> music = new Dictionary<string, string>();
         private static WaveOut musicOutput;
         private static AudioFileReader musicStream;
 
-        private static Dictionary<string, SFXCache> sfxMap;
+        private static Dictionary<string, SFXCache> sfxMap = new Dictionary<string, SFXCache>();
 
-        private static Dictionary<string, MemoryStream> audios;
-        private static Dictionary<int, (WaveOut player, StreamMediaFoundationReader reader)> PlayingAudioMap;
+        private static Dictionary<string, MemoryStream> audios = new Dictionary<string, MemoryStream>();
+        private static Dictionary<int, (WaveOut player, StreamMediaFoundationReader reader)> PlayingAudioMap = new Dictionary<int, (WaveOut player, StreamMediaFoundationReader reader)>();
         private static int PlayingIndex = 0;
+        private static string audioPath = "Assets/Audios/";
+        private static string musicPath = "Assets/Music/";
 
         public static void LoadMusic(string filename, string id)
         {
-            if (!File.Exists(filename)) throw new FileNotFoundException(filename);
-            if (audios.ContainsKey(id)) throw new ArgumentException();
-            music.Add(id, filename);
+            string file = Path.Combine(musicPath, filename);
+            if (!File.Exists(file)) throw new FileNotFoundException(file);
+            if (audios.ContainsKey(id)) throw new ArgumentException(id);
+            music.Add(id, file);
         }
 
         public static void PlayMusic(string id)
         {
-            if (!music.TryGetValue(id, out var filePath)) throw new ArgumentException();
+            if (!music.TryGetValue(id, out var filePath)) throw new ArgumentException(id);
             //StopMusic();
             musicOutput = new WaveOut();
             musicStream = new AudioFileReader(filePath);
@@ -67,14 +70,15 @@ namespace PrograVJ.Engine.Manager
 
         public static void LoadSFX(string filename, string id)
         {
-            if (!File.Exists(filename)) throw new FileNotFoundException();
-            if (audios.ContainsKey(id)) throw new ArgumentException();
-            sfxMap.Add(id, new SFXCache(filename));
+            string file = Path.Combine(audioPath, filename);
+            if (!File.Exists(file)) throw new FileNotFoundException(file);
+            if (audios.ContainsKey(id)) throw new ArgumentException(id);
+            sfxMap.Add(id, new SFXCache(file));
         }
 
         public static void PlaySFX(string AudioID)
         {
-            if (!sfxMap.TryGetValue(AudioID, out var sound)) throw new ArgumentException();
+            if (!sfxMap.TryGetValue(AudioID, out var sound)) throw new ArgumentException(AudioID);
 
             var ms = new MemoryStream(sound.AudioData);
             var stream = new RawSourceWaveStream(ms, sound.waveFormat);
@@ -91,9 +95,10 @@ namespace PrograVJ.Engine.Manager
 
         public static void Load(string filename, string id)
         {
-            if (!File.Exists(filename)) throw new FileNotFoundException();
-            if (audios.ContainsKey(id)) throw new ArgumentException();
-            audios.Add(id, GetMemorysStream(filename));
+            string file = Path.Combine(audioPath, filename);
+            if (!File.Exists(file)) throw new FileNotFoundException(file);
+            if (audios.ContainsKey(id)) throw new ArgumentException(id);
+            audios.Add(id, GetMemorysStream(file));
         }
 
         private static MemoryStream GetMemorysStream(string filename)
@@ -104,7 +109,7 @@ namespace PrograVJ.Engine.Manager
 
         public static int Play(string id)
         {
-            if (!audios.ContainsKey(id)) throw new ArgumentException();
+            if (!audios.ContainsKey(id)) throw new ArgumentException(id);
 
             var memStream = new MemoryStream(audios[id].ToArray());
 

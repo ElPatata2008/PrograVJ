@@ -33,7 +33,7 @@ namespace PrograVJ
             loop = true;
 
             c = new Camera( type,
-                new Vector3(0f, 0f, -50f), 
+                new Vector3(0f, 0f, -100f), 
                 new Vector3(0f, 0f, 0f), 
                 new Vector3(w, h, 0f)
             );

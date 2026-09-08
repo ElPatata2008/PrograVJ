@@ -20,8 +20,9 @@ namespace PrograVJ.Engine
         public Vector3 rotation;
         public Vector3 size;
 
-        public float zoom;
-        public float focalLength;
+        public float zoom = 1.0f;
+        public float focalLength = 100.0f;
+        public float nearZ = 0.1f;
 
         public Camera(CameraType type, Vector3 position, Vector3 rotation, Vector3 size)
         {
@@ -29,8 +30,6 @@ namespace PrograVJ.Engine
             this.position = position;
             this.rotation = rotation;
             this.size = size;
-            focalLength = 100.0f;
-            zoom = 1.0f;
         }
 
         public Vector3 TransformPoint(Vector3 point)

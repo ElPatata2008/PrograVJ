@@ -1,6 +1,7 @@
 ﻿using PrograVJ.GameObjects;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -21,7 +22,13 @@ namespace PrograVJ.Engine.Figures
     public class Square : GameObject
     {
         Vector3[] localVertices;
-        PointF[] localUVs;
+        PointF[] localUVs = new PointF[] {
+            new PointF(0, 1), 
+            new PointF(1, 1),
+            new PointF(1, 0), 
+            new PointF(0, 0)
+        };
+
         List<Vertex3D> viewPoints = new List<Vertex3D>();
         PointF[] polygonPoints;
 
@@ -40,7 +47,7 @@ namespace PrograVJ.Engine.Figures
         public override void Draw(Graphics g, Camera c)
         {
             
-            Brush b; Pen p;
+            //Brush b; Pen p;
 
             float halfX = size.X / 2;
             float halfY = size.Y / 2;
@@ -52,87 +59,141 @@ namespace PrograVJ.Engine.Figures
                 new Vector3(-halfX,  halfY, 0f),
             };
 
-            
+            //PointF[] screenPoints = new PointF[4];
+            //for (int i = 0; i < localVertices.Length; i++) {
+            //    // S * R * T
+            //    Vector3 scalePoint = MathUtils.Scale(localVertices[i], size);
+            //    Vector3 rotationPoint = MathUtils.Rotate(scalePoint, rotation);
+            //    Vector3 worldPoint = MathUtils.Translate(rotationPoint, position);
 
-            PointF[] screenPoints = new PointF[4];
-            for (int i = 0; i < localVertices.Length; i++) {
-                // S * R * T
-                Vector3 scalePoint = MathUtils.Scale(localVertices[i], size);
-                Vector3 rotationPoint = MathUtils.Rotate(scalePoint, rotation);
-                Vector3 worldPoint = MathUtils.Translate(rotationPoint, position);
-
-                Vector3 viewPoint = c.TransformPoint(worldPoint);
-                screenPoints[i] = c.ProjectPoint(viewPoint, Program.resolution);
-            }
-
-            //for (int i = 0; i < localVertices.Length; i++)
-            //{
-            //    Vector3 scale = MathUtils.Scale(localVertices[i], size);
-            //    Vector3 rotation = MathUtils.Rotate(scale, this.rotation);
-            //    Vector3 world = MathUtils.Translate(rotation, position);
-
-            //    viewPoints.Add(new Vertex3D
-            //    {
-            //        position = c.TransformPoint(world),
-            //        UV = localUVs[i]
-            //    });
+            //    Vector3 viewPoint = c.TransformPoint(worldPoint);
+            //    screenPoints[i] = c.ProjectPoint(viewPoint, Program.resolution);
             //}
 
-            //List<Vertex3D> clippedPoints = ClipPolygon(viewPoints, c.nearZ);
+            List<Vertex3D> viewSpace = TransformToViewSpace(c);
+            List<Vertex3D> clippedPoints = ClipPolygon(viewPoints, c.nearZ);
 
-            //for (int i = 0; i < clippedPoints.Count(); i++)
-            //{
-            //    polygonPoints[i] = new Vertex(c.ProjectPoint(clippedPoints[i].position, Program.resolution), clippedPoints[i].UV);
-            //}
+            if (clippedPoints.Count < 3) return;
 
-            //for (int i = 1; i < polygonPoints.Length - 1; i++)
-            //{
-            //    var vertices = polygonPoints.Position;
-            //    var v0 = vertices[0], v1 = vertices[1], v2 = vertices[2];
-            //    PointF[] triangle = { v0, v1, v2 };
-            //    float area = triangleArea(v0, v1, v2);
-            //    if (area < 0.001f) continue;
+            Vertex3D[] screenPoly = ProjectToScreen(clippedPoints, c);
+            PointF[] screenPoints = screenPoly.Select(v => new PointF(v.position.X, v.position.Y)).ToArray();
 
-            //    float minU, minV, maxU, maxV;
-            //    ObtainMinMaxPoints(screenPoints, out minU, out maxU, out minV, out maxV);
-            //    float width = (maxU - minU) * fillTexture.Width;
-            //    float height = (maxV - minV) * fillTexture.Height;
-            //    RectangleF source = new RectangleF(
-            //        minU * fillTexture.Width,
-            //        minV * fillTexture.Height,
-            //        width,
-            //        height
-            //    );
-            //}
+            Brush b = fillTexture == null
+                ? new SolidBrush(fillColor)
+                : BuildTextureBrush(screenPoly);
 
-            if (fillTexture == null) b = new SolidBrush(fillColor);
-            else
-            {
-                TextureBrush tb = new TextureBrush(fillTexture);
-                tb.WrapMode = WrapMode.Clamp;
-                tb.ResetTransform();
-
-                //Matrix uvMatrix = new Matrix(source, triangle);
-                //tb.Transform = uvMatrix;
-
-                float minX, maxX, minY, maxY;
-                ObtainMinMaxPoints(screenPoints, out minX, out maxX, out minY, out maxY);
-                float width = maxX - minX, height = maxY - minY;
-                tb.TranslateTransform(minX, minY);
-
-                if (width > 0 && height > 0) {
-                    float scaleX = width / fillTexture.Width;
-                    float scaleY = height / fillTexture.Height;
-                    tb.ScaleTransform(scaleX, scaleY);
-                }
-
-                b = tb;
-            }
-            p = new Pen(b, borderWidth);
+            Pen p = new Pen(b, borderWidth);
 
             g.FillPolygon(b, screenPoints);
             g.DrawPolygon(p, screenPoints);
 
+        }
+
+        private List<Vertex3D> ClipPolygon(List<Vertex3D> vertices, float nearZ)
+        {
+            List<Vertex3D> output = new List<Vertex3D>();
+            int n = vertices.Count();
+
+            for (int i = 0; i < n; i++)
+            {
+                Vertex3D current = vertices[i];
+                Vertex3D next = vertices[(i + 1) % n];
+
+                bool currentInside = current.position.Z > nearZ;
+                bool nextInside = next.position.Z > nearZ;
+
+                if (currentInside) output.Add(current);
+
+                if (currentInside != nextInside)
+                {
+                    float t = (nearZ - current.position.Z) / (next.position.Z - current.position.Z);
+
+                    Vertex3D intersection = new Vertex3D
+                    {
+                        position = Vector3.Lerp(current.position, next.position, t),
+                        UV = Lerp(current.UV, next.UV, t)
+                    };
+                    output.Add(intersection);
+                }
+            }
+
+            return output;
+        }
+
+        private PointF Lerp(PointF a, PointF b, float t) => new PointF(a.X + (b.X - a.X) * t, a.Y + (b.Y - a.Y) * t);
+
+        private List<Vertex3D> TransformToViewSpace(Camera c)
+        {
+            viewPoints.Clear();
+            for (int i = 0; i < localVertices.Length; i++)
+            {
+                Vector3 scale = MathUtils.Scale(localVertices[i], size);
+                Vector3 rotation = MathUtils.Rotate(scale, this.rotation);
+                Vector3 world = MathUtils.Translate(rotation, position);
+
+                viewPoints.Add(new Vertex3D
+                {
+                    position = c.TransformPoint(world),
+                    UV = localUVs[i]
+                });
+            }
+            return viewPoints;
+        }
+
+        private Vertex3D[] ProjectToScreen(List<Vertex3D> clipped, Camera c)
+        {
+            Vertex3D[] result = new Vertex3D[clipped.Count];
+
+            for (int i = 0; i < clipped.Count(); i++)
+            {
+                PointF newPos = c.ProjectPoint(clipped[i].position, Program.resolution);
+                result[i] = new Vertex3D
+                {
+                    position = new Vector3(newPos.X, newPos.Y, clipped[i].position.Z),
+                    UV = clipped[i].UV
+                };
+            }
+            return result;
+        }
+
+        private Brush BuildTextureBrush(Vertex3D[] screenPoly)
+        {
+            PointF? p00 = null, p10 = null, p01 = null;
+            foreach(var v in screenPoly)
+            {
+                if (v.UV.X == 0 && v.UV.Y == 0) p00 = new PointF(v.position.X, v.position.Y);
+                else if (v.UV.X == 1 && v.UV.Y == 0) p10 = new PointF(v.position.X, v.position.Y);
+                else if (v.UV.X == 0 && v.UV.Y == 1) p01 = new PointF(v.position.X, v.position.Y);
+            }
+
+            TextureBrush tb = new TextureBrush(fillTexture);
+            tb.WrapMode = WrapMode.Clamp;
+
+            if (p00.HasValue && p10.HasValue && p01.HasValue)
+            {
+                RectangleF sourceRect = new RectangleF(0, 0, fillTexture.Width, fillTexture.Height);
+                PointF[] destPoints = { p00.Value, p10.Value, p01.Value };
+                tb.Transform = new Matrix(sourceRect, destPoints);
+            }
+            else
+            {
+                tb.ResetTransform();
+
+                float minX, maxX, minY, maxY;
+                PointF[] positions = screenPoly.Select(v => new PointF(v.position.X, v.position.Y)).ToArray();
+                ObtainMinMaxPoints(positions, out minX, out maxX, out minY, out maxY);
+                float width = maxX - minX, height = maxY - minY;
+                tb.TranslateTransform(minX, minY);
+
+                if (width > 0 && height > 0)
+                {
+                    float scaleX = width / fillTexture.Width;
+                    float scaleY = height / fillTexture.Height;
+                    tb.ScaleTransform(scaleX, scaleY);
+                }
+            }
+
+            return tb;
         }
 
         private void ObtainMinMaxPoints(PointF[] screenPoints, out float minX, out float maxX, out float minY, out float maxY)
