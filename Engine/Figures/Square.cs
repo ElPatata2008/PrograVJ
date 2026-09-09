@@ -32,9 +32,9 @@ namespace PrograVJ.Engine.Figures
         List<Vertex3D> viewPoints = new List<Vertex3D>();
         PointF[] polygonPoints;
 
-        Color fillColor;
-        Bitmap fillTexture;
-        float borderWidth;
+        public Color fillColor;
+        public Bitmap fillTexture;
+        public float borderWidth;
 
         public Square(Vector3 position, Vector3 rotation, Vector3 size, Color color, bool isActive,
             Color fillColor, float borderWidth = 2f, Bitmap fillTexture = null) : base(position, rotation, size, color, isActive)

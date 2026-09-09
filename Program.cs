@@ -1,6 +1,7 @@
 ﻿using PrograVJ.Games;
 using PrograVJ.Games.Arkanoid;
 using PrograVJ.Games.Asteroids;
+using PrograVJ.Games.SimonSays;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,9 +19,10 @@ namespace PrograVJ
         {
             //Game pong = new Pong(800, 600, 60);
             //Game arkanoid = new Arkanoid(800, 600, 60);
-            Game test = new Test((int)resolution.X, (int)resolution.Y, 60, Engine.CameraType.Orthographic); test.StartGame();
             //Game asteroid = new Asteroids((int)resolution.X, (int)resolution.Y, 60, Engine.CameraType.Orthographic); asteroid.StartGame();
+            Game simonSays = new SimonSays((int)resolution.X, (int)resolution.Y, 60, Engine.CameraType.Orthographic); simonSays.StartGame();
 
+            //Game test = new Test((int)resolution.X, (int)resolution.Y, 60, Engine.CameraType.Orthographic); test.StartGame();
             Application.Run();
         }
     }

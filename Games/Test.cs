@@ -28,9 +28,9 @@ namespace PrograVJ.Games
             speed = 1f;
             rotationSpeed = 2f;
             TextureManager.Load("image.jpg", "img");
-            AudioManager.LoadSFX("fah.mp3", "fah");
-            AudioManager.LoadMusic("TempleBattle.mp3", "temple");
-            FontManager.Load("upheavtt.ttf", "uphea");
+            //AudioManager.LoadSFX("fah.mp3", "fah");
+            //AudioManager.LoadMusic("TempleBattle.mp3", "temple");
+            //FontManager.Load("upheavtt.ttf", "uphea");
 
             square = new Square(
                 new Vector3(0f, 0f, 0f),
@@ -43,7 +43,7 @@ namespace PrograVJ.Games
             );
             Instantiate(square);
 
-            AudioManager.PlayMusic("temple");
+            //AudioManager.PlayMusic("temple");
         }
 
         protected override void ProcessInput()
@@ -101,7 +101,7 @@ namespace PrograVJ.Games
         {
             g.Clear(Color.White);
 
-            g.DrawString("Hola Mundo!", FontManager.Get("uphea", 20), new SolidBrush(Color.Black), 0, 0);
+            //g.DrawString("Hola Mundo!", FontManager.Get("uphea", 20), new SolidBrush(Color.Black), 0, 0);
 
             //var img = TextureManager.Get("img");
             //g.DrawImage(img, 0, 0, window.ClientSize.Width, window.ClientSize.Height);
