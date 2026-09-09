@@ -38,10 +38,9 @@ namespace PrograVJ.Games.SimonSays
         int currentButtonInPattern = 0;
         int buttonPressed = 4;
         float timeBetweenButtonPattern = 1;
-        float btnPressedDelay = 0.25f;
+        float btnPressedDelay = 0.5f;
         bool finishedPattern = false;
         bool gameOver = false;
-        bool soundPlayed = false;
 
         Random rnd = new Random();
 
@@ -58,11 +57,29 @@ namespace PrograVJ.Games.SimonSays
 
             FontManager.Load("ByteBounce.ttf", "bb");
 
+            AudioManager.Load("simonSays_btn1.mp3", "ssbtn1");
+            AudioManager.Load("simonSays_btn2.mp3", "ssbtn2");
+            AudioManager.Load("simonSays_btn3.mp3", "ssbtn3");
+            AudioManager.Load("simonSays_btn4.mp3", "ssbtn4");
+
+            TextureManager.Load("zombie.jpg", "zombie");
+            TextureManager.Load("skeleton.jpg", "skeleton");
+            TextureManager.Load("creeper.jpg", "creeper");
+            TextureManager.Load("spider.jpg", "spider");
+            TextureManager.Load("zombieHurt.jpg", "zombieHurt");
+            TextureManager.Load("skeletonHurt.jpg", "skeletonHurt");
+            TextureManager.Load("creeperHurt.jpg", "creeperHurt");
+            TextureManager.Load("spiderHurt.jpg", "spiderHurt");
+
+            TextureManager.Load("ssbg.jpg", "ssbg");
+
+            AudioManager.LoadMusic("trinity.mp3", "trinity");
+
             Instantiate(visibleTime = new Square(
-                new Vector3(0, 285, 0),
+                new Vector3(0, 290, 0),
                 new Vector3(0, 0, 0),
                 new Vector3(visibleTimeX, 5, 0f),
-                Color.Blue, true, Color.Black
+                Color.Blue, true, Color.White
             ));
 
             Instantiate(ba = new Button(
@@ -70,7 +87,7 @@ namespace PrograVJ.Games.SimonSays
                 new Vector3(0, 0, 0),
                 new Vector3(10, 10, 0),
                 Color.Black, true, Color.Yellow,
-                0
+                0, TextureManager.Get("skeletonHurt"),  fillTexture: TextureManager.Get("skeleton")
             ));
 
             Instantiate(bs = new Button(
@@ -78,7 +95,7 @@ namespace PrograVJ.Games.SimonSays
                 new Vector3(0, 0, 0),
                 new Vector3(10, 10, 0),
                 Color.Black, true, Color.Blue,
-                1
+                1, TextureManager.Get("spiderHurt"),  fillTexture: TextureManager.Get("spider")
             ));
 
             Instantiate(bk = new Button(
@@ -86,7 +103,7 @@ namespace PrograVJ.Games.SimonSays
                 new Vector3(0, 0, 0),
                 new Vector3(10, 10, 0),
                 Color.Black, true, Color.Red,
-                2
+                2, TextureManager.Get("creeperHurt"),  fillTexture: TextureManager.Get("creeper")
             ));
 
             Instantiate(bl = new Button(
@@ -94,9 +111,10 @@ namespace PrograVJ.Games.SimonSays
                 new Vector3(0, 0, 0),
                 new Vector3(10, 10, 0),
                 Color.Black, true, Color.Green,
-                3
+                3, TextureManager.Get("zombieHurt"),  fillTexture: TextureManager.Get("zombie")
             ));
 
+            AudioManager.PlayMusic("trinity");
         }
 
         protected override void ProcessInput()
@@ -111,15 +129,18 @@ namespace PrograVJ.Games.SimonSays
         {
             g.Clear(Color.White);
 
+            var img = TextureManager.Get("ssbg");
+            g.DrawImage(img, 0, 0, c.size.X, c.size.Y);
+
             ba.Draw(g, c);
             bs.Draw(g, c);
             bk.Draw(g, c);
             bl.Draw(g, c);
 
             if (finishedPattern) visibleTime.Draw(g, c);
-            g.DrawString($"Round: {round}", FontManager.Get("bb", 50), new SolidBrush(Color.Black), c.size.X / 2 - 120, 30);
-            if (highestRound > 0) g.DrawString($"Highest Round: {round}", FontManager.Get("bb", 50), new SolidBrush(Color.Black), c.size.X / 2 - 220, 60);
-            if (gameOver) g.DrawString("Game Over!", FontManager.Get("bb", 50), new SolidBrush(Color.Black), c.size.X / 2 - 220, c.size.Y - 60);
+            g.DrawString($"Round: {round}", FontManager.Get("bb", 50), new SolidBrush(Color.White), c.size.X / 2 - 100, 30);
+            if (highestRound > 0) g.DrawString($"Highest Round: {round}", FontManager.Get("bb", 50), new SolidBrush(Color.White), c.size.X / 2 - 220, 60);
+            if (gameOver) g.DrawString("Game Over!", FontManager.Get("bb", 50), new SolidBrush(Color.White), c.size.X / 2 - 150, c.size.Y - 60);
         }
 
         protected override void Update()
@@ -149,11 +170,6 @@ namespace PrograVJ.Games.SimonSays
                         if (pattern[currentButtonInPattern] == buttonPressed && buttonPressed != 4)
                         {
                             currentButtonInPattern++;
-                            if (!soundPlayed)
-                            {
-                                Console.WriteLine("Played Sound");
-                                soundPlayed = true;
-                            }
                             if (pattern.Count() == currentButtonInPattern)
                             {
                                 StartNewRound();
@@ -161,6 +177,7 @@ namespace PrograVJ.Games.SimonSays
                             buttonPressed = 4;
                             btnPressedDelaySW.Start();
                             anyKeyPressed = false;
+
                             //Console.WriteLine($"{pattern.Count()}, {currentButtonInPattern}, {pattern[currentButtonInPattern]}");
                         }
                         else if (pattern[currentButtonInPattern] != buttonPressed && buttonPressed != 4)
@@ -183,7 +200,6 @@ namespace PrograVJ.Games.SimonSays
                         {
                             pa = true;
                             buttonPressed = 0;
-                            Console.WriteLine(buttonPressed);
                             anyKeyPressed = true;
                         }
                         else pa = false;
@@ -191,7 +207,6 @@ namespace PrograVJ.Games.SimonSays
                         {
                             ps = true;
                             buttonPressed = 1;
-                            Console.WriteLine(buttonPressed);
                             anyKeyPressed = true;
                         }
                         else ps = false;
@@ -199,7 +214,6 @@ namespace PrograVJ.Games.SimonSays
                         {
                             pk = true;
                             buttonPressed = 2;
-                            Console.WriteLine(buttonPressed);
                             anyKeyPressed = true;
                         }
                         else pk = false;
@@ -207,7 +221,6 @@ namespace PrograVJ.Games.SimonSays
                         {
                             pl = true;
                             buttonPressed = 3;
-                            Console.WriteLine(buttonPressed);
                             anyKeyPressed = true;
                         }
                         else pl = false;
@@ -219,21 +232,17 @@ namespace PrograVJ.Games.SimonSays
                     {
                         switch (pattern[currentButtonInPattern])
                         {
-                            case 0: pa = true; soundPlayed = false; break;
-                            case 1: ps = true; soundPlayed = false; break;
-                            case 2: pk = true; soundPlayed = false; break;
-                            case 3: pl = true; soundPlayed = false; break;
+                            case 0: pa = true; break;
+                            case 1: ps = true; break;
+                            case 2: pk = true; break;
+                            case 3: pl = true; break;
                             default: break;
                         }
                     }
                     if (timeBetweenButtonPattern < timeBetweenButtonPatternSW.ElapsedMilliseconds / 1000)
                     {
                         currentButtonInPattern++;
-                        if (!soundPlayed)
-                        {
-                            Console.WriteLine("Played Sound");
-                            soundPlayed = true;
-                        }
+
                         if (pattern.Count() == currentButtonInPattern)
                         {
                             StartRound();
@@ -245,7 +254,7 @@ namespace PrograVJ.Games.SimonSays
             }
             else
             {
-                if (gameOverDelaySW.ElapsedMilliseconds / 1000 > 5)
+                if (gameOverDelaySW.ElapsedMilliseconds / 1000 > 3)
                     {
                         StartOver();
                     }
@@ -265,7 +274,7 @@ namespace PrograVJ.Games.SimonSays
             anyKeyPressed = false;
             pa = ps = pk = pl = false;
             currentButtonInPattern = 0;
-
+            buttonPressed = 4;
             roundTimeSW.Start();
             maxRoundtime = (round * (int)Math.Log(6 * round) + 10) - (roundTimeSW.ElapsedMilliseconds / 1000);
             roundtime = maxRoundtime;

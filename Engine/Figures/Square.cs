@@ -30,7 +30,6 @@ namespace PrograVJ.Engine.Figures
         };
 
         List<Vertex3D> viewPoints = new List<Vertex3D>();
-        PointF[] polygonPoints;
 
         public Color fillColor;
         public Bitmap fillTexture;
