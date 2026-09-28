@@ -12,14 +12,7 @@ namespace PrograVJ.Engine.Colliders
 {
     internal class BoxCollider2D : Collider
     {
-        public Vector3 size;
         public BoxCollider2D(GameObject p) : base(p) {}
-
-        public override void Update()
-        {
-            base.Update();
-            size = parent.size;
-        }
 
         public override bool isColliding(Collider other)
         {

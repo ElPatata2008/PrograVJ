@@ -11,6 +11,8 @@ namespace PrograVJ.Engine.Colliders
     public abstract class Collider
     {
         public Vector3 position;
+        public Vector3 size;
+        public Vector3 rotation;
         public GameObject parent;
 
         public Collider(GameObject p)
@@ -21,6 +23,8 @@ namespace PrograVJ.Engine.Colliders
         public virtual void Update()
         {
             position = parent.position;
+            size = parent.size;
+            rotation = parent.rotation;
         }
 
         public abstract bool isColliding(Collider other);

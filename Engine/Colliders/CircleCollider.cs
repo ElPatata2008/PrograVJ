@@ -8,17 +8,15 @@ using System.Threading.Tasks;
 
 namespace PrograVJ.Engine.Colliders
 {
-    public class CircleCollider : Collider
+    public class CircleCollider2D : Collider
     {
         public float radius;
-        public CircleCollider(GameObject p) : base(p)
-        {
-        }
+        public CircleCollider2D(GameObject p) : base(p) { }
 
         public override void Update()
         {
             base.Update();
-            radius = parent.size.X;
+            radius = parent.size.X / 2;
         }
         public override bool isColliding(Collider other)
         {

@@ -100,7 +100,8 @@
     <Compile Include="Engine\Colliders\Collider.cs" />
     <Compile Include="Engine\Colliders\PointCollider.cs" />
     <Compile Include="Engine\Colliders\ShapeCollider.cs" />
-    <Compile Include="Engine\Figures\Circle.cs" />
+    <Compile Include="Engine\Colliders\TriangleCollider2D.cs" />
+    <Compile Include="Engine\Figures\Polygon.cs" />
     <Compile Include="Engine\Figures\Cube.cs" />
     <Compile Include="Engine\Figures\Square.cs" />
     <Compile Include="Engine\Figures\Triangle.cs" />

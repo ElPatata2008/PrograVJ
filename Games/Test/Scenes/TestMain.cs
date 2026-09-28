@@ -16,38 +16,39 @@ namespace PrograVJ.Games.Test.Scenes
     {
         Square box1;
         Square box2;
-        Square point; 
-        Circle circle;
-        float speed = 10f;
+        Square point;
+        Polygon circle;
+        float speed = 5f;
 
         public TestMain(Camera c) : base(c)
         {
             Instantiate(box1 = new Square(
-                Vector3.Zero,
+                new Vector3(-200, 0, 0),
                 Vector3.Zero,
                 new Vector3(100, 100, 100),
-                Color.White, Color.White, new BoxCollider2D(box1)
+                Color.White, Color.Black, new BoxCollider2D(box1)
             ));
 
             Instantiate(box2 = new Square(
                 Vector3.Zero,
-                Vector3.Zero,
-                new Vector3(100, 100, 100),
+                new Vector3(0, 0, 45),
+                new Vector3(100, 200, 100),
                 Color.White, Color.White, new BoxCollider2D(box2)
             ));
 
             Instantiate(point = new Square(
-                Vector3.Zero,
+                new Vector3(0, 200, 0),
                 Vector3.Zero,
                 Vector3.One,
-                Color.White, Color.White, new PointCollider(point)
+                Color.White, Color.Black, new PointCollider(point)
             ));
 
-            Instantiate(circle = new Circle(
-                Vector3.Zero,
+            Instantiate(circle = new Polygon(
+                new Vector3(200, 0, 0),
                 Vector3.Zero,
                 new Vector3(100, 100, 100),
-                Color.White, Color.White, new CircleCollider(circle)
+                Color.White, Color.Black,
+                collider: new CircleCollider2D(circle)
             ));
         }
 
@@ -58,10 +59,10 @@ namespace PrograVJ.Games.Test.Scenes
         public override void PaintScreen(Graphics g)
         {
             g.Clear(Color.Black);
+            circle.Draw(g, sceneCamera);
             box1.Draw(g, sceneCamera);
             box2.Draw(g, sceneCamera);
             point.Draw(g, sceneCamera);
-            circle.Draw(g, sceneCamera);
         }
 
         public override void ProcessInput()
@@ -81,12 +82,14 @@ namespace PrograVJ.Games.Test.Scenes
             if (InputManager.GetInput("np4")) circle.position.X -= speed;
             if (InputManager.GetInput("np6")) circle.position.X += speed;
 
-            if (InputManager.JustPressedInput("enter")) Console.WriteLine($"Box 1: {box1.collider} | {box1.collider.parent.position} | {box1.position}" +
-                $"\nBox 2: {box2.collider} | {box2.collider.parent.position} | {box2.position}");
+            //if (InputManager.GetInput("z")) box2.rotation.Z -= speed;
+            //if (InputManager.GetInput("x")) box2.rotation.Z += speed;
         }
 
         public override void Update()
         {
+            box2.rotation.Z += speed / 2;
+
             bool col1 = box2.isColliding(box1);
             bool col2 = box2.isColliding(point);
             bool col3 = box2.isColliding(circle);

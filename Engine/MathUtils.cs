@@ -11,6 +11,14 @@ namespace PrograVJ.Engine
 {
     public static class MathUtils
     {
+        //public static Point GetAxis(Vector3 v1, Vector3 v2)
+        //{
+        //    var edge = v2 - v1;
+        //    var perpendicular = (-edge.Y, edge.X);
+        //    var normalized = perpendicular / Math.Abs(perpendicular);
+        //    return normalized;
+        //}
+
         public static float Clamp(float value, float min, float max)
         {
             if (value < min) value = min;

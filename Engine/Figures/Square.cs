@@ -53,11 +53,6 @@ namespace PrograVJ.Engine.Figures
 
         public override void Draw(Graphics g, Camera c)
         {
-            
-            //Brush b; Pen p;
-
-            //float halfX = size.X / 2;
-            //float halfY = size.Y / 2;
             localVertices = new Vector3[4]
             {
                 new Vector3(-0.5f, -0.5f, 0f),
@@ -78,7 +73,7 @@ namespace PrograVJ.Engine.Figures
                 ? new SolidBrush(fillColor)
                 : BuildTextureBrush(screenPoly);
 
-            Pen p = new Pen(b, borderWidth);
+            Pen p = new Pen(fillTexture != null ? b : new SolidBrush(color), borderWidth);
 
             if (fillTexture == null)
             {

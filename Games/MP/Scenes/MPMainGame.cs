@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -124,7 +125,11 @@ namespace PrograVJ.Games.MP.Scenes
                         for (int i = 0; i < lives; i++)
                         {
                             Rectangle life = new Rectangle((int)sceneCamera.size.X / 5 + i * 100, (int)sceneCamera.size.Y - 105, 80, 40);
-                            g.FillRectangle(new TextureBrush(TextureManager.Get("player")), life);
+                            TextureBrush b = new TextureBrush(TextureManager.Get("player"))
+                            {
+                                WrapMode = WrapMode.Clamp
+                            };
+                            g.FillRectangle(b, life);
                         }
 
                     }

@@ -3,20 +3,14 @@ using PrograVJ.GameObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace PrograVJ.Engine.Colliders
 {
-    public class ShapeCollider : Collider
+    public class TriangleCollider2D : Collider
     {
-        public ShapeCollider(GameObject p) : base(p) { }
-
-        public override void Update()
-        {
-            base.Update();
-        }
+        public TriangleCollider2D(GameObject p) : base(p) { }
 
         public override bool isColliding(Collider other)
         {

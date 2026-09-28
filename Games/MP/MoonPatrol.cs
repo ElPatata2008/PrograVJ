@@ -25,7 +25,7 @@ namespace PrograVJ.Games.MP
             scores.Add(new Tuple<int, string>(1000, "Companion"));
             scores.Add(new Tuple<int, string>(600, "Guy"));
             scores.Add(new Tuple<int, string>(200, "Onion"));
-            scores.Add(new Tuple<int, string>(4600, "Developer"));
+            scores.Add(new Tuple<int, string>(7200, "Developer"));
 
 
             FontManager.Load("ByteBounce.ttf", "byte");

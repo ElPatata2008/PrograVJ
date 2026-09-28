@@ -1,9 +1,12 @@
 ﻿using PrograVJ.Engine.Colliders;
+using PrograVJ.Engine.Figures;
 using PrograVJ.GameObjects;
 using PrograVJ.Games.MP.Objects;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,11 +20,13 @@ namespace PrograVJ.Engine.Manager
         {
             // Same Collider
             if (a is BoxCollider2D && b is BoxCollider2D) return Box2DToBox2D(a as BoxCollider2D, b as BoxCollider2D);
-            if (a is CircleCollider && b is CircleCollider) return CircleToCircle(a as CircleCollider, b as CircleCollider);
+            if (a is CircleCollider2D && b is CircleCollider2D) return CircleToCircle(a as CircleCollider2D, b as CircleCollider2D);
 
-            // Different Collider
-            if (a is BoxCollider2D && b is CircleCollider) return BoxAndCircle(a as BoxCollider2D, b as CircleCollider);
-            if (b is BoxCollider2D && a is CircleCollider) return BoxAndCircle(b as BoxCollider2D, a as CircleCollider);
+            // Box and Circle
+            if (a is BoxCollider2D && b is CircleCollider2D) return BoxAndCircle(a as BoxCollider2D, b as CircleCollider2D);
+            if (b is BoxCollider2D && a is CircleCollider2D) return BoxAndCircle(b as BoxCollider2D, a as CircleCollider2D);
+
+            //
 
             return true;
         }
@@ -29,14 +34,28 @@ namespace PrograVJ.Engine.Manager
 
         private static bool Box2DToBox2D(BoxCollider2D a, BoxCollider2D b)
         {
-            bool inBoundsX = a.position.X + a.size.X / 2 >= b.position.X - b.size.X / 2
-                          && a.position.X - a.size.X / 2 <= b.position.X + b.size.X / 2;
-            bool inBoundsY = a.position.Y + a.size.Y / 2 >= b.position.Y - b.size.Y / 2
-                          && a.position.Y - a.size.Y / 2 <= b.position.Y + b.size.Y / 2;
-            return inBoundsX && inBoundsY;
+            float rotA = a.rotation.Z * ((float)Math.PI / 180f), rotB = b.rotation.Z * ((float)Math.PI / 180f);
+            List<Vector3> axis = new List<Vector3>()
+            {
+                new Vector3((float)Math.Cos(rotA), (float)Math.Sin(rotA), 0),  // AX
+                new Vector3((float)-Math.Sin(rotA), (float)Math.Cos(rotA), 0), // AY
+                new Vector3((float)Math.Cos(rotB), (float)Math.Sin(rotB), 0),  // BX
+                new Vector3((float)-Math.Sin(rotB), (float)Math.Cos(rotB), 0)  // BY
+            };
+            
+            Vector3 d = a.position - b.position;
+
+            foreach(var L in axis)
+            {
+                float rA = (a.size.X / 2) * Math.Abs(MathUtils.Dot(axis[0], L)) + (a.size.Y / 2) * Math.Abs(MathUtils.Dot(axis[1], L));
+                float rB = (b.size.X / 2) * Math.Abs(MathUtils.Dot(axis[2], L)) + (b.size.Y / 2) * Math.Abs(MathUtils.Dot(axis[3], L));
+                if (Math.Abs(MathUtils.Dot(d, L)) > rA + rB) return false;
+            }
+
+            return true;
         }
 
-        private static bool CircleToCircle(CircleCollider a, CircleCollider b)
+        private static bool CircleToCircle(CircleCollider2D a, CircleCollider2D b)
         {
             float x = a.position.X - b.position.X;
             float y = a.position.Y - b.position.Y;
@@ -44,16 +63,18 @@ namespace PrograVJ.Engine.Manager
             return dist <= a.radius + b.radius;
         }
 
-        private static bool BoxAndCircle(BoxCollider2D a, CircleCollider b)
+        private static bool BoxAndCircle(BoxCollider2D box, CircleCollider2D circle)
         {
-            float closestX = MathUtils.Clamp(b.position.X, a.position.X - a.size.X / 2, a.position.X + a.size.X / 2);
-            float closestY = MathUtils.Clamp(b.position.Y, a.position.Y - a.size.Y / 2, a.position.Y + a.size.Y / 2);
+            Vector3 localC = MathUtils.Rotate(circle.position - box.position, -box.rotation);
 
-            float dx = b.position.X - closestX;
-            float dy = b.position.Y - closestY;
-            float dist = dx * dx + dy * dy, rad = b.radius * b.radius;
+            float closestX = MathUtils.Clamp(localC.X, box.position.X - box.size.X / 2, box.position.X + box.size.X / 2);
+            float closestY = MathUtils.Clamp(localC.Y, box.position.Y - box.size.Y / 2, box.position.Y + box.size.Y / 2);
 
-            return dist >= rad;
+            float dx = localC.X - closestX;
+            float dy = localC.Y - closestY;
+            float dist = dx * dx + dy * dy, rad = circle.radius * circle.radius;
+
+            return dist <= rad;
         }
 
         #endregion
@@ -62,11 +83,13 @@ namespace PrograVJ.Engine.Manager
         {
             if (c is BoxCollider2D box)
             {
-                bool inBoundsX = p.position.X <= box.position.X + box.size.X / 2 && p.position.X >= box.position.X - box.size.X / 2;
-                bool inBoundsY = p.position.Y <= box.position.Y + box.size.Y / 2 && p.position.Y >= box.position.Y - box.size.Y / 2;
+                Vector3 localP = MathUtils.Rotate(p.position - box.position, -box.rotation);
+
+                bool inBoundsX = localP.X <= box.position.X + box.size.X / 2 && localP.X >= box.position.X - box.size.X / 2;
+                bool inBoundsY = localP.Y <= box.position.Y + box.size.Y / 2 && localP.Y >= box.position.Y - box.size.Y / 2;
                 return inBoundsX && inBoundsY;
             }
-            if (c is CircleCollider circle)
+            if (c is CircleCollider2D circle)
             {
                 float x = circle.position.X - p.position.X;
                 float y = circle.position.Y - p.position.Y;
