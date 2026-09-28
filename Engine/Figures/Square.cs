@@ -21,6 +21,7 @@ namespace PrograVJ.Engine.Figures
 
     public class Square : GameObject
     {
+        PointF? p00 = null, p10 = null, p01 = null;
         Vector3[] localVertices;
         PointF[] localUVs = new PointF[] {
             new PointF(0, 1), 
@@ -48,26 +49,15 @@ namespace PrograVJ.Engine.Figures
             
             //Brush b; Pen p;
 
-            float halfX = size.X / 2;
-            float halfY = size.Y / 2;
+            //float halfX = size.X / 2;
+            //float halfY = size.Y / 2;
             localVertices = new Vector3[4]
             {
-                new Vector3(-halfX, -halfY, 0f),
-                new Vector3( halfX, -halfY, 0f),
-                new Vector3( halfX,  halfY, 0f),
-                new Vector3(-halfX,  halfY, 0f),
+                new Vector3(-0.5f, -0.5f, 0f),
+                new Vector3( 0.5f, -0.5f, 0f),
+                new Vector3( 0.5f,  0.5f, 0f),
+                new Vector3(-0.5f,  0.5f, 0f),
             };
-
-            //PointF[] screenPoints = new PointF[4];
-            //for (int i = 0; i < localVertices.Length; i++) {
-            //    // S * R * T
-            //    Vector3 scalePoint = MathUtils.Scale(localVertices[i], size);
-            //    Vector3 rotationPoint = MathUtils.Rotate(scalePoint, rotation);
-            //    Vector3 worldPoint = MathUtils.Translate(rotationPoint, position);
-
-            //    Vector3 viewPoint = c.TransformPoint(worldPoint);
-            //    screenPoints[i] = c.ProjectPoint(viewPoint, Program.resolution);
-            //}
 
             List<Vertex3D> viewSpace = TransformToViewSpace(c);
             List<Vertex3D> clippedPoints = ClipPolygon(viewPoints, c.nearZ);
@@ -83,8 +73,12 @@ namespace PrograVJ.Engine.Figures
 
             Pen p = new Pen(b, borderWidth);
 
-            g.FillPolygon(b, screenPoints);
-            g.DrawPolygon(p, screenPoints);
+            if (fillTexture == null)
+            {
+                g.FillPolygon(b, screenPoints);
+                g.DrawPolygon(p, screenPoints);
+            }
+            if (fillTexture != null) g.DrawImage(fillTexture, new PointF[] { p00.Value, p10.Value, p01.Value });
 
         }
 
@@ -157,7 +151,7 @@ namespace PrograVJ.Engine.Figures
 
         private Brush BuildTextureBrush(Vertex3D[] screenPoly)
         {
-            PointF? p00 = null, p10 = null, p01 = null;
+            //PointF? p00 = null, p10 = null, p01 = null;
             foreach(var v in screenPoly)
             {
                 if (v.UV.X == 0 && v.UV.Y == 0) p00 = new PointF(v.position.X, v.position.Y);
@@ -165,8 +159,10 @@ namespace PrograVJ.Engine.Figures
                 else if (v.UV.X == 0 && v.UV.Y == 1) p01 = new PointF(v.position.X, v.position.Y);
             }
 
-            TextureBrush tb = new TextureBrush(fillTexture);
-            tb.WrapMode = WrapMode.Clamp;
+            TextureBrush tb = new TextureBrush(fillTexture)
+            {
+                WrapMode = WrapMode.Clamp
+            };
 
             if (p00.HasValue && p10.HasValue && p01.HasValue)
             {
@@ -191,6 +187,7 @@ namespace PrograVJ.Engine.Figures
                     tb.ScaleTransform(scaleX, scaleY);
                 }
             }
+            
 
             return tb;
         }
