@@ -23,11 +23,7 @@ namespace PrograVJ.Games.MP
             scores.Add(new Tuple<int, string>(800, "Buddy"));
             scores.Add(new Tuple<int, string>(400, "Pal"));
             scores.Add(new Tuple<int, string>(1000, "Companion"));
-            scores.Add(new Tuple<int, string>(200, "Onion"));
-            scores.Add(new Tuple<int, string>(200, "Onion"));
-            scores.Add(new Tuple<int, string>(200, "Onion"));
-            scores.Add(new Tuple<int, string>(200, "Onion"));
-            scores.Add(new Tuple<int, string>(200, "Onion"));
+            scores.Add(new Tuple<int, string>(600, "Guy"));
             scores.Add(new Tuple<int, string>(200, "Onion"));
             scores.Add(new Tuple<int, string>(4600, "Developer"));
 
