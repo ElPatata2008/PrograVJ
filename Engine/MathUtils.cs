@@ -11,7 +11,17 @@ namespace PrograVJ.Engine
 {
     public static class MathUtils
     {
+        public static float Clamp(float value, float min, float max)
+        {
+            if (value < min) value = min;
+            if (value > max) value = max;
+            return value;
+        }
 
+        public static float Dot(Vector3 a, Vector3 b)
+        {
+            return a.X * b.X + a.Y * b.Y + a.Z * b.Z;
+        }
 
         public static Vector3 Scale(Vector3 src, Vector3 scale)
         {

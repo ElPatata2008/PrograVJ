@@ -22,7 +22,7 @@ namespace PrograVJ.Engine
 
         public float zoom = 1.0f;
         public float focalLength = 100.0f;
-        public float nearZ = 0.1f;
+        public float nearZ = 0.01f;
 
         public Camera(CameraType type, Vector3 position, Vector3 rotation, Vector3 size)
         {

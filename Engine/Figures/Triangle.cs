@@ -1,4 +1,5 @@
-﻿using PrograVJ.GameObjects;
+﻿using PrograVJ.Engine.Colliders;
+using PrograVJ.GameObjects;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -12,7 +13,8 @@ namespace PrograVJ.Engine.Figures
     public class Triangle : GameObject
     {
         Color fillColor;
-        public Triangle(Vector3 position, Vector3 rotation, Vector3 size, Color color, bool isActive, Color fillColor) : base(position, rotation, size, color, isActive)
+
+        public Triangle(Vector3 position, Vector3 rotation, Vector3 size, Color color, Color fillColor, Collider collider = null) : base(position, rotation, size, color, collider)
         {
             this.fillColor = fillColor;
         }
@@ -22,16 +24,13 @@ namespace PrograVJ.Engine.Figures
             // S * R * T
 
             // Scale
-            float halfX = size.X / 2;
-            float halfY = size.Y / 2;
+            //float halfX = size.X / 2;
+            //float halfY = size.Y / 2;
             Vector3[] localVertices = new Vector3[3]
             {
-                new Vector3(-halfX, -halfY, 0f),
-                new Vector3(halfX, 0, 0f),
-                new Vector3(-halfX, halfY, 0f),
-                //new Vector3( halfX, -halfY, 0f),
-                //new Vector3( halfX,  halfY, 0f),
-                //new Vector3(-halfX,  halfY, 0f),
+                new Vector3(-0.5f, -0.5f, 0f),
+                new Vector3( 0.5f, 0, 0f),
+                new Vector3(-0.5f, 0.5f, 0f),
             };
 
             PointF[] screenPoints = new PointF[3];
@@ -40,8 +39,6 @@ namespace PrograVJ.Engine.Figures
                 Vector3 scalePoint = MathUtils.Scale(localVertices[i], size);
                 Vector3 rotationPoint = MathUtils.Rotate(scalePoint, rotation);
                 Vector3 worldPoint = MathUtils.Translate(rotationPoint, position);
-
-                //screenPoints[i] = new PointF(worldPoint.X, worldPoint.Y);
 
                 Vector3 viewPoint = c.TransformPoint(worldPoint);
                 screenPoints[i] = c.ProjectPoint(viewPoint, Program.resolution);

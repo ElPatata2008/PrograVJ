@@ -1,9 +1,12 @@
 ﻿using PrograVJ.Engine;
+using PrograVJ.Engine.Colliders;
+using PrograVJ.Engine.Manager;
 using PrograVJ.GameObjects;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -70,16 +73,26 @@ namespace PrograVJ
         }
 
 
-        protected abstract void ProcessInput();
-        protected abstract void Update();
-        protected abstract void Render(Graphics g);
+        protected void Init() { SceneManager.GetActive().Init(); }
+        protected void ProcessInput() { SceneManager.GetActive().ProcessInput(); }
+        protected void Update() { SceneManager.GetActive().Update(); }
+        protected void Render(Graphics g) {
+            g.SmoothingMode = SmoothingMode.None;
+            g.InterpolationMode = InterpolationMode.NearestNeighbor;
+            g.PixelOffsetMode = PixelOffsetMode.Half;
+            SceneManager.GetActive().PaintScreen(g);  
+        }
 
         public void Instantiate(GameObject obj) => gameObjects.Add(obj);
         public void Deinstantiate(GameObject obj) => gameObjects.Remove(obj);
        
         private void UpdateGameObjects()
         {
-            foreach (GameObject obj in gameObjects) obj.Update();
+            foreach (GameObject obj in SceneManager.GetActive().sceneGameObjects)
+            {
+                obj.Update();
+                if (obj.collider != null) obj.collider.Update();
+            }
         }
 
         private void UpdateGame()
@@ -92,6 +105,7 @@ namespace PrograVJ
         {
             Render(window.GetGraphics());
             window.Render();
+            //foreach (GameObject obj in SceneManager.GetActive().sceneGameObjects) obj.Draw(g, c);
         }
 
     }

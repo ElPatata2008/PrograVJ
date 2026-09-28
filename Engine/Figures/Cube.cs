@@ -1,4 +1,5 @@
-﻿using PrograVJ.GameObjects;
+﻿using PrograVJ.Engine.Colliders;
+using PrograVJ.GameObjects;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -12,28 +13,32 @@ namespace PrograVJ.Engine.Figures
     public class Cube : GameObject
     {
         Color fillColor;
-        public Cube(Vector3 position, Vector3 rotation, Vector3 size, Color color, bool isActive,
-            Color fillColor) : base(position, rotation, size, color, isActive)
+        public Cube(Vector3 position,
+                    Vector3 rotation,
+                    Vector3 size,
+                    Color color,
+                    Color fillColor,
+                    Collider collider = null) : base(position, rotation, size, color, collider)
         {
             this.fillColor = fillColor;
         }
 
         public override void Draw(Graphics g, Camera c)
         {
-            float halfX = size.X / 2;
-            float halfY = size.Y / 2;
-            float halfZ = size.Z / 2;
+            //float halfX = size.X / 2;
+            //float halfY = size.Y / 2;
+            //float halfZ = size.Z / 2;
 
             Vector3[] localVertices = new Vector3[8]
             {
-                new Vector3(-halfX, -halfY, -halfZ),
-                new Vector3( halfX, -halfY, -halfZ),
-                new Vector3( halfX,  halfY, -halfZ),
-                new Vector3(-halfX,  halfY, -halfZ),
-                new Vector3(-halfX, -halfY,  halfZ),
-                new Vector3( halfX, -halfY,  halfZ),
-                new Vector3( halfX,  halfY,  halfZ),
-                new Vector3(-halfX,  halfY,  halfZ),
+                new Vector3(-0.5f, -0.5f, -0.5f),
+                new Vector3( 0.5f, -0.5f, -0.5f),
+                new Vector3( 0.5f,  0.5f, -0.5f),
+                new Vector3(-0.5f,  0.5f, -0.5f),
+                new Vector3(-0.5f, -0.5f,  0.5f),
+                new Vector3( 0.5f, -0.5f,  0.5f),
+                new Vector3( 0.5f,  0.5f,  0.5f),
+                new Vector3(-0.5f,  0.5f,  0.5f),
             };
 
             int[][] faces = new int[][]
@@ -43,7 +48,7 @@ namespace PrograVJ.Engine.Figures
                 new int[] {0, 4, 7, 3},
                 new int[] {5, 1, 2, 6},
                 new int[] {0, 1, 5, 4},
-                new int[] {7, 6, 5, 3}
+                new int[] {7, 6, 2, 3}
             };
 
             PointF[] screenPoints = new PointF[8];
@@ -73,8 +78,8 @@ namespace PrograVJ.Engine.Figures
                 float ClipZ = c.type == CameraType.Orthographic ? -1000.0f : 0.1f;
                 //List<Vector3> clippedPoints = c.Clip
 
-                //if (!Vector3 Dot(normal, viewDir) >= 0)
-                        if (true)
+                if ((MathUtils.Dot(normal, viewDir) >= 0))
+                //if (true)
                 {
                     PointF p0 = screenPoints[face[0]], p1 = screenPoints[face[1]], p2 = screenPoints[face[2]], p3 = screenPoints[face[3]];
                     if (p0.X == -9999f || p0.Y == -9999f ||
@@ -95,7 +100,6 @@ namespace PrograVJ.Engine.Figures
                     g.DrawPolygon(new Pen(new SolidBrush(color), 2f), facePolygonPoints);
                 }
             }
-
         }
 
         public override void Update()

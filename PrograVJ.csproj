@@ -32,6 +32,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Win32.Registry, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Win32.Registry.4.7.0\lib\net461\Microsoft.Win32.Registry.dll</HintPath>
@@ -92,31 +95,39 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Engine\Camera.cs" />
+    <Compile Include="Engine\Colliders\BoxCollider2D.cs" />
+    <Compile Include="Engine\Colliders\CircleCollider.cs" />
+    <Compile Include="Engine\Colliders\Collider.cs" />
+    <Compile Include="Engine\Colliders\PointCollider.cs" />
+    <Compile Include="Engine\Colliders\ShapeCollider.cs" />
+    <Compile Include="Engine\Figures\Circle.cs" />
     <Compile Include="Engine\Figures\Cube.cs" />
     <Compile Include="Engine\Figures\Square.cs" />
     <Compile Include="Engine\Figures\Triangle.cs" />
     <Compile Include="Engine\Manager\AudioManager.cs" />
+    <Compile Include="Engine\Manager\CollisionManager.cs" />
     <Compile Include="Engine\Manager\FontManager.cs" />
     <Compile Include="Engine\Manager\InputManager.cs" />
+    <Compile Include="Engine\Manager\LoopStream.cs" />
+    <Compile Include="Engine\Manager\SceneManager.cs" />
     <Compile Include="Engine\Manager\TextureManager.cs" />
     <Compile Include="Engine\MathUtils.cs" />
     <Compile Include="Engine\Game.cs" />
     <Compile Include="Engine\GameObject.cs" />
-    <Compile Include="Games\Arkanoid\Arkanoid.cs" />
-    <Compile Include="Games\Arkanoid\Ball.cs" />
-    <Compile Include="Games\Arkanoid\Block.cs" />
-    <Compile Include="Games\Arkanoid\Pad.cs" />
-    <Compile Include="Games\Asteroids\Asteroid.cs" />
-    <Compile Include="Games\Asteroids\Asteroids.cs" />
-    <Compile Include="Games\Asteroids\Bullet.cs" />
-    <Compile Include="Games\Asteroids\PowerUp.cs" />
-    <Compile Include="Games\Asteroids\Ship.cs" />
-    <Compile Include="Games\Pong\Ball.cs" />
-    <Compile Include="Games\Pong\Pad.cs" />
-    <Compile Include="Games\Pong\Pong.cs" />
-    <Compile Include="Games\SimonSays\Button.cs" />
-    <Compile Include="Games\SimonSays\SimonSays.cs" />
-    <Compile Include="Games\Test.cs" />
+    <Compile Include="Engine\Scene.cs" />
+    <Compile Include="Games\MP\MoonPatrol.cs" />
+    <Compile Include="Games\MP\Objects\Bullet.cs" />
+    <Compile Include="Games\MP\Objects\Cart.cs" />
+    <Compile Include="Games\MP\Objects\Enemy.cs" />
+    <Compile Include="Games\MP\Objects\Parallax.cs" />
+    <Compile Include="Games\MP\Objects\Plate.cs" />
+    <Compile Include="Games\MP\Objects\Player.cs" />
+    <Compile Include="Games\MP\Objects\Saucer.cs" />
+    <Compile Include="Games\MP\Scenes\MPLeaderboards.cs" />
+    <Compile Include="Games\MP\Scenes\MPMainGame.cs" />
+    <Compile Include="Games\MP\Scenes\MPMainMenu.cs" />
+    <Compile Include="Games\Test\Scenes\TestMain.cs" />
+    <Compile Include="Games\Test\TestGame.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Window.cs">
@@ -125,6 +136,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="app.manifest" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

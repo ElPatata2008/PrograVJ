@@ -44,19 +44,9 @@ namespace PrograVJ
 
         public void Render() => managedBackBuffer.Render(); // Swap Buffer
 
-        private void _KeyDownLogic(object sender, KeyEventArgs e)
-        {
-            InputManager.KeyDown(e.KeyCode);
-            //if(!pressedKeys.Contains(e.KeyCode))
-            //    pressedKeys.Add(e.KeyCode);
-        }
+        private void _KeyDownLogic(object sender, KeyEventArgs e) => InputManager.KeyDown(e.KeyCode);
 
-        private void _KeyUpLogic(object sender, KeyEventArgs e) { 
-            
-            InputManager.KeyUp(e.KeyCode);
-            //if(pressedKeys.Contains(e.KeyCode))
-            //    pressedKeys.Remove(e.KeyCode); 
-        }
+        private void _KeyUpLogic(object sender, KeyEventArgs e) => InputManager.KeyUp(e.KeyCode);
 
         public void _MouseDown(object sender, MouseEventArgs e) => InputManager.MouseDown(e.Button);
 
@@ -66,6 +56,5 @@ namespace PrograVJ
         {
             //Input
         }
-        //public bool IsPressedKey(Keys key) => pressedKeys.Contains(key);
     }
 }
