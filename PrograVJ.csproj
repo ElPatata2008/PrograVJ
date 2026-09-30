@@ -101,6 +101,7 @@
     <Compile Include="Engine\Colliders\PointCollider.cs" />
     <Compile Include="Engine\Colliders\ShapeCollider.cs" />
     <Compile Include="Engine\Colliders\TriangleCollider2D.cs" />
+    <Compile Include="Engine\DrawingUtils.cs" />
     <Compile Include="Engine\Figures\Polygon.cs" />
     <Compile Include="Engine\Figures\Cube.cs" />
     <Compile Include="Engine\Figures\Square.cs" />
@@ -116,6 +117,10 @@
     <Compile Include="Engine\Game.cs" />
     <Compile Include="Engine\GameObject.cs" />
     <Compile Include="Engine\Scene.cs" />
+    <Compile Include="Games\Frogger\Frogger.cs" />
+    <Compile Include="Games\Frogger\Objects\Car.cs" />
+    <Compile Include="Games\Frogger\Objects\Log.cs" />
+    <Compile Include="Games\Frogger\Objects\Player.cs" />
     <Compile Include="Games\MP\MoonPatrol.cs" />
     <Compile Include="Games\MP\Objects\Bullet.cs" />
     <Compile Include="Games\MP\Objects\Cart.cs" />
@@ -127,6 +132,10 @@
     <Compile Include="Games\MP\Scenes\MPLeaderboards.cs" />
     <Compile Include="Games\MP\Scenes\MPMainGame.cs" />
     <Compile Include="Games\MP\Scenes\MPMainMenu.cs" />
+    <Compile Include="Games\Frogger\Scenes\Controls.cs" />
+    <Compile Include="Games\Frogger\Scenes\GameOver.cs" />
+    <Compile Include="Games\Frogger\Scenes\MainGame.cs" />
+    <Compile Include="Games\Frogger\Scenes\Menu.cs" />
     <Compile Include="Games\Test\Scenes\TestMain.cs" />
     <Compile Include="Games\Test\TestGame.cs" />
     <Compile Include="Program.cs" />

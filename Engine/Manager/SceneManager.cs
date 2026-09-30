@@ -25,5 +25,6 @@ namespace PrograVJ.Engine.Manager
         }
 
         public static Scene GetActive() => scenes[ActiveIndex];
+
     }
 }

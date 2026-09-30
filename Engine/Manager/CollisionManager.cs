@@ -65,7 +65,7 @@ namespace PrograVJ.Engine.Manager
 
         private static bool BoxAndCircle(BoxCollider2D box, CircleCollider2D circle)
         {
-            Vector3 localC = MathUtils.Rotate(circle.position - box.position, -box.rotation);
+            Vector3 localC = circle.position;//MathUtils.Rotate(circle.position - box.position, Vector3.Zero);
 
             float closestX = MathUtils.Clamp(localC.X, box.position.X - box.size.X / 2, box.position.X + box.size.X / 2);
             float closestY = MathUtils.Clamp(localC.Y, box.position.Y - box.size.Y / 2, box.position.Y + box.size.Y / 2);
@@ -74,7 +74,7 @@ namespace PrograVJ.Engine.Manager
             float dy = localC.Y - closestY;
             float dist = dx * dx + dy * dy, rad = circle.radius * circle.radius;
 
-            return dist <= rad;
+            return dist < rad;
         }
 
         #endregion
