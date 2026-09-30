@@ -25,9 +25,9 @@ namespace PrograVJ
             //Game asteroid = new Asteroids((int)resolution.X, (int)resolution.Y, 60, Engine.CameraType.Orthographic); asteroid.StartGame();
             //Game simonSays = new SimonSays((int)resolution.X, (int)resolution.Y, 60, Engine.CameraType.Orthographic); simonSays.StartGame();
 
-            //Game mp = new MoonPatrol((int)resolution.X, (int)resolution.Y, 60, Engine.CameraType.Orthographic); mp.StartGame();
+            Game mp = new MoonPatrol((int)resolution.X, (int)resolution.Y, 60, Engine.CameraType.Orthographic); mp.StartGame();
 
-            Game test = new TestGame((int)resolution.X, (int)resolution.Y, 60, Engine.CameraType.Orthographic); test.StartGame();
+            //Game test = new TestGame((int)resolution.X, (int)resolution.Y, 60, Engine.CameraType.Orthographic); test.StartGame();
             Application.Run();
         }
     }

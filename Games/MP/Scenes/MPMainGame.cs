@@ -125,10 +125,7 @@ namespace PrograVJ.Games.MP.Scenes
                         for (int i = 0; i < lives; i++)
                         {
                             Rectangle life = new Rectangle((int)sceneCamera.size.X / 5 + i * 100, (int)sceneCamera.size.Y - 105, 80, 40);
-                            TextureBrush b = new TextureBrush(TextureManager.Get("player"))
-                            {
-                                WrapMode = WrapMode.Clamp
-                            };
+                            TextureBrush b = new TextureBrush(TextureManager.Get("player"));
                             g.FillRectangle(b, life);
                         }
 
@@ -486,7 +483,7 @@ namespace PrograVJ.Games.MP.Scenes
                                 if (plate.hp == 0 && !removeEnemies.Contains(plate))
                                 {
                                     removeEnemies.Add(plate);
-                                    score += 100;
+                                    score += 50;
                                     AudioManager.PlaySFX("plateExplosion");
                                 }
                             }
