@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -127,7 +128,7 @@ namespace PrograVJ.Engine.Manager
 
         public static void InitMixer()
         {
-            var mixerFormat = WaveFormat.CreateIeeeFloatWaveFormat(32000, 1);
+            var mixerFormat = WaveFormat.CreateIeeeFloatWaveFormat(44100, 2);
             musicMixer = new MixingSampleProvider(mixerFormat) { ReadFully = true};
             musicOutput = new WaveOut();
             musicOutput.Init(musicMixer);
@@ -243,11 +244,11 @@ namespace PrograVJ.Engine.Manager
             }
         }
 
-        public static void StopMusic()
-        {
-            musicOutput.Stop();
-        }
-        
+        public static void StopMusic() =>  musicOutput.Stop();
+
+        public static void ResumeMusic() => musicOutput.Play(); 
+        public static void PauseMusic() => musicOutput.Pause();
+
         private static void Clean(int id)
         {
             if (PlayingAudioMap.TryGetValue(id, out var AudioData))

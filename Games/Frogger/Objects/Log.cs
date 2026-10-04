@@ -12,9 +12,12 @@ namespace PrograVJ.Games.Frogger.Objects
 {
     public class Log : Square
     {
+        private Random rand;
         public float speed = 5;
         public Log(Vector3 position, Vector3 rotation, Vector3 size, Color color, Color fillColor, Collider collider = null, float borderWidth = 2, Bitmap fillTexture = null) : base(position, rotation, size, color, fillColor, collider, borderWidth, fillTexture)
         {
+            rand = new Random();
+            speed = rand.Next(4, 7);
         }
 
         public override void Update()
