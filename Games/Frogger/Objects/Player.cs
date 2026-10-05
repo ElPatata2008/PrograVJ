@@ -28,18 +28,18 @@ namespace PrograVJ.Games.Frogger.Objects
             targetY = position.Y;
         }
 
-        public override void Update() {
+        public override void Update(float dt) {
             if (isMoving)
             {
                 var remainX = targetX - position.X;
                 var stepX = Math.Min(speed, Math.Abs(remainX));
                 if (Math.Abs(remainX) <= speed) position.X = targetX;
-                else position.X += Math.Sign(remainX) * stepX;
+                else position.X += Math.Sign(remainX) * stepX * dt;
 
                 var remainY = targetY - position.Y;
                 var stepY = Math.Min(speed, Math.Abs(remainY));
                 if (Math.Abs(remainY) <= speed) position.Y = targetY;
-                else position.Y += Math.Sign(remainY) * stepY;
+                else position.Y += Math.Sign(remainY) * stepY * dt;
 
                 if (position.Y == targetY && position.X == targetX) isMoving = false;
             }

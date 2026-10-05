@@ -13,38 +13,22 @@ using System.Threading.Tasks;
 
 namespace PrograVJ.Engine.Figures
 {
-    //public struct Vertex3D
-    //{
-    //    public Vector3 position;
-    //    public PointF UV;
-    //}
     public class Polygon : GameObject
     {
-        //PointF? p00 = null, p10 = null, p01 = null;
-        //Vector3[] localVertices;
         List<Vector3> localVertices = new List<Vector3>();
-        //PointF[] localUVs = new PointF[] {
-        //    new PointF(0, 1),
-        //    new PointF(1, 1),
-        //    new PointF(1, 0),
-        //    new PointF(0, 0)
-        //};
+
         List<PointF> localUVs = new List<PointF>();
         List<Vertex3D> viewPoints = new List<Vertex3D>();
         float borderWidth;
         //float radius;
        
-        Color fillColor;
-        Bitmap fillTexture;
+        public Color fillColor;
         public Polygon(Vector3 position, Vector3 rotation, Vector3 size, Color color, Color fillColor, 
-            int vertices = 24, float border = 2f, Bitmap fillTexture = null,
+            int vertices = 24, float border = 2f,
             Collider collider = null) : base(position, rotation, size, color, collider)
         {
-            //radius = size.X / 2;
-            //radius = size.X * (float)Math.Sqrt(2) / 2;
             borderWidth = border;
             this.fillColor = fillColor;
-            this.fillTexture = fillTexture;
 
             var step = (2 * Math.PI) / vertices;
 
@@ -53,20 +37,11 @@ namespace PrograVJ.Engine.Figures
                 var angle = i * step;
                 localVertices.Add(new Vector3(0.5f * (float)Math.Cos(angle), 0.5f * (float)Math.Sin(angle), 0f));
                 localUVs.Add(new PointF(0.5f + 0.5f * (float)Math.Cos(angle), 0.5f + 0.5f * (float)Math.Sin(angle)));
-                Console.WriteLine($"{i} | Local Vértice: {localVertices[i]} | Local UV: {localUVs[i]}");
             }
         }
 
         public override void Draw(Graphics g, Camera c)
         {
-            //localVertices = new Vector3[4]
-            //{
-            //    new Vector3(-0.5f, -0.5f, 0f),
-            //    new Vector3( 0.5f, -0.5f, 0f),
-            //    new Vector3( 0.5f,  0.5f, 0f),
-            //    new Vector3(-0.5f,  0.5f, 0f),
-            //};
-
             List<Vertex3D> viewSpace = TransformToViewSpace(c);
             List<Vertex3D> clippedPoints = ClipPolygon(viewPoints, c.nearZ);
 
@@ -75,12 +50,9 @@ namespace PrograVJ.Engine.Figures
             Vertex3D[] screenPoly = ProjectToScreen(clippedPoints, c);
             PointF[] screenPoints = screenPoly.Select(v => new PointF(v.position.X, v.position.Y)).ToArray();
 
-            //Brush b = fillTexture == null
-            //    ? new SolidBrush(fillColor)
-            //    : BuildTextureBrush(screenPoly);
             Brush b = new SolidBrush(fillColor);
 
-            Pen p = new Pen(fillTexture != null ? b : new SolidBrush(color), borderWidth);
+            Pen p = new Pen(new SolidBrush(color), borderWidth);
 
             g.FillPolygon(b, screenPoints);
             g.DrawPolygon(p, screenPoints);
@@ -154,72 +126,13 @@ namespace PrograVJ.Engine.Figures
             return result;
         }
 
-        //private Brush BuildTextureBrush(Vertex3D[] screenPoly)
-        //{
-        //    //PointF? p00 = null, p10 = null, p01 = null;
-        //    foreach (var v in screenPoly)
-        //    {
-        //        if (v.UV.X == 0 && v.UV.Y == 0) p00 = new PointF(v.position.X, v.position.Y);
-        //        else if (v.UV.X == 1 && v.UV.Y == 0) p10 = new PointF(v.position.X, v.position.Y);
-        //        else if (v.UV.X == 0 && v.UV.Y == 1) p01 = new PointF(v.position.X, v.position.Y);
-        //    }
 
-        //    TextureBrush tb = new TextureBrush(fillTexture)
-        //    {
-        //        WrapMode = WrapMode.Clamp
-        //    };
+        public override void OnColiisionStay(GameObject c) { }
 
-        //    if (p00.HasValue && p10.HasValue && p01.HasValue)
-        //    {
-        //        RectangleF sourceRect = new RectangleF(0, 0, fillTexture.Width, fillTexture.Height);
-        //        PointF[] destPoints = { p00.Value, p10.Value, p01.Value };
-        //        tb.Transform = new Matrix(sourceRect, destPoints);
-        //    }
-        //    else
-        //    {
-        //        tb.ResetTransform();
+        public override void OnCollisionEnter(GameObject c) { }
 
-        //        float minX, maxX, minY, maxY;
-        //        PointF[] positions = screenPoly.Select(v => new PointF(v.position.X, v.position.Y)).ToArray();
-        //        ObtainMinMaxPoints(positions, out minX, out maxX, out minY, out maxY);
-        //        float width = maxX - minX, height = maxY - minY;
-        //        tb.TranslateTransform(minX, minY);
+        public override void OnCollisionExit(GameObject c) { }
 
-        //        if (width > 0 && height > 0)
-        //        {
-        //            float scaleX = width / fillTexture.Width;
-        //            float scaleY = height / fillTexture.Height;
-        //            tb.ScaleTransform(scaleX, scaleY);
-        //        }
-        //    }
-
-
-        //    return tb;
-        //}
-
-        private void ObtainMinMaxPoints(PointF[] screenPoints, out float minX, out float maxX, out float minY, out float maxY)
-        {
-            if (screenPoints == null || screenPoints.Length == 0)
-            {
-                minX = maxX = minY = maxY = 0; return;
-            }
-
-            minX = maxX = screenPoints[0].X;
-            minY = maxY = screenPoints[0].Y;
-
-            for (int i = 1; i < screenPoints.Length; i++)
-            {
-                float x = screenPoints[i].X;
-                float y = screenPoints[i].Y;
-
-                if (x < minX) minX = x;
-                if (y < minY) minY = y;
-                if (x > maxX) maxX = x;
-                if (y > maxY) maxY = y;
-            }
-
-        }
-
-        public override void Update() { }
+        public override void Update(float dt) { }
     }
 }

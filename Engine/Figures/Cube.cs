@@ -102,9 +102,12 @@ namespace PrograVJ.Engine.Figures
             }
         }
 
-        public override void Update()
-        {
-            
-        }
+        public override void OnColiisionStay(GameObject c) { }
+
+        public override void OnCollisionEnter(GameObject c) { }
+
+        public override void OnCollisionExit(GameObject c) { }
+
+        public override void Update(float dt) { }
     }
 }

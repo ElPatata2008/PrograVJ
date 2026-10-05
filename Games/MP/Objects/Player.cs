@@ -35,18 +35,18 @@ namespace PrograVJ.Games.MP.Objects
             sw.Start();
         }
 
-        public override void Update()
+        public override void Update(float dt)
         {
             if (speed > maxSpeed) speed = maxSpeed;
             if (speed < -maxSpeed) speed = -maxSpeed;
 
-            position.X += speed;
-            position.Y += vSpeed;
+            position.X += speed * dt;
+            position.Y += vSpeed * dt;
 
 
             if (jumped)
             {
-                vSpeed -= gravity;
+                vSpeed -= gravity * dt;
                 if (position.Y < initY)
                 {
                     position.Y = initY;
@@ -62,8 +62,8 @@ namespace PrograVJ.Games.MP.Objects
         }
 
 
-        public void Right() => speed += accel * 1.25f;
-        public void Left() => speed -= accel;
+        public void Right(float dt) => speed += accel * 1.25f * dt;
+        public void Left(float dt) => speed -= accel * dt;
         public void Jump()
         {
             if (vSpeed == 0) { 

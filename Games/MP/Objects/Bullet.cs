@@ -21,10 +21,10 @@ namespace PrograVJ.Games.MP.Objects
         {
         }
         
-        public override void Update()
+        public override void Update(float dt)
         {
-            position.X += xSpeed;
-            position.Y += ySpeed;
+            position.X += xSpeed * dt;
+            position.Y += ySpeed * dt;
         }
     }
 }

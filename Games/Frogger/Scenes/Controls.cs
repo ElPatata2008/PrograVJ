@@ -85,7 +85,7 @@ namespace PrograVJ.Games.Scenes
             }
         }
 
-        public override void Update()
+        public override void Update(float dt)
         {
             if (sw.ElapsedMilliseconds / 1000 > 1.5f)
             {

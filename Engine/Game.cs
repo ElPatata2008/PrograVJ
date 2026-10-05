@@ -51,14 +51,15 @@ namespace PrograVJ
 
         private void Loop()
         {
+            Stopwatch sw = new Stopwatch();
             while (loop)
             {
                 if (!loop) break;
 
-                Stopwatch sw = new Stopwatch();
-                sw.Start();
+                float deltaTime = (float)sw.Elapsed.TotalMilliseconds;
+                sw.Restart();
                 ProcessInput();
-                UpdateGame();
+                UpdateGame(deltaTime);
                 RenderGraphics(g);
                 sw.Stop();
 
@@ -66,7 +67,6 @@ namespace PrograVJ
                 sleepTime = 1000 / fps - frameTime;
                 if (sleepTime < 0) sleepTime = 1;
                 Thread.Sleep((int)sleepTime);
-                sw.Reset();
             }
 
             Environment.Exit(0);
@@ -75,7 +75,7 @@ namespace PrograVJ
 
         protected void Init() { SceneManager.GetActive().Init(); }
         protected void ProcessInput() { SceneManager.GetActive().ProcessInput(); }
-        protected void Update() { SceneManager.GetActive().Update(); }
+        protected void Update(float dt) { SceneManager.GetActive().Update(dt); }
         protected void Render(Graphics g) {
             g.SmoothingMode = SmoothingMode.None;
             g.InterpolationMode = InterpolationMode.NearestNeighbor;
@@ -86,19 +86,20 @@ namespace PrograVJ
         public void Instantiate(GameObject obj) => gameObjects.Add(obj);
         public void Deinstantiate(GameObject obj) => gameObjects.Remove(obj);
        
-        private void UpdateGameObjects()
+        private void UpdateGameObjects(float dt)
         {
             foreach (GameObject obj in SceneManager.GetActive().sceneGameObjects)
             {
-                obj.Update();
-                if (obj.collider != null) obj.collider.Update();
+                obj.Update(dt);
+                obj.PhysicsUpdate(dt, SceneManager.GetActive().sceneGameObjects);
+                if (obj.collider != null) obj.collider.Update(dt);
             }
         }
 
-        private void UpdateGame()
+        private void UpdateGame(float dt)
         {
-            Update();
-            UpdateGameObjects();
+            Update(dt);
+            UpdateGameObjects(dt);
         }
 
         private void RenderGraphics(Graphics g)

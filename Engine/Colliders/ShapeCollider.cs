@@ -13,9 +13,9 @@ namespace PrograVJ.Engine.Colliders
     {
         public ShapeCollider(GameObject p) : base(p) { }
 
-        public override void Update()
+        public override void Update(float dt)
         {
-            base.Update();
+            base.Update(dt);
         }
 
         public override bool isColliding(Collider other)

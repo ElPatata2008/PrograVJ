@@ -21,11 +21,6 @@ namespace PrograVJ.Engine.Figures
 
         public override void Draw(Graphics g, Camera c)
         {
-            // S * R * T
-
-            // Scale
-            //float halfX = size.X / 2;
-            //float halfY = size.Y / 2;
             Vector3[] localVertices = new Vector3[3]
             {
                 new Vector3(-0.5f, -0.5f, 0f),
@@ -48,9 +43,12 @@ namespace PrograVJ.Engine.Figures
             g.DrawPolygon(new Pen(new SolidBrush(color), 2f), screenPoints);
         }
 
-        public override void Update()
-        {
-            
-        }
+        public override void OnColiisionStay(GameObject c) { }
+
+        public override void OnCollisionEnter(GameObject c) { }
+
+        public override void OnCollisionExit(GameObject c) { }
+
+        public override void Update(float dt) { }
     }
 }

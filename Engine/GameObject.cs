@@ -18,6 +18,9 @@ namespace PrograVJ.GameObjects
         public Color color;
         public Collider collider;
 
+        private List<GameObject> collidingObjects = new List<GameObject>();
+        private List<GameObject> prevCollidingObejcts = new List<GameObject>();
+
         public GameObject(Vector3 position, Vector3 rotation, Vector3 size, Color color, Collider collider = null)
         {
             this.position = position;
@@ -28,13 +31,36 @@ namespace PrograVJ.GameObjects
             if (this.collider != null) this.collider.parent = this;
         }
 
-        public abstract void Update();
+        public abstract void Update(float dt);
         public abstract void Draw(Graphics g, Camera c);
 
-        public bool isColliding(GameObject other)
-        {
-            return collider.isColliding(other.collider);
-        }
+        public bool isColliding(GameObject other) { return collider.isColliding(other.collider); }
 
+        public abstract void OnColiisionStay(GameObject c);
+        public abstract void OnCollisionEnter(GameObject c);
+        public abstract void OnCollisionExit(GameObject c);
+
+
+        public void PhysicsUpdate(float dt, List<GameObject> candidates)
+        {
+            collidingObjects = new List<GameObject>();
+
+            foreach (var c in candidates)
+            {
+                if (c == this) continue;
+                if (isColliding(c))
+                {
+                    collidingObjects.Add(c);
+                    if (prevCollidingObejcts.Contains(c)) OnColiisionStay(c);
+                    else OnCollisionEnter(c);
+                }
+            }
+
+            foreach(var po in prevCollidingObejcts)
+            {
+                if (!collidingObjects.Contains(po)) OnCollisionExit(po);
+            } 
+            prevCollidingObejcts = new List<GameObject>(collidingObjects);
+        }
     }
 }

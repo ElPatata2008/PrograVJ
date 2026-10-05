@@ -32,7 +32,7 @@ namespace PrograVJ.Engine
 
         public abstract void Init();
         public abstract void ProcessInput();
-        public abstract void Update();
+        public abstract void Update(float dt);
         public abstract void PaintScreen(Graphics g);
     }
 }

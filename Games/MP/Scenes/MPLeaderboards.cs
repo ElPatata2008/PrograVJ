@@ -76,12 +76,12 @@ namespace PrograVJ.Games.MP.Scenes
             if (InputManager.JustPressedInput("enter")) { inTransition = true; fadeOut = true; AudioManager.PlaySFX("menuButton"); }
         }
 
-        public override void Update()
+        public override void Update(float dt)
         {
             if (!inTransition)
             {
                 bg.UpdateParallax(0.2f);
-                moon.rotation.Z += 0.05f;
+                moon.rotation.Z += 0.05f * dt;
                 if (moon.rotation.Z > 360) moon.rotation.Z = 0;
             }
             else Transition(); 

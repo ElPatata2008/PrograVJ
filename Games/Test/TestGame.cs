@@ -14,6 +14,8 @@ namespace PrograVJ.Games.Test
     {
         public TestGame(int w, int h, float fps, CameraType type) : base(w, h, fps, type)
         {
+            FontManager.Load("ByteBounce.ttf", "byte");
+
             InputManager.Register("up", new List<Keys>() { Keys.Up, });
             InputManager.Register("down", new List<Keys>() { Keys.Down, });
             InputManager.Register("left", new List<Keys>() { Keys.Left, });

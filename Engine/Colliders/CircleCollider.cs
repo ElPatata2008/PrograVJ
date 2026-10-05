@@ -13,9 +13,9 @@ namespace PrograVJ.Engine.Colliders
         public float radius;
         public CircleCollider2D(GameObject p) : base(p) { }
 
-        public override void Update()
+        public override void Update(float dt)
         {
-            base.Update();
+            base.Update(dt);
             radius = parent.size.X / 2;
         }
         public override bool isColliding(Collider other)

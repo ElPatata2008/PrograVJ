@@ -110,18 +110,18 @@ namespace PrograVJ.Games.MP.Scenes
         }
 
 
-        public override void Update()
+        public override void Update(float dt)
         {
-            if (!inTransition) MenuLogic();
-            else TransitionScreen();
+            if (!inTransition) MenuLogic(dt);
+            else TransitionScreen(dt);
         }
 
-        private void MenuLogic()
+        private void MenuLogic(float dt)
         {
-            bgBack.UpdateParallax(0.2f);
-            bgMiddle.UpdateParallax(0.5f);
-            bgFront.UpdateParallax(0.9f);
-            ground.UpdateParallax(2.5f);
+            bgBack.UpdateParallax(0.2f * dt);
+            bgMiddle.UpdateParallax(0.5f * dt);
+            bgFront.UpdateParallax(0.9f * dt);
+            ground.UpdateParallax(2.5f * dt);
         }
 
         private void FadeOut()
@@ -132,11 +132,11 @@ namespace PrograVJ.Games.MP.Scenes
             else AudioManager.PlaySFX("menuButton");
         }
 
-        private void TransitionScreen()
+        private void TransitionScreen(float dt)
         {
             if (fadeIn)
             {
-                Fade.size.X /= 1.5f;
+                Fade.size.X /= 1.5f * dt;
                 //Console.WriteLine($"Fade X: {Fade.size.X}");
                 if (Fade.size.X < 1) { inTransition = false; fadeIn = false; Fade.size.Y = Fade.size.X; }
             }
@@ -144,9 +144,9 @@ namespace PrograVJ.Games.MP.Scenes
             {
                 if (menuIndex == 0)
                 {
-                    Fade.size.X *= 1.15f;
-                    Fade.size.Y *= 1.15f;
-                    Fade.rotation.Z *= 1.125f;
+                    Fade.size.X *= 1.15f * dt;
+                    Fade.size.Y *= 1.15f * dt;
+                    Fade.rotation.Z *= 1.125f * dt;
                     //Console.WriteLine($"Fade X: {Fade.size.X}");
                     if (Fade.size.X >= sceneCamera.size.X * 2) { inTransition = false; SceneManager.SetActive("game"); }
                 }
@@ -154,7 +154,7 @@ namespace PrograVJ.Games.MP.Scenes
                 {
                     Fade.rotation.Z = 0f;
                     Fade.size.Y = sceneCamera.size.Y;
-                    Fade.size.X *= menuIndex == 1 ? 1.5f : 1.2f;
+                    Fade.size.X *= menuIndex == 1 ? 1.5f * dt : 1.2f * dt;
                     if (Fade.size.X >= sceneCamera.size.X * 2) { 
                         if (menuIndex == 1) { inTransition = false; SceneManager.SetActive("lb"); }
                         if (menuIndex == 2) Environment.Exit(0);

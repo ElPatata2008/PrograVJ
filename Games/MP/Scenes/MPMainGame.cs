@@ -152,8 +152,7 @@ namespace PrograVJ.Games.MP.Scenes
             if (!inTransition && !starting && !gameOver)
             {
                 if (InputManager.GetInput("escape")) GameOver();
-                if (InputManager.GetInput("right")) player.Right();
-                if (InputManager.GetInput("left")) player.Left();
+                
                 if (InputManager.JustPressedInput("up")) player.Jump();
                 //if (InputManager.JustPressedInput("down")) AudioManager.CrossfadeToLayer("game2", 1000);
                 shootAbove = InputManager.JustPressedInput("z");
@@ -162,13 +161,13 @@ namespace PrograVJ.Games.MP.Scenes
             if (InputManager.JustPressedInput("enter") && gameOverTime > 6 && !inTransition) { inTransition = true; fadeOut = true; AudioManager.PlaySFX("menuButton"); }
         }
 
-        public override void Update()
+        public override void Update(float dt)
         {
-            if (!inTransition) GameLogic();
-            else Transitions();
+            if (!inTransition) GameLogic(dt);
+            else Transitions(dt);
         }
 
-        private void GameLogic()
+        private void GameLogic(float dt)
         {
             if (starting)
             {
@@ -192,15 +191,15 @@ namespace PrograVJ.Games.MP.Scenes
                         intenseMusic = false;
                     }
 
-                    bgBack.UpdateParallax(0.2f);
-                    bgMiddle.UpdateParallax(0.5f);
-                    bgFront.UpdateParallax(0.9f);
-                    ground.UpdateParallax(2.5f);
+                    bgBack.UpdateParallax(0.2f * dt);
+                    bgMiddle.UpdateParallax(0.5f * dt);
+                    bgFront.UpdateParallax(0.9f * dt);
+                    ground.UpdateParallax(2.5f * dt);
 
                     SpawnPlate();
                     SpawnCart();
 
-                    PlayerLogic();
+                    PlayerLogic(dt);
                     EnemiesLogic();
                     SaucerLogic();
                     Collisions();
@@ -399,10 +398,13 @@ namespace PrograVJ.Games.MP.Scenes
                 }
             }
         }
-        private void PlayerLogic()
+        private void PlayerLogic(float dt)
         {
-            if (player.position.X > moveLimits) player.speed -= player.accel * 1.75f;
-            if (player.position.X < -moveLimits) player.speed += player.accel * 1.75f;
+            if (InputManager.GetInput("right")) player.Right(dt);
+            if (InputManager.GetInput("left")) player.Left(dt);
+
+            if (player.position.X > moveLimits) player.speed -= player.accel * 1.75f * dt;
+            if (player.position.X < -moveLimits) player.speed += player.accel * 1.75f * dt;
 
             if (bullets.Count(b => !b.enemy) < 5)
             {
@@ -524,11 +526,11 @@ namespace PrograVJ.Games.MP.Scenes
 
         }
 
-        private void Transitions()
+        private void Transitions(float dt)
         {
             if (fadeIn)
             {
-                Fade.size.X /= 1.5f;
+                Fade.size.X /= 1.5f * dt;
                 if (Fade.size.X < 1) {
                     sw.Start();
                     inTransition = false; fadeIn = false; 
@@ -536,7 +538,7 @@ namespace PrograVJ.Games.MP.Scenes
             }
             if (fadeOut)
             {
-                Fade.size.X *= 1.5f;
+                Fade.size.X *= 1.5f * dt;
                 if (Fade.size.X > sceneCamera.size.X) { 
                     inTransition = false;
                     MoonPatrol.scores.Add(new Tuple<int, string>(score, "User"));

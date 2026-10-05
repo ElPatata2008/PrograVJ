@@ -21,12 +21,12 @@ namespace PrograVJ.Games.MP.Objects
             hp = 1;
         }
 
-        public override void Update()
+        public override void Update(float dt)
         {
             double rad = rotation.Z * (Math.PI / 180);
 
-            position.X += speed * (float)Math.Cos(rad);
-            position.Y += speed * (float)Math.Sin(rad);
+            position.X += speed * (float)Math.Cos(rad) * dt;
+            position.Y += speed * (float)Math.Sin(rad) * dt;
         }
 
         public void SetRotation(float rot) => rotation.Z = rot;

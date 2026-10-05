@@ -20,9 +20,9 @@ namespace PrograVJ.Games.MP.Objects
             sw.Start();
         }
 
-        public override void Update()
+        public override void Update(float dt)
         {
-            position.X += speed;
+            position.X += speed * dt;
         }
 
         public bool CanAttack() => sw.ElapsedMilliseconds / 1000 > 5;

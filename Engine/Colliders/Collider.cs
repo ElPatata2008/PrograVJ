@@ -20,7 +20,7 @@ namespace PrograVJ.Engine.Colliders
             parent = p;
         }
 
-        public virtual void Update()
+        public virtual void Update(float dt)
         {
             position = parent.position;
             size = parent.size;

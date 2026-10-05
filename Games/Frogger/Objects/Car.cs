@@ -20,11 +20,11 @@ namespace PrograVJ.Games.Frogger.Objects
 
         }
 
-        public override void Update()
+        public override void Update(float dt)
         {
             var rad = rotation.Z * (Math.PI / 180);
             var dir = Math.Cos(rad);
-            position.X += speed * (float)dir;
+            position.X += speed * (float)dir * dt;
         }
 
         public void CreateCollider() => collider = new BoxCollider2D(this);

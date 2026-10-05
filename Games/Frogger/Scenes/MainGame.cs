@@ -143,7 +143,7 @@ namespace PrograVJ.Games.Scenes
             }
         }
 
-        public override void Update()
+        public override void Update(float dt)
         {
             if (starting)
             {
@@ -171,8 +171,8 @@ namespace PrograVJ.Games.Scenes
                 }
                 else
                 {
-                    if (player.position.X > 350) player.position.X += player.speed;
-                    else if (player.position.X < -350) player.position.X -= player.speed;
+                    if (player.position.X > 350) player.position.X += player.speed * dt;
+                    else if (player.position.X < -350) player.position.X -= player.speed * dt;
 
                     if (sw.ElapsedMilliseconds / 1000 > 2)
                     {

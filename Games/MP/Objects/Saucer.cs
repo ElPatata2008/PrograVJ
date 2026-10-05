@@ -23,9 +23,9 @@ namespace PrograVJ.Games.MP.Objects
         }
 
 
-        public override void Update()
+        public override void Update(float dt)
         {
-            position.X += speed;
+            position.X += speed * dt;
 
             if (position.X > hLimits && speed > 0) speed *= -1;
             else if (position.X < -hLimits && speed < 0) speed *= -1;
