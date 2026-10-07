@@ -1,5 +1,7 @@
 ﻿using PrograVJ.Games;
 using PrograVJ.Games.Frogger;
+using PrograVJ.Games.Mariano;
+
 
 //using PrograVJ.Games.Arkanoid;
 //using PrograVJ.Games.Asteroids;
@@ -28,11 +30,12 @@ namespace PrograVJ
             //Game asteroid = new Asteroids((int)resolution.X, (int)resolution.Y, 60, Engine.CameraType.Orthographic); asteroid.StartGame();
             //Game simonSays = new SimonSays((int)resolution.X, (int)resolution.Y, 60, Engine.CameraType.Orthographic); simonSays.StartGame();
             //Game frogger = new Frogger((int)resolution.X, (int)resolution.Y, 60, Engine.CameraType.Orthographic); frogger.StartGame();
+            Game mariano = new MarianoHermanos((int)resolution.X, (int)resolution.Y, 120, Engine.CameraType.Orthographic); mariano.StartGame();
 
             // Proyectos
             //Game mp = new MoonPatrol((int)resolution.X, (int)resolution.Y, 60, Engine.CameraType.Orthographic); mp.StartGame();
 
-            Game test = new TestGame((int)resolution.X, (int)resolution.Y, 120, Engine.CameraType.Orthographic); test.StartGame();
+            //Game test = new TestGame((int)resolution.X, (int)resolution.Y, 120, Engine.CameraType.Orthographic); test.StartGame();
             Application.Run();
         }
     }

@@ -1,4 +1,5 @@
-﻿using PrograVJ.Engine.Colliders;
+﻿using PrograVJ.Engine;
+using PrograVJ.Engine.Colliders;
 using PrograVJ.Engine.Figures;
 using System;
 using System.Collections.Generic;
@@ -15,9 +16,12 @@ namespace PrograVJ.Games.MP.Objects
         public int hp;
         public float speed { get; set; }
 
-        public Enemy(Vector3 position, Vector3 rotation, Vector3 size, Color color, Color fillColor, Collider collider = null, float borderWidth = 2, Bitmap fillTexture = null) : base(position, rotation, size, color, fillColor, collider, borderWidth, fillTexture)
+        public Enemy(Vector3 position, Vector3 rotation, Vector3 size, Color color, Color fillColor, Collider collider = null, Rigidbody body = null, float borderWidth = 2, Bitmap fillTexture = null) : base(position, rotation, size, color, fillColor, collider, body, borderWidth, fillTexture)
         {
         }
+
+
+
 
 
     }

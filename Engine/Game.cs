@@ -56,7 +56,7 @@ namespace PrograVJ
             {
                 if (!loop) break;
 
-                float deltaTime = (float)sw.Elapsed.TotalMilliseconds;
+                float deltaTime = (float)sw.Elapsed.TotalSeconds;
                 sw.Restart();
                 ProcessInput();
                 UpdateGame(deltaTime);
@@ -91,6 +91,7 @@ namespace PrograVJ
             foreach (GameObject obj in SceneManager.GetActive().sceneGameObjects)
             {
                 obj.Update(dt);
+                if (obj.body != null) obj.body.Update(dt);
                 obj.PhysicsUpdate(dt, SceneManager.GetActive().sceneGameObjects);
                 if (obj.collider != null) obj.collider.Update(dt);
             }

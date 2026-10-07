@@ -26,6 +26,12 @@ namespace PrograVJ.Engine
         public Vector3 accumulatedForce;
         public Vector3 accumulatedImpulse;
 
+        public Rigidbody(RigidbodyType type, float mass = 1.0f, float gravityScale = 1.0f) {
+            this.type = type;
+            this.mass = mass;
+            this.gravityScale = gravityScale;
+        }
+
         public void Update(float dt)
         {
             switch(type)
@@ -48,9 +54,9 @@ namespace PrograVJ.Engine
             }
         }
 
-        private void AddForce(float x, float y, float z)
+        public void AddForce(float x, float y, float z)
         {
-
+            accumulatedImpulse += new Vector3(x, y, z);
         }
     }
 }

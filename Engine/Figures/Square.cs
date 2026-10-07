@@ -43,8 +43,9 @@ namespace PrograVJ.Engine.Figures
                       Color color,
                       Color fillColor,
                       Collider collider = null,
+                      Rigidbody body = null,
                       float borderWidth = 2f,
-                      Bitmap fillTexture = null) : base(position, rotation, size, color, collider)
+                      Bitmap fillTexture = null) : base(position, rotation, size, color, collider, body)
         {
             this.fillColor = fillColor;
             this.borderWidth = borderWidth;

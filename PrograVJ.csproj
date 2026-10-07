@@ -142,6 +142,16 @@
     <Compile Include="Games\Frogger\Objects\Car.cs" />
     <Compile Include="Games\Frogger\Objects\Log.cs" />
     <Compile Include="Games\Frogger\Objects\Player.cs" />
+    <Compile Include="Games\Mariano\MarianoHermanos.cs" />
+    <Compile Include="Games\Mariano\Objects\Enemy.cs" />
+    <Compile Include="Games\Mariano\Objects\Leaderboard.cs" />
+    <Compile Include="Games\Mariano\Objects\Player.cs" />
+    <Compile Include="Games\Mariano\Objects\POW.cs" />
+    <Compile Include="Games\Mariano\Objects\Terrain.cs" />
+    <Compile Include="Games\Mariano\Scenes\GameOver.cs" />
+    <Compile Include="Games\Mariano\Scenes\LeaderboardMenu.cs" />
+    <Compile Include="Games\Mariano\Scenes\MainGame.cs" />
+    <Compile Include="Games\Mariano\Scenes\Menu.cs" />
     <Compile Include="Games\MP\MoonPatrol.cs" />
     <Compile Include="Games\MP\Objects\Bullet.cs" />
     <Compile Include="Games\MP\Objects\Cart.cs" />
@@ -171,6 +181,7 @@
     <None Include="app.manifest" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets" Condition="Exists('packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

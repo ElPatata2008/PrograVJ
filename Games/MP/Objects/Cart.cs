@@ -1,4 +1,5 @@
-﻿using PrograVJ.Engine.Colliders;
+﻿using PrograVJ.Engine;
+using PrograVJ.Engine.Colliders;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,7 +15,7 @@ namespace PrograVJ.Games.MP.Objects
     {
         Stopwatch sw = new Stopwatch();
 
-        public Cart(Vector3 position, Vector3 rotation, Vector3 size, Color color, Color fillColor, Collider collider = null, float borderWidth = 2, Bitmap fillTexture = null) : base(position, rotation, size, color, fillColor, collider, borderWidth, fillTexture)
+        public Cart(Vector3 position, Vector3 rotation, Vector3 size, Color color, Color fillColor, Collider collider = null, Rigidbody body = null, float borderWidth = 2, Bitmap fillTexture = null) : base(position, rotation, size, color, fillColor, collider, body, borderWidth, fillTexture)
         {
             hp = 15;
             sw.Start();

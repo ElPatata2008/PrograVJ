@@ -17,11 +17,13 @@ namespace PrograVJ.GameObjects
         public Vector3 size;
         public Color color;
         public Collider collider;
+        public Rigidbody body;
 
         private List<GameObject> collidingObjects = new List<GameObject>();
         private List<GameObject> prevCollidingObejcts = new List<GameObject>();
 
-        public GameObject(Vector3 position, Vector3 rotation, Vector3 size, Color color, Collider collider = null)
+        public GameObject(Vector3 position, Vector3 rotation, Vector3 size, Color color, 
+            Collider collider = null, Rigidbody body = null)
         {
             this.position = position;
             this.rotation = rotation;
@@ -29,18 +31,17 @@ namespace PrograVJ.GameObjects
             this.color = color;
             this.collider = collider;
             if (this.collider != null) this.collider.parent = this;
+            this.body = body;
+            if (this.body != null) this.body.parent = this;
         }
 
         public abstract void Update(float dt);
         public abstract void Draw(Graphics g, Camera c);
 
         public bool isColliding(GameObject other) { return collider.isColliding(other.collider); }
-
         public abstract void OnColiisionStay(GameObject c);
         public abstract void OnCollisionEnter(GameObject c);
         public abstract void OnCollisionExit(GameObject c);
-
-
         public void PhysicsUpdate(float dt, List<GameObject> candidates)
         {
             collidingObjects = new List<GameObject>();

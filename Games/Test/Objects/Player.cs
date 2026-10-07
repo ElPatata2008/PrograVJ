@@ -19,7 +19,7 @@ namespace PrograVJ.Games.Test.Objects
         public string SaveID = "Player";
         public int score = 0;
 
-        public Player(Vector3 position, Vector3 rotation, Vector3 size, Color color, Color fillColor, Collider collider = null, float borderWidth = 2, Bitmap fillTexture = null) : base(position, rotation, size, color, fillColor, collider, borderWidth, fillTexture)
+        public Player(Vector3 position, Vector3 rotation, Vector3 size, Color color, Color fillColor, Collider collider = null, Rigidbody body = null, float borderWidth = 2, Bitmap fillTexture = null) : base(position, rotation, size, color, fillColor, collider, body, borderWidth, fillTexture)
         {
             SaveManager.Register(this);
         }
@@ -46,12 +46,6 @@ namespace PrograVJ.Games.Test.Objects
                 rotation = data.rotation;
                 size = data.scale;
                 score = data.puntaje;
-
-                Console.WriteLine($"{data.position}");
-                Console.WriteLine($"{data.rotation}");
-                Console.WriteLine($"{data.scale}");
-                Console.WriteLine($"{data.puntaje}");
-
             }
         }
 

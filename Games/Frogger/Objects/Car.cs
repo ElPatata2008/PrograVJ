@@ -1,4 +1,5 @@
-﻿using PrograVJ.Engine.Colliders;
+﻿using PrograVJ.Engine;
+using PrograVJ.Engine.Colliders;
 using PrograVJ.Engine.Figures;
 using PrograVJ.GameObjects;
 using System;
@@ -14,11 +15,12 @@ namespace PrograVJ.Games.Frogger.Objects
 {
     public class Car : Square
     {
-        public int speed { get; set; }
-        public Car(Vector3 position, Vector3 rotation, Vector3 size, Color color, Color fillColor, Collider collider = null, float borderWidth = 2, Bitmap fillTexture = null) : base(position, rotation, size, color, fillColor, collider, borderWidth, fillTexture)
+        public Car(Vector3 position, Vector3 rotation, Vector3 size, Color color, Color fillColor, Collider collider = null, Rigidbody body = null, float borderWidth = 2, Bitmap fillTexture = null) : base(position, rotation, size, color, fillColor, collider, body, borderWidth, fillTexture)
         {
-
         }
+
+        public int speed { get; set; }
+
 
         public override void Update(float dt)
         {
