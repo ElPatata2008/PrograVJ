@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.Remoting.Channels;
@@ -19,7 +20,6 @@ namespace PrograVJ.Engine.Figures
         public Vector3 position;
         public PointF UV;
     }
-
     public class Square : GameObject
     {
         PointF? p00 = null, p10 = null, p01 = null;
@@ -36,6 +36,9 @@ namespace PrograVJ.Engine.Figures
         public Color fillColor;
         public Bitmap fillTexture;
         public float borderWidth;
+        public WrapMode mode;
+        public int repeatTileX = 1;
+        public int repeatTileY = 1;
 
         public Square(Vector3 position,
                       Vector3 rotation,
@@ -45,11 +48,17 @@ namespace PrograVJ.Engine.Figures
                       Collider collider = null,
                       Rigidbody body = null,
                       float borderWidth = 2f,
-                      Bitmap fillTexture = null) : base(position, rotation, size, color, collider, body)
+                      Bitmap fillTexture = null,
+                      WrapMode mode = WrapMode.Clamp,
+                      int repeatTileX = 1,
+                      int repeatTileY = 1) : base(position, rotation, size, color, collider, body)
         {
             this.fillColor = fillColor;
             this.borderWidth = borderWidth;
             this.fillTexture = fillTexture;
+            this.mode = mode;
+            this.repeatTileX = repeatTileX;
+            this.repeatTileY = repeatTileY;
         }
 
         public override void Draw(Graphics g, Camera c)
@@ -81,7 +90,28 @@ namespace PrograVJ.Engine.Figures
                 g.FillPolygon(b, screenPoints);
                 g.DrawPolygon(p, screenPoints);
             }
-            if (fillTexture != null) g.DrawImage(fillTexture, new PointF[] { p00.Value, p10.Value, p01.Value });
+            //if (fillTexture != null) g.DrawImage(fillTexture, new PointF[] { p00.Value, p10.Value, p01.Value });
+            if (fillTexture != null)
+            {
+                PointF[] dest = { p00.Value, p10.Value, p01.Value };
+
+                if (mode == WrapMode.Clamp)
+                {
+                    g.DrawImage(fillTexture, dest);
+                }
+                else
+                {
+                    using (var attrs = new ImageAttributes())
+                    {
+                        attrs.SetWrapMode(mode);
+                        var src = new RectangleF(0, 0,
+                            fillTexture.Width * repeatTileX,
+                            fillTexture.Height * repeatTileY);
+
+                        g.DrawImage(fillTexture, dest, src, GraphicsUnit.Pixel, attrs);
+                    }
+                }
+            }
 
         }
 
@@ -154,7 +184,6 @@ namespace PrograVJ.Engine.Figures
 
         private Brush BuildTextureBrush(Vertex3D[] screenPoly)
         {
-            //PointF? p00 = null, p10 = null, p01 = null;
             foreach(var v in screenPoly)
             {
                 if (v.UV.X == 0 && v.UV.Y == 0) p00 = new PointF(v.position.X, v.position.Y);
@@ -164,12 +193,14 @@ namespace PrograVJ.Engine.Figures
 
             TextureBrush tb = new TextureBrush(fillTexture)
             {
-                WrapMode = WrapMode.Clamp
+                WrapMode = mode
             };
 
             if (p00.HasValue && p10.HasValue && p01.HasValue)
             {
-                RectangleF sourceRect = new RectangleF(0, 0, fillTexture.Width, fillTexture.Height);
+                RectangleF sourceRect;
+                if (mode == WrapMode.Clamp) sourceRect = new RectangleF(0, 0, fillTexture.Width, fillTexture.Height);
+                else sourceRect = new RectangleF(0, 0, fillTexture.Width * repeatTileX, fillTexture.Height * repeatTileY);
                 PointF[] destPoints = { p00.Value, p10.Value, p01.Value };
                 tb.Transform = new Matrix(sourceRect, destPoints);
             }
@@ -185,12 +216,23 @@ namespace PrograVJ.Engine.Figures
 
                 if (width > 0 && height > 0)
                 {
-                    float scaleX = width / fillTexture.Width;
-                    float scaleY = height / fillTexture.Height;
+                    float scaleX;
+                    float scaleY;
+                    if (mode == WrapMode.Clamp)
+                    {
+                        scaleX = width / fillTexture.Width;
+                        scaleY = height / fillTexture.Height;
+                    }
+                    else
+                    {
+                        scaleX = width / (fillTexture.Width * repeatTileX);
+                        scaleY = height / (fillTexture.Height * repeatTileY);
+                    }
                     tb.ScaleTransform(scaleX, scaleY);
                 }
             }
-            
+
+            //Console.WriteLine($"{tb.WrapMode}");
 
             return tb;
         }

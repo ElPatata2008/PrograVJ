@@ -43,9 +43,9 @@ namespace PrograVJ.Engine
                 case RigidbodyType.Dynamic:
                     AddForce(0, -9.81f * gravityScale, 0);
 
-                    velocity += accumulatedImpulse * mass;
+                    velocity += accumulatedImpulse;
                     accumulatedImpulse = Vector3.Zero;
-                    Vector3 acceleration = accumulatedForce / mass;
+                    Vector3 acceleration = accumulatedForce * mass;
                     accumulatedForce = Vector3.Zero;
 
                     velocity += acceleration * dt;
@@ -56,7 +56,12 @@ namespace PrograVJ.Engine
 
         public void AddForce(float x, float y, float z)
         {
-            accumulatedImpulse += new Vector3(x, y, z);
+            accumulatedForce += new Vector3(x, y, z);
         }
+
+        public void AddImpulse(float x, float y, float z)
+        {
+            accumulatedImpulse += new Vector3(x, y, z);
+        }   
     }
 }

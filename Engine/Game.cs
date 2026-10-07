@@ -52,6 +52,7 @@ namespace PrograVJ
         private void Loop()
         {
             Stopwatch sw = new Stopwatch();
+            sw.Start();
             while (loop)
             {
                 if (!loop) break;
@@ -61,7 +62,7 @@ namespace PrograVJ
                 ProcessInput();
                 UpdateGame(deltaTime);
                 RenderGraphics(g);
-                sw.Stop();
+                //sw.Stop();
 
                 frameTime = sw.ElapsedMilliseconds;
                 sleepTime = 1000 / fps - frameTime;

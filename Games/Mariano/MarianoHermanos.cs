@@ -18,6 +18,7 @@ namespace PrograVJ.Games.Mariano
         public MarianoHermanos(int w, int h, float fps, CameraType type) : base(w, h, fps, type)
         {
             FontManager.Load("ByteBounce.ttf", "byte");
+            AudioManager.InitMixer();
 
             InputManager.Register("up", new List<Keys>() { Keys.Up, });
             InputManager.Register("down", new List<Keys>() { Keys.Down, });
@@ -26,6 +27,24 @@ namespace PrograVJ.Games.Mariano
             InputManager.Register("1", new List<Keys>() { Keys.D1, Keys.NumPad1 });
             InputManager.Register("2", new List<Keys>() { Keys.D2, Keys.NumPad2 });
             InputManager.Register("3", new List<Keys>() { Keys.D3, Keys.NumPad3 });
+
+            TextureManager.Load("mario.png", "mario");
+            TextureManager.Load("enemy1_phase1.png", "enemy1_phase1");
+            TextureManager.Load("enemy1_phase2.png", "enemy1_phase2");
+            TextureManager.Load("enemy1_phase3.png", "enemy1_phase3");
+            TextureManager.Load("enemy2.png", "enemy2");
+            TextureManager.Load("ground.png", "ground");
+            TextureManager.Load("platform.png", "platform");
+            TextureManager.Load("pow.png", "pow");
+            TextureManager.Load("pipe.png", "pipe");
+            TextureManager.Load("mainmenu.png", "mainmenu");
+
+            AudioManager.LoadSFX("enemyDeath.mp3", "enemyDeath");
+            AudioManager.LoadSFX("jump.mp3", "jump");
+            AudioManager.LoadSFX("stomp.mp3", "stomp");
+            AudioManager.LoadSFX("pow.mp3", "pow");
+            AudioManager.LoadSFX("damage.mp3", "damage");
+            AudioManager.LoadMusic("music.mp3", "music");
 
             SceneManager.Register(new Scenes.MainMenu(c), "menu");
             SceneManager.Register(new MainGame(c), "game");

@@ -1,6 +1,7 @@
 ﻿using PrograVJ.Engine;
 using PrograVJ.Engine.Colliders;
 using PrograVJ.Engine.Figures;
+using PrograVJ.Engine.Manager;
 using PrograVJ.GameObjects;
 using System;
 using System.Collections.Generic;
@@ -38,7 +39,7 @@ namespace PrograVJ.Games.Mariano.Objects
         {
             if (c is Player p)
             {
-                if (p.body.velocity.X > 0)
+                if (p.body.velocity.Y > 0)
                 {
                     if (p.position.Y < position.Y)
                     {
@@ -48,6 +49,7 @@ namespace PrograVJ.Games.Mariano.Objects
                             isActive = false;
                             gotActivated = true;
                             p.body.velocity.Y = -100;
+                            AudioManager.PlaySFX("pow");
                         }
                     }
                 }

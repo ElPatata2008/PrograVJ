@@ -37,7 +37,11 @@ namespace PrograVJ.Games.Mariano.Objects
             body.gravityScale = isGrounded ? 0 : initGrav;
             if (InputManager.GetInput("left")) body.AddForce(-speed, 0, 0);
             if (InputManager.GetInput("right")) body.AddForce(speed, 0, 0);
-            if (isGrounded && InputManager.JustPressedInput("up")) body.AddForce(0, 3000, 0);
+            if (isGrounded && InputManager.JustPressedInput("up"))
+            {
+                AudioManager.PlaySFX("jump");
+                body.AddImpulse(0, 650, 0);
+            }
 
             if (body.velocity.X < -maxSpeed) body.velocity.X = -maxSpeed;
             if (body.velocity.X > maxSpeed) body.velocity.X = maxSpeed;
@@ -47,13 +51,23 @@ namespace PrograVJ.Games.Mariano.Objects
             bool isMoving = InputManager.GetInput("left") || InputManager.GetInput("right");
             if (!isMoving)
             {
-                if (body.velocity.X > 0) body.velocity.X -= speed * 10;
-                if (body.velocity.X < 0) body.velocity.X += speed * 10;
+                if (body.velocity.X > 0) body.velocity.X -= speed;
+                if (body.velocity.X < 0) body.velocity.X += speed;
+            }
+
+            if (CanTakeDamage())
+            {
+                fillColor = Color.White;
+            }
+            else
+            {
+                fillColor = Color.Red;
             }
         }
 
         public void TakeDamage()
         {
+            AudioManager.PlaySFX("damage");
             sw.Restart();
             hp--;
         }
