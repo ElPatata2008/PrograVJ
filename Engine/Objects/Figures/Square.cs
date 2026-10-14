@@ -1,4 +1,5 @@
 ﻿using PrograVJ.Engine.Colliders;
+using PrograVJ.Engine.Manager;
 using PrograVJ.GameObjects;
 using System;
 using System.Collections.Generic;
@@ -40,6 +41,10 @@ namespace PrograVJ.Engine.Figures
         public int repeatTileX = 1;
         public int repeatTileY = 1;
 
+        public AnimationController animationController;
+        SpriteSheet spriteSheet;
+        //Sprite sprite;
+
         public Square(Vector3 position,
                       Vector3 rotation,
                       Vector3 size,
@@ -50,8 +55,11 @@ namespace PrograVJ.Engine.Figures
                       float borderWidth = 2f,
                       Bitmap fillTexture = null,
                       WrapMode mode = WrapMode.Clamp,
-                      int repeatTileX = 1,
-                      int repeatTileY = 1) : base(position, rotation, size, color, collider, body)
+                      int repeatTileX = 1, int repeatTileY = 1,
+                      AnimationController animationController = null
+            //SpriteSheet spriteSheet = null,
+            //Sprite sprite = null
+            ) : base(position, rotation, size, color, collider, body)
         {
             this.fillColor = fillColor;
             this.borderWidth = borderWidth;
@@ -59,10 +67,17 @@ namespace PrograVJ.Engine.Figures
             this.mode = mode;
             this.repeatTileX = repeatTileX;
             this.repeatTileY = repeatTileY;
+            this.animationController = animationController;
         }
 
         public override void Draw(Graphics g, Camera c)
         {
+            
+            if (animationController != null)
+            {
+                fillTexture = (Bitmap)spriteSheet.GetCurrentFrame();
+            }
+
             localVertices = new Vector3[4]
             {
                 new Vector3(-0.5f, -0.5f, 0f),
@@ -103,12 +118,23 @@ namespace PrograVJ.Engine.Figures
                 {
                     using (var attrs = new ImageAttributes())
                     {
+                        RectangleF src;
                         attrs.SetWrapMode(mode);
-                        var src = new RectangleF(0, 0,
-                            fillTexture.Width * repeatTileX,
-                            fillTexture.Height * repeatTileY);
+                        if (animationController != null)
+                        {
+                            Console.WriteLine("Drawing SpriteSheet Frame");
+                            src = spriteSheet.GetCurrentSourceRect();
+                            g.DrawImage(spriteSheet.GetCurrentFrame(), dest, src, GraphicsUnit.Pixel, attrs);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Drawing Sprite");
+                            src = new RectangleF(0, 0,
+                                fillTexture.Width * repeatTileX,
+                                fillTexture.Height * repeatTileY);
+                            g.DrawImage(fillTexture, dest, src, GraphicsUnit.Pixel, attrs);
+                        }
 
-                        g.DrawImage(fillTexture, dest, src, GraphicsUnit.Pixel, attrs);
                     }
                 }
             }
@@ -266,6 +292,13 @@ namespace PrograVJ.Engine.Figures
 
         public override void OnCollisionExit(GameObject c) { }
 
-        public override void Update(float dt) { }
+        public override void Update(float dt) {
+            if (animationController != null)
+            {
+                spriteSheet = animationController.currentAnimation;
+                animationController?.Update(dt);
+
+            }
+        }
     }
 }

@@ -36,6 +36,12 @@ namespace PrograVJ.Games.Test
             InputManager.Register("z", new List<Keys>() { Keys.Z });
             InputManager.Register("x", new List<Keys>() { Keys.X });
 
+            TextureManager.Load("red_balbing_roll.png", "rollRB");
+            TextureManager.Load("red_balbing_walk.png", "walkRB");
+            TextureManager.Load("red_balbing_dizzy.png", "dizzyRB");
+            TextureManager.Load("red_balbing_stand.png", "standRB");
+
+
             SceneManager.Register(new TestMain(c), "main");
 
             SceneManager.SetActive("main");
