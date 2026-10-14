@@ -51,6 +51,7 @@ namespace PrograVJ.Engine
         {
             RectangleF sourceRect = GetCurrentSourceRect();
             Bitmap frame = new Bitmap(frameWidth, frameHeight);
+            if (frame == null) Console.WriteLine("hola");
             using (Graphics g = Graphics.FromImage(frame))
             {
                 g.DrawImage(spriteSheet, new RectangleF(0, 0, frameWidth, frameHeight), sourceRect, GraphicsUnit.Pixel);
@@ -64,6 +65,12 @@ namespace PrograVJ.Engine
             int x = (currentFrame % cols) * frameWidth;
             int y = (currentFrame / cols) * frameHeight;
             return new RectangleF(x, y, frameWidth, frameHeight);
+        }
+
+        public void Reset()
+        {
+            currentFrame = 0;
+            elapsedTime = 0;
         }
     }
 }

@@ -72,10 +72,14 @@ namespace PrograVJ.Engine.Figures
 
         public override void Draw(Graphics g, Camera c)
         {
-            
+            //if (spriteSheet == null)
+            //{
+            //    Console.WriteLine("hola");
+            //}
             if (animationController != null)
             {
-                fillTexture = (Bitmap)spriteSheet.GetCurrentFrame();
+                spriteSheet = animationController.currentAnimation;
+                fillTexture = (Bitmap)animationController.currentAnimation.GetCurrentFrame();
             }
 
             localVertices = new Vector3[4]

@@ -140,6 +140,11 @@
     <Compile Include="Engine\Objects\Rigidbody.cs" />
     <Compile Include="Engine\Scene.cs" />
     <Compile Include="Engine\Manager\Animation\SpriteSheet.cs" />
+    <Compile Include="Games\PunchOut\Objects\Enemy.cs" />
+    <Compile Include="Games\PunchOut\Objects\EnemyPunch.cs" />
+    <Compile Include="Games\PunchOut\Objects\Player.cs" />
+    <Compile Include="Games\PunchOut\PunchOut.cs" />
+    <Compile Include="Games\PunchOut\Scenes\Game.cs" />
     <Compile Include="Games\Test\Objects\Player.cs" />
     <Compile Include="Games\Test\Scenes\TestMain.cs" />
     <Compile Include="Games\Test\TestGame.cs" />

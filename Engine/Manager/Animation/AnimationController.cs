@@ -14,8 +14,6 @@ namespace PrograVJ.Engine.Manager
         public SpriteSheet currentAnimation;
         private string currentAnimationName;
 
-
-
         public void Update(float deltaTime) => currentAnimation?.Update(deltaTime);
 
         public void AddAnimation(string name, SpriteSheet animation)
@@ -33,7 +31,7 @@ namespace PrograVJ.Engine.Manager
             {
                 currentAnimation = animations[name];
                 currentAnimationName = name;
-                //currentAnimation.Reset();
+                currentAnimation.Reset();
             }
         }
     }
