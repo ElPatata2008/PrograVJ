@@ -17,8 +17,23 @@ namespace PrograVJ.Games.PunchOut.Objects
     public class EnemyPunch : Square
     {
         public bool active = false;
+        public bool strong = false;
         public EnemyPunch(Vector3 position, Vector3 rotation, Vector3 size, Color color, Color fillColor, Collider collider = null, Rigidbody body = null, float borderWidth = 2, Bitmap fillTexture = null, WrapMode mode = WrapMode.Clamp, int repeatTileX = 1, int repeatTileY = 1, AnimationController animationController = null) : base(position, rotation, size, color, fillColor, collider, body, borderWidth, fillTexture, mode, repeatTileX, repeatTileY, animationController)
         {
+        }
+
+        public override void OnColiisionStay(GameObject c)
+        {
+            if (c is Player p)
+            {
+                if (active)
+                {
+                    if (!p.blocking)
+                    {
+                        p.Hit(strong ? 20 : 10);
+                    }
+                }
+            }
         }
 
     }

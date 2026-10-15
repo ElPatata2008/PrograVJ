@@ -11,8 +11,8 @@ namespace PrograVJ.Engine
     {
         Image spriteSheet;
         int frameWidth, frameHeight;
-        int totalFrames;
-        int currentFrame = 0;
+        public int totalFrames;
+        public int currentFrame = 0;
         private Dictionary<int, Action> frameEvents = new Dictionary<int, Action>();
         private bool eventFiredThisFrame = false;
 

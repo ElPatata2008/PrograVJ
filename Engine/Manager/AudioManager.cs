@@ -21,29 +21,32 @@ namespace PrograVJ.Engine.Manager
         {
             public byte[] AudioData;
             public WaveFormat waveFormat;
-            
+
             public SFXCache(string FilePath)
             {
-                //using var reader = new AudioFileReader(FilePath);
-                var reader = new AudioFileReader(FilePath);
-                waveFormat = reader.WaveFormat;
-
-                var pcmData = new List<byte>((int)reader.Length);
-                var buffer = new byte[reader.WaveFormat.AverageBytesPerSecond];
-                int bytesRead;
-
-                while ((bytesRead = reader.Read(buffer, 0 , buffer.Length)) > 0)
+                using (var reader = new AudioFileReader(FilePath))
                 {
-                    pcmData.AddRange(buffer.Take(bytesRead));
-                }
+                    waveFormat = reader.WaveFormat;
 
-                AudioData = pcmData.ToArray();
+                    var pcmData = new List<byte>((int)reader.Length);
+                    var buffer = new byte[reader.WaveFormat.AverageBytesPerSecond];
+                    int bytesRead;
+
+                    while ((bytesRead = reader.Read(buffer, 0, buffer.Length)) > 0)
+                    {
+                        pcmData.AddRange(buffer.Take(bytesRead));
+                    }
+
+                    AudioData = pcmData.ToArray();
+                }
             }
         }
 
 
         private static Dictionary<string, string> music = new Dictionary<string, string>();
-        private static WaveOut musicOutput;
+
+        // CAMBIO: WaveOut -> WaveOutEvent (no usa ventana oculta, se puede liberar desde cualquier hilo)
+        private static WaveOutEvent musicOutput;
         private static MixingSampleProvider musicMixer;
         private static Dictionary<int, (AudioFileReader reader, FadeInOutSampleProvider fader, bool loops)> musicTracks = new Dictionary<int, (AudioFileReader reader, FadeInOutSampleProvider fader, bool loops)>();
 
@@ -51,7 +54,7 @@ namespace PrograVJ.Engine.Manager
 
         private static Dictionary<string, SFXCache> sfxMap = new Dictionary<string, SFXCache>();
 
-        private static Dictionary<int, (WaveOut player, IDisposable reader)> PlayingAudioMap = new Dictionary<int, (WaveOut player, IDisposable reader)>();
+        private static Dictionary<int, (WaveOutEvent player, IDisposable reader)> PlayingAudioMap = new Dictionary<int, (WaveOutEvent player, IDisposable reader)>();
         private static int? PlayingMusic = null;
         private static int PlayingIndex = 0;
         private static string audioPath = "Assets/Audios/";
@@ -68,7 +71,7 @@ namespace PrograVJ.Engine.Manager
         public static int PlayMusic(string id, bool loop, int fadeTime)
         {
             if (!music.TryGetValue(id, out var filePath)) throw new ArgumentException(id);
-            if (musicLayers.Count > 0) StopLayeredMusic(fadeTime); 
+            if (musicLayers.Count > 0) StopLayeredMusic(fadeTime);
 
             int? previousIndex = PlayingMusic;
 
@@ -85,17 +88,24 @@ namespace PrograVJ.Engine.Manager
 
             fader.BeginFadeIn(fadeTime);
 
-            if (previousIndex.HasValue) FadeOutAndRemove(previousIndex.Value, fadeTime); 
+            if (previousIndex.HasValue) FadeOutAndRemove(previousIndex.Value, fadeTime);
 
             return index;
         }
 
         public static void StopFinishedMusic()
         {
-            if (musicTracks.Count == 0) return;
+            // CAMBIO: se toma un snapshot dentro del lock, porque FadeOutAndRemove
+            // modifica musicTracks desde otro hilo y podía romper el foreach
+            List<KeyValuePair<int, (AudioFileReader reader, FadeInOutSampleProvider fader, bool loops)>> snapshot;
+            lock (musicTracks)
+            {
+                if (musicTracks.Count == 0) return;
+                snapshot = musicTracks.ToList();
+            }
 
             var finishedTracks = new List<int>();
-            foreach (var track in musicTracks)
+            foreach (var track in snapshot)
             {
                 bool finished = track.Value.reader.CurrentTime >= track.Value.reader.TotalTime;
                 if (!track.Value.loops && finished) finishedTracks.Add(track.Key);
@@ -103,18 +113,25 @@ namespace PrograVJ.Engine.Manager
 
             foreach (var index in finishedTracks)
             {
-                var reader = musicTracks[index].reader;
-                var fader = musicTracks[index].fader;
+                (AudioFileReader reader, FadeInOutSampleProvider fader, bool loops) track;
+                lock (musicTracks)
+                {
+                    if (!musicTracks.TryGetValue(index, out track)) continue;
+                    musicTracks.Remove(index);
+                }
 
-                musicMixer.RemoveMixerInput(fader);
-                reader.Dispose();
-                lock (musicTracks) musicTracks.Remove(index);
+                musicMixer.RemoveMixerInput(track.fader);
+                track.reader.Dispose();
             }
         }
 
         private static void FadeOutAndRemove(int index, int time)
         {
-            if (!musicTracks.TryGetValue(index, out var track)) return;
+            (AudioFileReader reader, FadeInOutSampleProvider fader, bool loops) track;
+            lock (musicTracks)
+            {
+                if (!musicTracks.TryGetValue(index, out track)) return;
+            }
 
             track.fader.BeginFadeOut(time);
 
@@ -129,13 +146,13 @@ namespace PrograVJ.Engine.Manager
         public static void InitMixer()
         {
             var mixerFormat = WaveFormat.CreateIeeeFloatWaveFormat(44100, 2);
-            musicMixer = new MixingSampleProvider(mixerFormat) { ReadFully = true};
-            musicOutput = new WaveOut();
+            musicMixer = new MixingSampleProvider(mixerFormat) { ReadFully = true };
+            musicOutput = new WaveOutEvent(); // CAMBIO: antes WaveOut
             musicOutput.Init(musicMixer);
             musicOutput.Play();
         }
 
-        
+
         public static void StartLayeredMusic(Dictionary<string, string> layerFilenames, string initialActiveLayer, bool loop, int fadeTime)
         {
             foreach (var musicFile in layerFilenames)
@@ -150,7 +167,8 @@ namespace PrograVJ.Engine.Manager
                 PlayingMusic = null;
             }
 
-            foreach (var musicFile in layerFilenames) {
+            foreach (var musicFile in layerFilenames)
+            {
                 var layerName = musicFile.Key; var filename = musicFile.Value;
 
                 string file = Path.Combine(musicPath, filename);
@@ -208,7 +226,11 @@ namespace PrograVJ.Engine.Manager
 
             var ms = new MemoryStream(sound.AudioData);
             var stream = new RawSourceWaveStream(ms, sound.waveFormat);
-            var player = new WaveOut();
+
+            // CAMBIO PRINCIPAL: WaveOut -> WaveOutEvent.
+            // WaveOut crea una ventana oculta (control sin nombre) ligada al hilo que lo creó;
+            // hacerle Dispose desde otro hilo causaba la InvalidOperationException.
+            var player = new WaveOutEvent();
             player.Init(stream);
 
             int index = Interlocked.Increment(ref PlayingIndex);
@@ -216,47 +238,57 @@ namespace PrograVJ.Engine.Manager
 
             player.PlaybackStopped += (s, e) =>
             {
-                Task.Run(() => {
-                    ms.Dispose();
-                    Clean(index);
-                });
+                // stream.Dispose() (dentro de Clean) ya libera también el MemoryStream
+                Task.Run(() => Clean(index));
             };
 
             player.Play();
             return index;
         }
 
+        // Helper: lectura segura del diccionario desde cualquier hilo
+        private static bool TryGetPlaying(int id, out (WaveOutEvent player, IDisposable reader) data)
+        {
+            lock (PlayingAudioMap) return PlayingAudioMap.TryGetValue(id, out data);
+        }
+
         public static void Pause(int id)
         {
-            if (PlayingAudioMap.TryGetValue(id, out var AudioData)) AudioData.player.Pause();
+            if (TryGetPlaying(id, out var AudioData)) AudioData.player.Pause();
         }
 
         public static void Resume(int id)
         {
-            if (PlayingAudioMap.TryGetValue(id, out var AudioData)) AudioData.player.Play();
+            if (TryGetPlaying(id, out var AudioData)) AudioData.player.Play();
         }
 
         public static void Stop(int id)
         {
-            if (PlayingAudioMap.TryGetValue(id, out var AudioData))
+            if (TryGetPlaying(id, out var AudioData))
             {
                 AudioData.player.Stop();
             }
         }
 
-        public static void StopMusic() =>  musicOutput.Stop();
+        public static void StopMusic() => musicOutput.Stop();
 
-        public static void ResumeMusic() => musicOutput.Play(); 
+        public static void ResumeMusic() => musicOutput.Play();
         public static void PauseMusic() => musicOutput.Pause();
 
         private static void Clean(int id)
         {
-            if (PlayingAudioMap.TryGetValue(id, out var AudioData))
+            (WaveOutEvent player, IDisposable reader) data;
+
+            // Remover del diccionario de forma atómica: evita doble Dispose si dos hilos llegan a la vez
+            lock (PlayingAudioMap)
             {
-                AudioData.player.Dispose(); 
-                AudioData.reader.Dispose();
-                lock (PlayingAudioMap) PlayingAudioMap.Remove(id);
+                if (!PlayingAudioMap.TryGetValue(id, out data)) return;
+                PlayingAudioMap.Remove(id);
             }
+
+            // Dispose fuera del lock para evitar bloqueos
+            data.player.Dispose();
+            data.reader.Dispose();
         }
     }
 }
