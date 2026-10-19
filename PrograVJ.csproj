@@ -112,6 +112,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Engine\AI\AIController.cs" />
+    <Compile Include="Engine\AI\Blackboard.cs" />
+    <Compile Include="Engine\AI\BT.cs" />
+    <Compile Include="Engine\AI\FSM.cs" />
+    <Compile Include="Engine\AI\Strategy.cs" />
+    <Compile Include="Engine\AI\US.cs" />
     <Compile Include="Engine\Camera.cs" />
     <Compile Include="Engine\Colliders\BoxCollider2D.cs" />
     <Compile Include="Engine\Colliders\CircleCollider.cs" />
@@ -140,15 +146,6 @@
     <Compile Include="Engine\Objects\Rigidbody.cs" />
     <Compile Include="Engine\Scene.cs" />
     <Compile Include="Engine\Manager\Animation\SpriteSheet.cs" />
-    <Compile Include="Games\PunchOut\Objects\Enemy.cs" />
-    <Compile Include="Games\PunchOut\Objects\EnemyPunch.cs" />
-    <Compile Include="Games\PunchOut\Objects\Player.cs" />
-    <Compile Include="Games\PunchOut\Objects\PlayerPunch.cs" />
-    <Compile Include="Games\PunchOut\PunchOut.cs" />
-    <Compile Include="Games\PunchOut\Scenes\POGame.cs" />
-    <Compile Include="Games\PunchOut\Scenes\POControls.cs" />
-    <Compile Include="Games\PunchOut\Scenes\POEndScreen.cs" />
-    <Compile Include="Games\PunchOut\Scenes\POIntro.cs" />
     <Compile Include="Games\Test\Objects\Player.cs" />
     <Compile Include="Games\Test\Scenes\TestMain.cs" />
     <Compile Include="Games\Test\TestGame.cs" />

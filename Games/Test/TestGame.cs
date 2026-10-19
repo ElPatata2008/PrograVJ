@@ -14,32 +14,11 @@ namespace PrograVJ.Games.Test
     {
         public TestGame(int w, int h, float fps, CameraType type) : base(w, h, fps, type)
         {
-            FontManager.Load("ByteBounce.ttf", "byte");
-
-            InputManager.Register("up", new List<Keys>() { Keys.Up, });
-            InputManager.Register("down", new List<Keys>() { Keys.Down, });
-            InputManager.Register("left", new List<Keys>() { Keys.Left, });
-            InputManager.Register("right", new List<Keys>() { Keys.Right, });
-            InputManager.Register("w", new List<Keys>() { Keys.W });
-            InputManager.Register("s", new List<Keys>() { Keys.S });
-            InputManager.Register("a", new List<Keys>() { Keys.A });
-            InputManager.Register("d", new List<Keys>() { Keys.D });
-
-            InputManager.Register("np8", new List<Keys>() { Keys.NumPad8 });
-            InputManager.Register("np2", new List<Keys>() { Keys.NumPad2 });
-            InputManager.Register("np4", new List<Keys>() { Keys.NumPad4 });
-            InputManager.Register("np6", new List<Keys>() { Keys.NumPad6 });
-
-            InputManager.Register("space", new List<Keys>() { Keys.Space });
-            InputManager.Register("enter", new List<Keys>() { Keys.Enter });
-            InputManager.Register("escape", new List<Keys>() { Keys.Escape });
-            InputManager.Register("z", new List<Keys>() { Keys.Z });
-            InputManager.Register("x", new List<Keys>() { Keys.X });
-
-            TextureManager.Load("red_balbing_roll.png", "rollRB");
-            TextureManager.Load("red_balbing_walk.png", "walkRB");
-            TextureManager.Load("red_balbing_dizzy.png", "dizzyRB");
-            TextureManager.Load("red_balbing_stand.png", "standRB");
+            
+            //TextureManager.Load("red_balbing_roll.png", "rollRB");
+            //TextureManager.Load("red_balbing_walk.png", "walkRB");
+            //TextureManager.Load("red_balbing_dizzy.png", "dizzyRB");
+            //TextureManager.Load("red_balbing_stand.png", "standRB");
 
 
             SceneManager.Register(new TestMain(c), "main");

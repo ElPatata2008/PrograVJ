@@ -1,4 +1,5 @@
-﻿using PrograVJ.Engine.Colliders;
+﻿using PrograVJ.Engine.AI;
+using PrograVJ.Engine.Colliders;
 using PrograVJ.Engine.Manager;
 using PrograVJ.GameObjects;
 using System;
@@ -45,21 +46,21 @@ namespace PrograVJ.Engine.Figures
         SpriteSheet spriteSheet;
         //Sprite sprite;
 
-        public Square(Vector3 position,
-                      Vector3 rotation,
-                      Vector3 size,
-                      Color color,
-                      Color fillColor,
-                      Collider collider = null,
-                      Rigidbody body = null,
-                      float borderWidth = 2f,
-                      Bitmap fillTexture = null,
-                      WrapMode mode = WrapMode.Clamp,
-                      int repeatTileX = 1, int repeatTileY = 1,
-                      AnimationController animationController = null
-            //SpriteSheet spriteSheet = null,
-            //Sprite sprite = null
-            ) : base(position, rotation, size, color, collider, body)
+        public Square(
+            Vector3 position,
+            Vector3 rotation,
+            Vector3 size,
+            Color color,
+            Color fillColor,
+            Collider collider = null,
+            Rigidbody body = null,
+            AIController controller = null,
+            float borderWidth = 2f,
+            Bitmap fillTexture = null,
+            WrapMode mode = WrapMode.Clamp,
+            int repeatTileX = 1,
+            int repeatTileY = 1,
+            AnimationController animationController = null) : base(position, rotation, size, color, collider, body, controller)
         {
             this.fillColor = fillColor;
             this.borderWidth = borderWidth;

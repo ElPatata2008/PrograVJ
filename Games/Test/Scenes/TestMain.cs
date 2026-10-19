@@ -1,4 +1,5 @@
 ﻿using PrograVJ.Engine;
+using PrograVJ.Engine.AI;
 using PrograVJ.Engine.Colliders;
 using PrograVJ.Engine.Figures;
 using PrograVJ.Engine.Manager;
@@ -16,8 +17,8 @@ namespace PrograVJ.Games.Test.Scenes
 {
     public class TestMain : Scene
     {
-        Square box1;
-        Stopwatch stopwatch = new Stopwatch();
+        //Square box1;
+        //Stopwatch stopwatch = new Stopwatch();
         //Square box2;
         //Square point;
         //Polygon circle;
@@ -27,24 +28,24 @@ namespace PrograVJ.Games.Test.Scenes
 
         public TestMain(Camera c) : base(c)
         {
-            Instantiate(box1 = new Square(
-                new Vector3(-200, 0, 0),
-                Vector3.Zero,
-                new Vector3(100, 100, 100),
-                Color.White, Color.Black, new BoxCollider2D(box1),
-                animationController: new AnimationController()
-            ));
+            //Instantiate(box1 = new Square(
+            //    new Vector3(-200, 0, 0),
+            //    Vector3.Zero,
+            //    new Vector3(100, 100, 100),
+            //    Color.White, Color.Black, new BoxCollider2D(box1),
+            //    animationController: new AnimationController()
+            //));
 
-            SpriteSheet walkRB = new SpriteSheet(TextureManager.Get("walkRB"), 32, 32, 0.3f, 5);
-            walkRB.AddEvent(2, () => Console.WriteLine("Step"));
-            walkRB.AddEvent(4, () => Console.WriteLine("Step"));
-            box1.animationController.AddAnimation("walk", walkRB);
+            //SpriteSheet walkRB = new SpriteSheet(TextureManager.Get("walkRB"), 32, 32, 0.3f, 5);
+            //walkRB.AddEvent(2, () => Console.WriteLine("Step"));
+            //walkRB.AddEvent(4, () => Console.WriteLine("Step"));
+            //box1.animationController.AddAnimation("walk", walkRB);
 
-            SpriteSheet standRB = new SpriteSheet(TextureManager.Get("standRB"), 32, 32, 0.1f, 19);
-            standRB.AddEvent(18, () => box1.animationController.Play("walk"));
-            box1.animationController.AddAnimation("stand", standRB);
+            //SpriteSheet standRB = new SpriteSheet(TextureManager.Get("standRB"), 32, 32, 0.1f, 19);
+            //standRB.AddEvent(18, () => box1.animationController.Play("walk"));
+            //box1.animationController.AddAnimation("stand", standRB);
 
-            SpriteSheet dizzyRB = new SpriteSheet(TextureManager.Get("dizzyRB"), 32, 32, 0.1f, 5);
+            //SpriteSheet dizzyRB = new SpriteSheet(TextureManager.Get("dizzyRB"), 32, 32, 0.1f, 5);
             //dizzyRB.AddEvent(0, () =>
             //{
 
@@ -56,13 +57,13 @@ namespace PrograVJ.Games.Test.Scenes
             //        break;
             //    }
             //});
-            dizzyRB.AddEvent(0, () => stopwatch.Start() );
-            box1.animationController.AddAnimation("dizzy", dizzyRB);
+            //dizzyRB.AddEvent(0, () => stopwatch.Start() );
+            //box1.animationController.AddAnimation("dizzy", dizzyRB);
 
-            SpriteSheet rollRB = new SpriteSheet(TextureManager.Get("rollRB"), 32, 32, 0.1f, 5);
-            box1.animationController.AddAnimation("roll", rollRB);
+            //SpriteSheet rollRB = new SpriteSheet(TextureManager.Get("rollRB"), 32, 32, 0.1f, 5);
+            //box1.animationController.AddAnimation("roll", rollRB);
 
-            box1.animationController.Play("walk");
+            //box1.animationController.Play("walk");
 
             //Instantiate(box2 = new Square(
             //    Vector3.Zero,
@@ -89,12 +90,13 @@ namespace PrograVJ.Games.Test.Scenes
             Instantiate(p = new Player(
                 new Vector3(0, -200, 0),
                 Vector3.Zero,
-                new Vector3(100, 100, 0),
+                Vector3.One * 50,
                 Color.White, Color.Black, new BoxCollider2D(p),
-                animationController: new AnimationController()
+                controller: new AIController(new Blackboard(), new FSM())
+                //animationController: new AnimationController()
             ));
 
-            SpriteSheet walkP = new SpriteSheet(TextureManager.Get("walkRB"), 32, 32, 0.3f, 5);
+            //SpriteSheet walkP = new SpriteSheet(TextureManager.Get("walkRB"), 32, 32, 0.3f, 5);
 
         }
 
@@ -106,12 +108,12 @@ namespace PrograVJ.Games.Test.Scenes
         {
             g.Clear(Color.Black);
             //circle.Draw(g, sceneCamera);
-            box1.Draw(g, sceneCamera);
+            //box1.Draw(g, sceneCamera);
             //box2.Draw(g, sceneCamera);
             //point.Draw(g, sceneCamera);
-            //p.Draw(g, sceneCamera);
+            p.Draw(g, sceneCamera);
 
-            //DrawingUtils.DrawCenterText(g, $"{p.score}", FontManager.Get("byte", 36), Color.White, new PointF(sceneCamera.size.X / 2, 10));
+            DrawingUtils.DrawCenterText(g, $"{p.score}", FontManager.Get("byte", 36), Color.White, new PointF(sceneCamera.size.X / 2, 10));
         }
 
         public override void ProcessInput() 
@@ -121,30 +123,35 @@ namespace PrograVJ.Games.Test.Scenes
                 SaveManager.Save("test.json");
                 Environment.Exit(0);
             }
+            if (InputManager.JustPressedInput("enter")) (p.controller.brain as FSM).ChangeState("MoveBorders");
+            if (InputManager.JustPressedInput("space")) (p.controller.brain as FSM).ChangeState("MoveCenter");
             //if (InputManager.JustPressedInput("space")) box1.animationController.Play("walk");
             //if (InputManager.JustPressedInput("z")) box1.animationController.Play("roll");
-            if (InputManager.JustPressedInput("x")) box1.animationController.Play("dizzy");
+            //if (InputManager.JustPressedInput("x")) box1.animationController.Play("dizzy");
         }
 
         public override void Update(float dt)
         {
-            box1.animationController.Update(dt);
+            p.controller.Update(dt);
+
+
+            //box1.animationController.Update(dt);
             //if (InputManager.GetInput("up")) box1.position.Y += speed * dt;
             //if (InputManager.GetInput("down")) box1.position.Y -= speed * dt;
             //if (InputManager.GetInput("left")) box1.position.X -= speed * dt;
             //if (InputManager.GetInput("right")) box1.position.X += speed * dt;
 
-            if (InputManager.GetInput("up")) box1.position.Y += speed * dt;
-            if (InputManager.GetInput("down")) box1.position.Y -= speed * dt;
-            if (InputManager.GetInput("left")) box1.position.X -= speed * dt;
-            if (InputManager.GetInput("right")) box1.position.X += speed * dt;
+            //if (InputManager.GetInput("up")) box1.position.Y += speed * dt;
+            //if (InputManager.GetInput("down")) box1.position.Y -= speed * dt;
+            //if (InputManager.GetInput("left")) box1.position.X -= speed * dt;
+            //if (InputManager.GetInput("right")) box1.position.X += speed * dt;
 
-            if (stopwatch.ElapsedMilliseconds / 1000 >= 2)
-            {
-                Console.WriteLine("Standing up!");
-                box1.animationController.Play("stand");
-                stopwatch.Reset();
-            }
+            //if (stopwatch.ElapsedMilliseconds / 1000 >= 2)
+            //{
+            //    Console.WriteLine("Standing up!");
+            //    box1.animationController.Play("stand");
+            //    stopwatch.Reset();
+            //}
 
             //if (InputManager.GetInput("np8")) circle.position.Y += speed * dt;
             //if (InputManager.GetInput("np2")) circle.position.Y -= speed * dt;

@@ -7,6 +7,8 @@ using System.Numerics;
 using System.Drawing;
 using PrograVJ.Engine;
 using PrograVJ.Engine.Colliders;
+using PrograVJ.Engine.AI;
+using System.Windows.Forms.VisualStyles;
 
 namespace PrograVJ.GameObjects
 {
@@ -18,12 +20,13 @@ namespace PrograVJ.GameObjects
         public Color color;
         public Collider collider;
         public Rigidbody body;
+        public AIController controller;
 
         private List<GameObject> collidingObjects = new List<GameObject>();
         private List<GameObject> prevCollidingObejcts = new List<GameObject>();
 
         public GameObject(Vector3 position, Vector3 rotation, Vector3 size, Color color, 
-            Collider collider = null, Rigidbody body = null)
+            Collider collider = null, Rigidbody body = null, AIController controller = null)
         {
             this.position = position;
             this.rotation = rotation;
@@ -33,6 +36,8 @@ namespace PrograVJ.GameObjects
             if (this.collider != null) this.collider.parent = this;
             this.body = body;
             if (this.body != null) this.body.parent = this;
+            this.controller = controller;
+            if (this.controller != null) this.controller.pawn = this;
         }
 
         public abstract void Update(float dt);
