@@ -34,6 +34,7 @@ namespace PrograVJ
             KeyUp += _KeyUpLogic;
             MouseUp += _MouseUp;
             MouseDown += _MouseDown;
+            MouseMove += _MouseMove;
         }
 
         public Graphics GetGraphics()
@@ -52,9 +53,6 @@ namespace PrograVJ
 
         public void _MouseUp(object sender, MouseEventArgs e) => InputManager.MouseUp(e.Button);
 
-        public void _MouseMove(object sender, MouseEventArgs e)
-        {
-            //Input
-        }
+        public void _MouseMove(object sender, MouseEventArgs e) => InputManager.MouseMove(e.Location);
     }
 }

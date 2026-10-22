@@ -16,6 +16,11 @@ namespace PrograVJ.Engine.Manager
 
         public static Dictionary<string, List<Keys>> controls = new Dictionary<string, List<Keys>>();
 
+        //public static List<MouseButtons> pressedButtons = new List<MouseButtons>();
+        //public static List<MouseButtons> justPressedBtn = new List<MouseButtons>();
+
+        //public static Dictionary<string, List<MouseButtons>> buttons = new Dictionary<string, List<MouseButtons>>();
+
         public static bool MBL;
         public static bool MBR;
         public static PointF MouseLocation;
@@ -24,6 +29,11 @@ namespace PrograVJ.Engine.Manager
         {
             if (!controls.ContainsKey(key)) controls[key] = controlList;
         }
+
+        //public static void RegisterMouseButton(string key, List<MouseButtons> buttonsList)
+        //{
+        //    if (!buttons)
+        //}
 
         public static bool GetInput(string key)
         {

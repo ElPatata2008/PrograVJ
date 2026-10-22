@@ -146,6 +146,13 @@
     <Compile Include="Engine\Objects\Rigidbody.cs" />
     <Compile Include="Engine\Scene.cs" />
     <Compile Include="Engine\Manager\Animation\SpriteSheet.cs" />
+    <Compile Include="Games\TerrariaBattleSimulator\Objects\MinionBoss1.cs" />
+    <Compile Include="Games\TerrariaBattleSimulator\Objects\PlayerBullet.cs" />
+    <Compile Include="Games\TerrariaBattleSimulator\TerrariaBattleSimulator.cs" />
+    <Compile Include="Games\TerrariaBattleSimulator\Objects\Boss1.cs" />
+    <Compile Include="Games\TerrariaBattleSimulator\Configuration.cs" />
+    <Compile Include="Games\TerrariaBattleSimulator\Objects\Player.cs" />
+    <Compile Include="Games\TerrariaBattleSimulator\Scenes\Boss1Battle.cs" />
     <Compile Include="Games\Test\Objects\Player.cs" />
     <Compile Include="Games\Test\Scenes\TestMain.cs" />
     <Compile Include="Games\Test\TestGame.cs" />

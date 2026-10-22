@@ -1,5 +1,7 @@
 ﻿using PrograVJ.Engine.Manager;
 using PrograVJ.Games;
+using PrograVJ.Games.Cuphead;
+
 //using PrograVJ.Games.PunchOut;
 
 //using PrograVJ.Games.Frogger;
@@ -42,8 +44,9 @@ namespace PrograVJ
 
             // Proyectos
             //Game mp = new MoonPatrol((int)resolution.X, (int)resolution.Y, 60, Engine.CameraType.Orthographic); mp.StartGame();
+            Game cuphead = new TerrariaBattleSimulator((int)resolution.X, (int)resolution.Y, 144, Engine.CameraType.Orthographic); cuphead.StartGame();
 
-            Game test = new TestGame((int)resolution.X, (int)resolution.Y, 120, Engine.CameraType.Orthographic); test.StartGame();
+            //Game test = new TestGame((int)resolution.X, (int)resolution.Y, 120, Engine.CameraType.Orthographic); test.StartGame();
             Application.Run();
         }
 
