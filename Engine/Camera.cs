@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PrograVJ.Engine.Manager;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -88,5 +89,12 @@ namespace PrograVJ.Engine
         }
 
         public Vector3 GetCameraPosition() => TransformPoint(position);
+
+        public Vector3 GetCursorOnWorld()
+        {
+            float camx = (InputManager.MouseLocation.X - Program.resolution.X / 2) / ((Program.resolution.X / size.X) * zoom);
+            float camy = (Program.resolution.Y / 2 - InputManager.MouseLocation.Y) / ((Program.resolution.Y / size.Y) * zoom);
+            return MathUtils.Rotate(new Vector3(camx, camy, 0), rotation) + position;
+        }
     }
 }

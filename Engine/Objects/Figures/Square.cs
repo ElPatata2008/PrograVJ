@@ -168,7 +168,7 @@ namespace PrograVJ.Engine.Figures
                     Vertex3D intersection = new Vertex3D
                     {
                         position = Vector3.Lerp(current.position, next.position, t),
-                        UV = Lerp(current.UV, next.UV, t)
+                        UV = MathUtils.LerpPointF(current.UV, next.UV, t)
                     };
                     output.Add(intersection);
                 }
@@ -177,7 +177,7 @@ namespace PrograVJ.Engine.Figures
             return output;
         }
 
-        private PointF Lerp(PointF a, PointF b, float t) => new PointF(a.X + (b.X - a.X) * t, a.Y + (b.Y - a.Y) * t);
+        
 
         private List<Vertex3D> TransformToViewSpace(Camera c)
         {

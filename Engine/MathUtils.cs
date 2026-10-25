@@ -11,13 +11,30 @@ namespace PrograVJ.Engine
 {
     public static class MathUtils
     {
-        //public static Point GetAxis(Vector3 v1, Vector3 v2)
-        //{
-        //    var edge = v2 - v1;
-        //    var perpendicular = (-edge.Y, edge.X);
-        //    var normalized = perpendicular / Math.Abs(perpendicular);
-        //    return normalized;
-        //}
+        public static float GetAngleFrom2Points(Vector3 a, Vector3 b)
+        {
+            float dx = b.X - a.X;
+            float dy = b.Y - a.Y;
+            double rad = Math.Atan2(dy, dx);
+            double deg = rad * (180.0 / Math.PI);
+            return (float)((deg < 0) ? deg += 360.0 : deg);
+        }
+        public static Vector2 GetDirectionFromAngle(float rotationZ)
+        {
+            double radians = rotationZ * (Math.PI / 180);
+
+            double x = Math.Cos(radians);
+            double y = Math.Sin(radians);
+
+            return new Vector2((float)x, (float)y);
+        }
+
+        public static float GetAngleFromDirection(float x, float y)
+        {
+            double rad = Math.Atan2(y, x);
+            double deg = rad * (180.0 / Math.PI);
+            return (float)(deg < 0 ? deg += 360.0f : deg);
+        }
 
         public static float Clamp(float value, float min, float max)
         {
@@ -25,6 +42,20 @@ namespace PrograVJ.Engine
             if (value > max) value = max;
             return value;
         }
+
+        public static PointF LerpPointF(PointF a, PointF b, float t) 
+            => new PointF(
+                a.X + (b.X - a.X) * t, 
+                a.Y + (b.Y - a.Y) * t
+            );
+        public static Vector3 LerpVector3(Vector3 a, Vector3 b, float t) 
+            => new Vector3(
+                a.X + (b.X - a.X) * t, 
+                a.Y + (b.Y - a.Y) * t,
+                a.Z + (b.Z - a.Z) * t
+            );
+        public static float Lerp(float a, float b, float t) => a + (b - a) * t;
+               
 
         public static float Dot(Vector3 a, Vector3 b)
         {
@@ -67,15 +98,5 @@ namespace PrograVJ.Engine
         }
 
         public static Vector3 Translate(Vector3 src, Vector3 translate) => src + translate;
-
-        public static Vector2 GetAngle2D(float rotationZ)
-        {
-            double radians = rotationZ * (Math.PI / 180);
-
-            double x = Math.Cos(radians);
-            double y = Math.Sin(radians);
-
-            return new Vector2((float)x, (float)y);
-        }
     }
 }

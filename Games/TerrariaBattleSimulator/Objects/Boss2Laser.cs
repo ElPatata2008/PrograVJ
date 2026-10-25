@@ -1,0 +1,22 @@
+﻿using PrograVJ.Engine;
+using PrograVJ.Engine.AI;
+using PrograVJ.Engine.Colliders;
+using PrograVJ.Engine.Manager;
+using PrograVJ.GameObjects;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Linq;
+using System.Numerics;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
+{
+    public class Boss2Laser : Proyectile
+    {
+        public Boss2Laser(Vector3 position, Vector3 rotation, Vector3 size, Color color, Color fillColor, int dmg, float critChance, float speed, Collider collider = null, Rigidbody body = null, AIController controller = null, float borderWidth = 2, Bitmap fillTexture = null, WrapMode mode = WrapMode.Clamp, int repeatTileX = 1, int repeatTileY = 1, AnimationController animationController = null) : base(position, rotation, size, color, fillColor, dmg, critChance, speed, collider, body, controller, borderWidth, fillTexture, mode, repeatTileX, repeatTileY, animationController)
+        { }
+    }
+}

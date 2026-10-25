@@ -1,4 +1,5 @@
-﻿using PrograVJ.Engine;
+﻿using NAudio.Wave;
+using PrograVJ.Engine;
 using PrograVJ.Engine.AI;
 using PrograVJ.Engine.Colliders;
 using PrograVJ.Engine.Figures;
@@ -9,24 +10,24 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PrograVJ.Games.Cuphead.Objects
+namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
 {
-    public class Phase1JumpState : FSMState
+    public class JumpState : FSMState
     {
-        Stopwatch sw = new Stopwatch();
-        float hSpeed = 50f;
+        float jumpTimer = 0;
+        float hSpeed = 100f;
         Random rnd = new Random();
-        int dir = 1;
-        public Phase1JumpState(AIController controller) : base(controller) { }
+        public JumpState(AIController controller) : base(controller) { }
 
         public override void OnEnter() {  }
 
-        public override void OnExit() { sw.Reset(); }
+        public override void OnExit() { jumpTimer = 0; }
 
         public override void Update(float deltaTime)
         {
@@ -34,55 +35,65 @@ namespace PrograVJ.Games.Cuphead.Objects
             {
                 if (pawn.isGrounded)
                 {
-                    sw.Start();
-                    if (sw.ElapsedMilliseconds / 1000 > 1)
+                    jumpTimer += deltaTime;
+                    float percent = (float)pawn.hp / pawn.maxHp;
+                    float cd = MathUtils.Lerp(0.1f, 1f, percent);
+                    if (jumpTimer > cd)
                     {
-                        sw.Reset();
-                        pawn.body.velocity = Vector3.Zero;
-                        pawn.body.type = RigidbodyType.Dynamic;
-                        pawn.body.AddImpulse(0, (pawn.jumpCount % 3 == 2) ? 500f : 350f, 0);
+                        jumpTimer = 0;
+                        pawn.body.gravityScale = 1;
                         pawn.isGrounded = false;
+                        float jumpStrenghtX = rnd.NextDouble() < 0.33 ? hSpeed * 2f : hSpeed;
+                        float finalJumpX = pawn.facingRight ? jumpStrenghtX : -jumpStrenghtX;
+                        float clampedPercent = MathUtils.Clamp(percent, 0.75f, 1f);
+                        float jumpStrenghtY = ((pawn.jumpCount % 3 == 2) ? 500f : 350f) * clampedPercent;
+                        pawn.body.AddImpulse(finalJumpX, jumpStrenghtY, 0);
                         pawn.jumpCount++;
-                        dir = pawn.facingRight ? 1 : -1;
                     }
-                }
-                else
-                {
-                    float jumpSpeed = rnd.NextDouble() < 0.33 ? hSpeed * 2f : hSpeed;
-                    pawn.position.X += jumpSpeed * dir * deltaTime;
                 }
             }
         }
     }
 
-    public class Phase1AttackState : FSMState
+    public class AttackState : FSMState
     {
-        Stopwatch sw = new Stopwatch();
+        float timer = 0;
+        bool attacked = false;
         
-        public Phase1AttackState(AIController controller) : base(controller) { }
+        public AttackState(AIController controller) : base(controller) { }
 
-        public override void OnEnter() { sw.Start(); (controller.pawn as Boss1).fillColor = Color.Orange; }
+        public override void OnEnter() { (controller.pawn as Boss1).fillColor = Color.Orange; }
 
-        public override void OnExit() { sw.Reset(); (controller.pawn as Boss1).fillColor = Color.White; }
+        public override void OnExit() { timer = 0; attacked = false;
+            (controller.pawn as Boss1).fillColor = Color.DeepSkyBlue; 
+        }
 
         public override void Update(float deltaTime)
         {
-            Boss1 pawn = controller.pawn as Boss1;
-            if (sw.ElapsedMilliseconds / 1000 > 3)
+            if (controller.pawn is Boss1 pawn)
             {
-
+                timer += deltaTime;
+                if (!attacked && timer > 2)
+                {
+                    attacked = true;
+                    pawn.attack = true;
+                }
+                if (timer > 4) (controller.brain as FSM).ChangeState("Jump");
             }
         }
     }
 
-    public class Boss1 : Square
+    public class Boss1 : Enemy
     {
-        public int hp;
-        public int dmg;
         public bool isGrounded = false;
         public int jumpCount = 0;
         public bool facingRight = false;
-        bool attacked = false;
+        public float spawnChance = 0.05f;
+        public bool spawnEnemy = false;
+        public bool attack = false;
+        Random rnd = new Random();
+        Vector3 initSize;
+        Vector3 minSize;
 
         public Boss1(Vector3 position,
                      Vector3 rotation,
@@ -100,37 +111,97 @@ namespace PrograVJ.Games.Cuphead.Objects
                      AnimationController animationController = null
             ) : base(position, rotation, size, color, fillColor, collider, body, controller, borderWidth, fillTexture, mode, repeatTileX, repeatTileY, animationController)
         {
+
+            initSize = size;
+            minSize = size / 2;
             switch (TerrariaBattleSimulator.config.difficulty) {
                 case 0: { SetStats(2000, 40); } break;
                 case 1: { SetStats(2800, 64); } break;
                 case 2: { SetStats(3570, 96); } break;
             }
-            Console.WriteLine($"HP: {hp}, DMG: {dmg}");
                 
-            if (controller.brain is FSM fsm)
-            {
-                fsm.AddState("Phase1Jump", new Phase1JumpState(controller));
-                fsm.AddState("Phase1Attack", new Phase1AttackState(controller));
+            if (controller.brain is FSM fsm) {
+                fsm.AddState("Jump", new JumpState(controller));
+                fsm.AddState("Attack", new AttackState(controller));
             }
         }
-        private void SetStats(int hp, int dmg) { this.hp = hp; this.dmg = dmg; }
 
         public override void Update(float dt)
         {
-            FSM fsm = controller.brain as FSM;
-            controller.brain.Update(dt);
-            if (position.X - size.X / 2 < -400) facingRight = true;
-            if (position.X + size.X / 2 >  400) facingRight = false;
+            base.Update(dt);
 
-            //if (jumpCount == 3) fsm.ChangeState("Phase1Jump");
-            //if ()
+            spawnChance = getChance(0.05f, 0.25f);
+            size = ChangeSize();
+
+            facingRight = playerPos.X > position.X;
+
+            if (isGrounded && jumpCount == 6) {
+                fsm.ChangeState("Attack");
+                jumpCount = 0;
+            }
 
             if (position.Y - size.Y / 2 < -200)
             {
                 position.Y = -200 + size.Y / 2;
-                body.type = RigidbodyType.Static;
+                body.velocity = Vector3.Zero;
                 isGrounded = true;
+                body.gravityScale = 0;
             }
+        }
+
+        private float getChance(float pMin, float pHalf)
+        {
+            if (hp <= maxHp / 2) return pHalf;
+            float slope = 2 * (pHalf - pMin);
+            float intersection = pMin + slope;
+            return intersection - (slope * ((float)hp / maxHp));
+        }
+
+        private Vector3 ChangeSize()
+        {
+            float hpPercent = (float)hp / maxHp;
+            hpPercent = MathUtils.Clamp(hpPercent, 0, 1);
+            Vector3 newSize = MathUtils.LerpVector3(minSize, initSize, hpPercent);
+            if (isGrounded) position.Y = -200 + newSize.Y / 2;
+            return newSize;
+        }
+
+        public MinionBoss1 SpawnMinion()
+        {
+            bool spiked = rnd.NextDouble() < 0.25;
+            MinionBoss1 minion = new MinionBoss1(
+                position, rotation,
+                new Vector3(30, 20, 0),
+                Color.Black, spiked ? Color.CadetBlue : Color.Blue, spiked,
+                body: new Rigidbody(RigidbodyType.Dynamic, 50, 1),
+                controller: new AIController(controller.bb, new FSM())
+                //animationController: new AnimationController()
+            );
+            minion.SetCollision();
+            Vector2 dir = MathUtils.GetDirectionFromAngle(rnd.Next(20, 90)) * 500f;
+            dir.X *= facingRight ? 1 : -1;
+            minion.body.AddImpulse(dir.X, dir.Y, 0);
+            return minion;
+        }
+
+        public List<Boss1Spike> Attack()
+        {
+            List<Boss1Spike> spikes = new List<Boss1Spike>();
+            for (int i = -6; i < 6; i++)
+            {
+                Boss1Spike s = new Boss1Spike(
+                    position,
+                    new Vector3(0, 0, 18 * (i + 5)),
+                    new Vector3(10, 5, 0),
+                    Color.Black, Color.BlueViolet,
+                    dmg * 2, 0, 250f * (1 + Math.Abs(i) / 10)
+                )
+                { rotSpeed = 45f / Math.Abs(i) };
+                s.SetCol();
+                spikes.Add(s);
+            }
+            Console.WriteLine("Attacked");
+            return spikes;
         }
     }
 }
