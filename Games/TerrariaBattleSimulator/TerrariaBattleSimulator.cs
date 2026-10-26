@@ -21,6 +21,10 @@ namespace PrograVJ.Games.TerrariaBattleSimulator
             TextureManager.Load("boss2phase1.png", "boss2phase1");
             TextureManager.Load("boss2phase2.png", "boss2phase2");
             TextureManager.Load("minionBoss2.png", "minionBoss2");
+            TextureManager.Load("boss1Jump.png", "boss1jump");
+            TextureManager.Load("boss1idle.png", "boss1idle");
+            TextureManager.Load("boss1attackCharge.png", "boss1attackCharge");
+            TextureManager.Load("boss1attackRelease.png", "boss1attackRelease");
 
             AudioManager.LoadSFX("metalEnemyHit.wav", "meHit");
             AudioManager.LoadSFX("metalEnemyKill.wav", "meKill");

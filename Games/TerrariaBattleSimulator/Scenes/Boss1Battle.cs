@@ -10,12 +10,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Numerics;
+using System.Threading.Tasks;
 
 namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
 {
     public class Boss1Battle : Battle
     {
-        //float ground = -200f;
+        bool explode = false;
+        Random rnd = new Random();
         public Boss1Battle(Camera c) : base(c)
         {
             Instantiate(boss = new Boss1(
@@ -25,7 +27,8 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
                 Color.Black, Color.DeepSkyBlue,
                 new BoxCollider2D(boss),
                 new Rigidbody(RigidbodyType.Dynamic, 50, 1),
-                new AIController(bb, new FSM())
+                new AIController(bb, new FSM()),
+                animationController: new AnimationController()
             ));
         }
 
@@ -43,25 +46,22 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
         public override void ProcessInput()
         {
             base.ProcessInput();
+
         }
 
         public override void Update(float dt)
         {
             base.Update(dt);
 
-            if (!bossDefeated)
-            {
-                if (boss is Boss1 b)
-                {
-                    if (b.spawnEnemy)
-                    {
-                        MinionBoss1 m = b.SpawnMinion();
+            if (!bossDefeated) {
+                if (boss is Boss1 b) {
+                    if (b.spawnEnemy) {
+                        MinionBoss1 m = b.SpawnMinion(MathUtils.GetDirectionFromAngle(rnd.Next(20, 90)) * 500f, true);
                         Instantiate(m);
                         minions.Add(m);
                         b.spawnEnemy = false;
                     }
-                    if (b.attack)
-                    {
+                    if (b.attack) {
                         List<Boss1Spike> spikes = b.Attack();
                         foreach(Boss1Spike s in spikes) {
                             Instantiate(s);
@@ -69,6 +69,15 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
                         }
                         b.attack = false;
                     }
+                }
+            }
+
+            if (bossDefeated && !explode) {
+                explode = true;
+                for (int i = 0; i < 10; i++) {
+                    MinionBoss1 m = (boss as Boss1).SpawnMinion(MathUtils.GetDirectionFromAngle(rnd.Next(50, 130)) * 400f, false);
+                    Instantiate(m);
+                    minions.Add(m);
                 }
             }
 

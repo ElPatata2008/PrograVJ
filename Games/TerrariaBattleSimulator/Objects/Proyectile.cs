@@ -33,6 +33,11 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
 
         public override void Update(float dt)
         {
+            if (position.Y - size.Y / 2 < -200) {
+                landed = true;
+                return;
+            }
+
             Vector2 dir = MathUtils.GetDirectionFromAngle(rotation.Z);
             position += new Vector3(dir.X, dir.Y, 0) * speed * dt;
             expire += dt;

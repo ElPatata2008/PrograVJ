@@ -28,8 +28,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
         public Battle(Camera c) : base(c)
         {
             Instantiate(p = new Player(
-                Vector3.Zero,
-                Vector3.Zero,
+                Vector3.Zero, Vector3.Zero,
                 new Vector3(25, 50, 0),
                 Color.Black, Color.White,
                 new BoxCollider2D(p),
@@ -44,7 +43,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
             );
         }
 
-        public override void Init() { }
+        public override void Init() {}
 
         public override void PaintScreen(Graphics g)
         {
@@ -55,6 +54,13 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
             if (!bossDefeated) boss.Draw(g, sceneCamera);
             if (minions.Count > 0) foreach (Enemy m in minions) m.Draw(g, sceneCamera);
             p.Draw(g, sceneCamera);
+
+            if (!bossDefeated) {
+                float hpLeft = (float)boss.hp / (float)boss.maxHp;
+                Point hpPos = new Point((int)(sceneCamera.size.X / 2 - 300), (int)(sceneCamera.size.Y - 100));
+                g.FillRectangle(Brushes.Red, new RectangleF(hpPos.X, hpPos.Y, 600f * hpLeft, 40));
+                g.DrawRectangle(new Pen(Brushes.Black, 4f), new Rectangle(hpPos.X, hpPos.Y, 600, 40));
+            }
         }
 
         public override void ProcessInput()
@@ -71,10 +77,8 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
             if (!bossDefeated) boss.UpdatePlayerPos(p.position);
             foreach (Enemy minion in minions) minion.UpdatePlayerPos(p.position);
 
-            if (InputManager.MBL)
-            {
-                if (p.attackDelay > p.firerate)
-                {
+            if (InputManager.MBL) {
+                if (p.attackDelay > p.firerate) {
                     PlayerBullet b = p.Shoot(sceneCamera);
                     Instantiate(b);
                     bullets.Add(b);
@@ -91,24 +95,20 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
 
             foreach (Enemy m in minions) if (m.hp < 1) removeList.Add(m);
 
-            foreach (GameObject go in removeList)
-            {
+            foreach (GameObject go in removeList) {
                 if (go is Proyectile b) bullets.Remove(b);
                 if (go is Enemy e) minions.Remove(e);
                 Destroy(go);
             }
             removeList.Clear();
 
-            if (!bossDefeated)
-            {
-                if (boss.hp < 1)
-                {
+            if (!bossDefeated) {
+                if (boss.hp < 1) {
                     bossDefeated = true;
                     AudioManager.PlayMusic("title", true, 5000);
                     Destroy(boss);
                 }
             }
-
 
             bool followPlayer = p.position.Y > -50;
             sceneCamera.position = new Vector3(p.position.X, followPlayer ? p.position.Y : -50, sceneCamera.position.Z);

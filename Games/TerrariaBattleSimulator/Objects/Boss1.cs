@@ -49,6 +49,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
                         float jumpStrenghtY = ((pawn.jumpCount % 3 == 2) ? 500f : 350f) * clampedPercent;
                         pawn.body.AddImpulse(finalJumpX, jumpStrenghtY, 0);
                         pawn.jumpCount++;
+                        pawn.animationController.Play("jump");
                     }
                 }
             }
@@ -62,10 +63,10 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
         
         public AttackState(AIController controller) : base(controller) { }
 
-        public override void OnEnter() { (controller.pawn as Boss1).fillColor = Color.Orange; }
+        public override void OnEnter() { (controller.pawn as Boss1).animationController.Play("attackCharge"); }
 
         public override void OnExit() { timer = 0; attacked = false;
-            (controller.pawn as Boss1).fillColor = Color.DeepSkyBlue; 
+            (controller.pawn as Boss1).release = false; 
         }
 
         public override void Update(float deltaTime)
@@ -73,12 +74,12 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
             if (controller.pawn is Boss1 pawn)
             {
                 timer += deltaTime;
-                if (!attacked && timer > 2)
-                {
+                if (!attacked && timer > 2) {
                     attacked = true;
                     pawn.attack = true;
+                    pawn.animationController.Play("attackRelease");
                 }
-                if (timer > 4) (controller.brain as FSM).ChangeState("Jump");
+                if (pawn.release) (controller.brain as FSM).ChangeState("Jump");
             }
         }
     }
@@ -94,21 +95,10 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
         Random rnd = new Random();
         Vector3 initSize;
         Vector3 minSize;
+        private int width = 48, height = 32;
+        public bool release = false;
 
-        public Boss1(Vector3 position,
-                     Vector3 rotation,
-                     Vector3 size,
-                     Color color,
-                     Color fillColor,
-                     Collider collider = null,
-                     Rigidbody body = null,
-                     AIController controller = null,
-                     float borderWidth = 2,
-                     Bitmap fillTexture = null,
-                     WrapMode mode = WrapMode.Clamp,
-                     int repeatTileX = 1,
-                     int repeatTileY = 1,
-                     AnimationController animationController = null
+        public Boss1(Vector3 position, Vector3 rotation, Vector3 size, Color color, Color fillColor, Collider collider = null, Rigidbody body = null, AIController controller = null, float borderWidth = 2, Bitmap fillTexture = null, WrapMode mode = WrapMode.Clamp, int repeatTileX = 1, int repeatTileY = 1, AnimationController animationController = null
             ) : base(position, rotation, size, color, fillColor, collider, body, controller, borderWidth, fillTexture, mode, repeatTileX, repeatTileY, animationController)
         {
 
@@ -124,11 +114,27 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
                 fsm.AddState("Jump", new JumpState(controller));
                 fsm.AddState("Attack", new AttackState(controller));
             }
+
+            SpriteSheet idle = new SpriteSheet(TextureManager.Get("boss1idle"), width, height, 0.15f, 5);
+            animationController.AddAnimation("idle", idle);
+
+            SpriteSheet jump = new SpriteSheet(TextureManager.Get("boss1jump"), width, height, 0.15f, 2);
+            animationController.AddAnimation("jump", jump);
+
+            SpriteSheet attackCharge = new SpriteSheet(TextureManager.Get("boss1attackCharge"), width, height, 0.15f, 4);
+            animationController.AddAnimation("attackCharge", attackCharge);
+
+            SpriteSheet attackRelease = new SpriteSheet(TextureManager.Get("boss1attackRelease"), width, height, 0.15f, 9);
+            attackRelease.AddEvent(8, () => release = true);
+            animationController.AddAnimation("attackRelease", attackRelease);
+
+            animationController.Play("idle");
         }
 
         public override void Update(float dt)
         {
             base.Update(dt);
+            animationController.Update(dt);
 
             spawnChance = getChance(0.05f, 0.25f);
             size = ChangeSize();
@@ -146,6 +152,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
                 body.velocity = Vector3.Zero;
                 isGrounded = true;
                 body.gravityScale = 0;
+                animationController.Play("idle");
             }
         }
 
@@ -166,7 +173,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
             return newSize;
         }
 
-        public MinionBoss1 SpawnMinion()
+        public MinionBoss1 SpawnMinion(Vector2 dir, bool facing)
         {
             bool spiked = rnd.NextDouble() < 0.25;
             MinionBoss1 minion = new MinionBoss1(
@@ -178,8 +185,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
                 //animationController: new AnimationController()
             );
             minion.SetCollision();
-            Vector2 dir = MathUtils.GetDirectionFromAngle(rnd.Next(20, 90)) * 500f;
-            dir.X *= facingRight ? 1 : -1;
+            if (facing) dir.X *= facingRight ? 1 : -1;
             minion.body.AddImpulse(dir.X, dir.Y, 0);
             return minion;
         }
