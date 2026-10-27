@@ -84,8 +84,10 @@ namespace PrograVJ.Engine.Manager
             {
                 Vector3 localP = MathUtils.Rotate(p.position - box.position, -box.rotation);
 
-                bool inBoundsX = localP.X <= box.position.X + box.size.X / 2 && localP.X >= box.position.X - box.size.X / 2;
-                bool inBoundsY = localP.Y <= box.position.Y + box.size.Y / 2 && localP.Y >= box.position.Y - box.size.Y / 2;
+                bool inBoundsX = localP.X <= + box.size.X / 2 
+                              && localP.X >= - box.size.X / 2;
+                bool inBoundsY = localP.Y <= + box.size.Y / 2 
+                              && localP.Y >= - box.size.Y / 2;
                 return inBoundsX && inBoundsY;
             }
             if (c is CircleCollider2D circle)

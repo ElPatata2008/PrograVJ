@@ -10,21 +10,45 @@ using System.Threading.Tasks;
 
 namespace PrograVJ.Games.TerrariaBattleSimulator
 {
-    public class TerrariaBattleSimulator : Game
+    public class TBS : Game
     {
         public static Configuration config = new Configuration();
-        public TerrariaBattleSimulator(int w, int h, float fps, CameraType type) : base(w, h, fps, type)
+        public TBS(int w, int h, float fps, CameraType type) : base(w, h, fps, type)
         {
             SaveManager.Load("config.json");
             AudioManager.InitMixer();
 
-            TextureManager.Load("boss2phase1.png", "boss2phase1");
-            TextureManager.Load("boss2phase2.png", "boss2phase2");
-            TextureManager.Load("minionBoss2.png", "minionBoss2");
+            // Boss 1
             TextureManager.Load("boss1Jump.png", "boss1jump");
             TextureManager.Load("boss1idle.png", "boss1idle");
             TextureManager.Load("boss1attackCharge.png", "boss1attackCharge");
             TextureManager.Load("boss1attackRelease.png", "boss1attackRelease");
+
+            // Boss 2
+            TextureManager.Load("boss2phase1.png", "boss2phase1");
+            TextureManager.Load("boss2phase2.png", "boss2phase2");
+            TextureManager.Load("minionBoss2.png", "minionBoss2");
+
+            // Accesories
+            TextureManager.Load("Tabi.png", "tabi");
+            TextureManager.Load("Cloud_in_a_Bottle.png", "ciab");
+            TextureManager.Load("Anklet_of_the_Wind.png", "aotw");
+            TextureManager.Load("Panic_Necklace.png", "panl");
+            TextureManager.Load("Band_of_Regeneration.png", "breg");
+            TextureManager.Load("Shackle.png", "shak");
+            TextureManager.Load("Cross_Necklace.png", "cros");
+            TextureManager.Load("Putrid_Scent.png", "scen");
+
+            // Weapons
+            TextureManager.Load("The_Undertaker.png", "undertaker");
+            TextureManager.Load("Musket.png", "musket");
+            TextureManager.Load("Minishark.png", "minishark");
+            TextureManager.Load("Vortex_Beater.png", "vortex");
+
+            // Difficulties
+            TextureManager.Load("classic.png", "classic");
+            TextureManager.Load("expert.png", "expert");
+            TextureManager.Load("master.png", "master");
 
             AudioManager.LoadSFX("metalEnemyHit.wav", "meHit");
             AudioManager.LoadSFX("metalEnemyKill.wav", "meKill");
@@ -41,10 +65,13 @@ namespace PrograVJ.Games.TerrariaBattleSimulator
             AudioManager.LoadMusic("boss2.mp3", "boss2");
             AudioManager.LoadMusic("boss1.mp3", "boss1");
 
+            SceneManager.Register(new WeaponSelection(c), "weaponSelection");
+            SceneManager.Register(new AccessorySelection(c), "accessorySelection");
+            SceneManager.Register(new BattleSelection(c), "battleSelection");
             SceneManager.Register(new Boss1Battle(c), "boss1");
             SceneManager.Register(new Boss2Battle(c), "boss2");
 
-            SceneManager.SetActive("boss2");
+            SceneManager.SetActive("weaponSelection");
         }
     }
 }

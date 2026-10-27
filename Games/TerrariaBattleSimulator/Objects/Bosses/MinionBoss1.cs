@@ -90,12 +90,6 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
             Collider collider = null, Rigidbody body = null, AIController controller = null, float borderWidth = 2, Bitmap fillTexture = null, WrapMode mode = WrapMode.Clamp, int repeatTileX = 1, int repeatTileY = 1, AnimationController animationController = null) : base(position, rotation, size, color, fillColor, collider, body, controller, borderWidth, fillTexture, mode, repeatTileX, repeatTileY, animationController)
         {
             this.spiked = spiked;
-            switch(TerrariaBattleSimulator.config.difficulty)
-            {
-                case 0: SetStats(spiked ?  50 : 25, spiked ? 14 :  7); break;
-                case 1: SetStats(spiked ? 100 : 50, spiked ? 28 : 14); break;
-                case 2: SetStats(spiked ? 150 : 75, spiked ? 42 : 21); break;
-            }
             if (controller.brain is FSM fsm)
             {
                 fsm.AddState("Move", new MoveState(controller));
@@ -103,6 +97,15 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
             }
         }
         public void SetCollision() => collider = new BoxCollider2D(this);
+        public override void InitStats()
+        {
+            switch (TBS.config.difficulty)
+            {
+                case 0: SetStats(spiked ? 50 : 25, spiked ? 14 : 7); break;
+                case 1: SetStats(spiked ? 100 : 50, spiked ? 28 : 14); break;
+                case 2: SetStats(spiked ? 150 : 75, spiked ? 42 : 21); break;
+            }
+        }
 
         public override void Update(float dt)
         {

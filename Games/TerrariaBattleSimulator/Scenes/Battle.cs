@@ -12,6 +12,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
 {
@@ -43,7 +44,32 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
             );
         }
 
-        public override void Init() {}
+        public override void Init() {
+            boss.InitStats();
+            switch (TBS.config.weapon)
+            {
+                case 0: p.SetGunStats(26, 2, 0.33f); break; // Undertaker
+                case 1: p.SetGunStats(38, 0, 0.53f); p.critChance += 0.08f; break; // Musket
+                case 2: p.SetGunStats(13, 4, 0.13f); break; // Minishark
+                case 3: p.SetGunStats(57, 4, 0.083f); break;
+            }
+            if (TBS.config.equipment[2]) {
+                p.speed *= 1.1f;
+                p.maxSpeed *= 1.1f;
+            }
+            if (TBS.config.equipment[3]) {
+                p.panicSpeed = p.speed * 2;
+                p.panicMaxSpeed = p.maxSpeed * 2;
+            }
+            if (TBS.config.equipment[4]) p.regen += 1;
+            if (TBS.config.equipment[5]) p.defense += 1;
+            if (TBS.config.equipment[6]) p.maxiFrames *= 2;
+            if (TBS.config.equipment[7]){
+                float newDamage = p.gunDamage * 1.1f;
+                p.gunDamage = (int)newDamage;
+                Console.WriteLine($"Gun Damage | {p.gunDamage}");
+            }
+        }
 
         public override void PaintScreen(Graphics g)
         {
@@ -54,6 +80,10 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
             if (!bossDefeated) boss.Draw(g, sceneCamera);
             if (minions.Count > 0) foreach (Enemy m in minions) m.Draw(g, sceneCamera);
             p.Draw(g, sceneCamera);
+            if (p.panic)
+            {
+                g.DrawString($"PANIC! | {5f - p.panicTimer}", FontManager.Get("andyBold", 26), Brushes.Black, new PointF(50, -200));
+            }
 
             if (!bossDefeated) {
                 float hpLeft = (float)boss.hp / (float)boss.maxHp;
@@ -74,6 +104,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
 
         public override void Update(float dt)
         {
+            Cursor.Show();
             if (!bossDefeated) boss.UpdatePlayerPos(p.position);
             foreach (Enemy minion in minions) minion.UpdatePlayerPos(p.position);
 

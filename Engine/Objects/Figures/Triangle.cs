@@ -43,7 +43,7 @@ namespace PrograVJ.Engine.Figures
             g.DrawPolygon(new Pen(new SolidBrush(color), 2f), screenPoints);
         }
 
-        public override void OnColiisionStay(GameObject c) { }
+        public override void OnCollisionStay(GameObject c) { }
 
         public override void OnCollisionEnter(GameObject c) { }
 

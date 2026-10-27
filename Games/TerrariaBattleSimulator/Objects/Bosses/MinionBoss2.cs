@@ -25,16 +25,17 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
         {
             if (phase2) { rotSpeed = 135f; moveSpeed = 150f;   maxSpeed = 200f; }
             else        { rotSpeed = 90f; moveSpeed = 75f; maxSpeed = 150f; }
-
-            switch (TerrariaBattleSimulator.config.difficulty)
+        }
+        public void SetCollision() => collider = new CircleCollider2D(this);
+        public override void InitStats()
+        {
+            switch (TBS.config.difficulty)
             {
                 case 0: SetStats(8, 12); break;
                 case 1: SetStats(12, 24); break;
                 case 2: SetStats(15, 36); break;
             }
-
         }
-        public void SetCollision() => collider = new CircleCollider2D(this);
 
         public override void Update(float dt)
         {

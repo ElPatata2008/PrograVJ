@@ -104,11 +104,6 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
 
             initSize = size;
             minSize = size / 2;
-            switch (TerrariaBattleSimulator.config.difficulty) {
-                case 0: { SetStats(2000, 40); } break;
-                case 1: { SetStats(2800, 64); } break;
-                case 2: { SetStats(3570, 96); } break;
-            }
                 
             if (controller.brain is FSM fsm) {
                 fsm.AddState("Jump", new JumpState(controller));
@@ -125,10 +120,20 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
             animationController.AddAnimation("attackCharge", attackCharge);
 
             SpriteSheet attackRelease = new SpriteSheet(TextureManager.Get("boss1attackRelease"), width, height, 0.15f, 9);
-            attackRelease.AddEvent(8, () => release = true);
+            attackRelease.AddEvent(7, () => release = true);
             animationController.AddAnimation("attackRelease", attackRelease);
 
             animationController.Play("idle");
+        }
+
+        public override void InitStats()
+        {
+            switch (TBS.config.difficulty)
+            {
+                case 0: { SetStats(2000, 40); } break;
+                case 1: { SetStats(2800, 64); } break;
+                case 2: { SetStats(3570, 96); } break;
+            }
         }
 
         public override void Update(float dt)
@@ -169,7 +174,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
             float hpPercent = (float)hp / maxHp;
             hpPercent = MathUtils.Clamp(hpPercent, 0, 1);
             Vector3 newSize = MathUtils.LerpVector3(minSize, initSize, hpPercent);
-            if (isGrounded) position.Y = -200 + newSize.Y / 2;
+            if (isGrounded) position.Y = -200 + newSize.Y / 2 + 1;
             return newSize;
         }
 
@@ -184,6 +189,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
                 controller: new AIController(controller.bb, new FSM())
                 //animationController: new AnimationController()
             );
+            minion.InitStats();
             minion.SetCollision();
             if (facing) dir.X *= facingRight ? 1 : -1;
             minion.body.AddImpulse(dir.X, dir.Y, 0);

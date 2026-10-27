@@ -205,7 +205,7 @@ namespace PrograVJ.Games.Test.Objects
             }
         }
 
-        public override void OnColiisionStay(GameObject c)
+        public override void OnCollisionStay(GameObject c)
         {
             if (c is Square square) square.fillColor = Color.Red;
             if (c is Polygon circle) circle.fillColor = Color.Blue;

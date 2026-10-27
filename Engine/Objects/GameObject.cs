@@ -44,7 +44,7 @@ namespace PrograVJ.GameObjects
         public abstract void Draw(Graphics g, Camera c);
 
         public bool isColliding(GameObject other) { return collider.isColliding(other.collider); }
-        public abstract void OnColiisionStay(GameObject c);
+        public abstract void OnCollisionStay(GameObject c);
         public abstract void OnCollisionEnter(GameObject c);
         public abstract void OnCollisionExit(GameObject c);
         public void PhysicsUpdate(float dt, List<GameObject> candidates)
@@ -57,7 +57,7 @@ namespace PrograVJ.GameObjects
                 if (isColliding(c))
                 {
                     collidingObjects.Add(c);
-                    if (prevCollidingObejcts.Contains(c)) OnColiisionStay(c);
+                    if (prevCollidingObejcts.Contains(c)) OnCollisionStay(c);
                     else OnCollisionEnter(c);
                 }
             }

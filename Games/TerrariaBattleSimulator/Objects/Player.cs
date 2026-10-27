@@ -23,33 +23,43 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
         public bool isGrounded = false;
         public bool jumped = false;
         public bool doubleJumped = false;
-        float speed = 20f;
-        float maxSpeed = 150f;
+        public float speed = 20f;
+        public float maxSpeed = 150f;
         float knockback = 400f;
         bool facingRight = false;
 
+        bool dash = false;
+        float dashCD = 0;
+        bool dashRWindowActive = false;
+        float dashRtimer = 0;
+        bool dashLWindowActive = false;
+        float dashLtimer = 0;
+        float dashSpeed = 500f;
+
         float iFrames = 0;
+        public float maxiFrames = 0.67f;
+        public bool panic = false;
+        public float panicTimer = 0;
+        public float panicSpeed = 20f;
+        public float panicMaxSpeed = 150f;
         public float attackDelay = 0;
 
-        int gunDamage = 0;
+        public int regen = 1;
+        float regenTimer = 0;
+
+        public int defense = 0;
+
+        public int gunDamage = 0;
         float inaccuracy = 0;
         public float firerate = 0;
-        float critChance = 0.04f;
+        public float critChance = 0.04f;
         Random rnd = new Random();
 
         public Player(Vector3 position, Vector3 rotation, Vector3 size, Color color, Color fillColor, Collider collider = null, Rigidbody body = null, AIController controller = null, float borderWidth = 2, Bitmap fillTexture = null, WrapMode mode = WrapMode.Clamp, int repeatTileX = 1, int repeatTileY = 1, AnimationController animationController = null) : base(position, rotation, size, color, fillColor, collider, body, controller, borderWidth, fillTexture, mode, repeatTileX, repeatTileY, animationController)
         {
-            switch (TerrariaBattleSimulator.config.weapon)
-            {
-                case 0: SetGunStats(26, 2, 0.33f); break; // Undertaker
-                case 1: SetGunStats(38, 0, 0.53f); critChance += 0.08f; break; // Musket
-                case 2: SetGunStats(13, 4, 0.13f); break; // Minishark
-                case 3: SetGunStats(57, 4, 0.083f); break;
-            }
-            Console.WriteLine($"Fire Rate: {firerate}");
         }
 
-        private void SetGunStats(int dmg, float inac, float fr) {
+        public void SetGunStats(int dmg, float inac, float fr) {
             gunDamage = dmg; inaccuracy = inac; firerate = fr;
         }
 
@@ -58,13 +68,60 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
             attackDelay += dt;
             iFrames += dt;
 
-            if (InputManager.JustPressedInput("w")) Jump();
+            bool jump = InputManager.JustPressedInput("space") || InputManager.JustPressedInput("up");
+            if (jump) Jump();
             bool a = InputManager.GetInput("a");
             bool d = InputManager.GetInput("d");
             if (a && !d) MoveLeft(dt);
             if (!a && d) MoveRight(dt);
 
-            body.velocity.X = MathUtils.Clamp(body.velocity.X, -maxSpeed, maxSpeed);
+            if (regen > 0) {
+                regenTimer += dt;
+                if (regenTimer >= 1f) {
+                    regenTimer = 0;
+                    if (hp < 400) hp += regen;
+                    if (hp > 400) hp = 400;
+                    Console.WriteLine($"HP | {hp}");
+                }
+            }
+
+            if (dash) {
+                dashCD += dt;
+                if (dashCD >= 0.5f) {
+                    dash = false;
+                    dashCD = 0;
+                    dashRWindowActive = false;
+                    dashRtimer = 0;
+                }
+            } else {
+                body.velocity.X = MathUtils.Clamp(body.velocity.X, -maxSpeed, maxSpeed);
+                if (dashRWindowActive) dashRtimer += dt;
+                if (dashRtimer >= 0.5f) {
+                    dashRWindowActive = false;
+                    dashRtimer = 0;
+                }
+
+                if (dashLWindowActive) dashLtimer += dt;
+                if (dashLtimer >= 0.5f)
+                {
+                    dashLWindowActive = false;
+                    dashLtimer = 0;
+                }
+            }
+
+            if (panic)
+            {
+                panicTimer += dt;
+                speed = panicSpeed;
+                maxSpeed = panicMaxSpeed;
+                if (panicTimer >= 5)
+                {
+                    panic = false;
+                    panicTimer = 0;
+                    speed /= 2;
+                    maxSpeed /= 2;
+                }
+            }
 
             if (!a && !d)
             {
@@ -75,13 +132,14 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
                 }
             }
 
-            isGrounded = (position.Y - size.Y / 2 == -200) ? true : false;
-            body.gravityScale = isGrounded ? 0 : 1;
+            if (position.Y - size.Y / 2 > -200) isGrounded = false;
 
             if (position.Y - size.Y / 2 < -200)
             {
                 position.Y = -200 + size.Y / 2;
                 body.velocity.Y = 0;
+                isGrounded = true;
+                body.gravityScale = 0;
                 jumped = false;
                 doubleJumped = false;
             }
@@ -90,32 +148,89 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
         public void Jump() {
             if (isGrounded) {
                 if (!jumped) {
+                    body.gravityScale = 1;
                     body.velocity.Y = 0;
                     body.AddImpulse(0, 300f, 0);
-                    //isGrounded = false;
+                    isGrounded = false;
                     jumped = true;
                 }
             } else {
-                if (!doubleJumped) {
-                    body.velocity.Y = 0;
-                    body.AddImpulse(0, 300f, 0);
-                    //isGrounded = false;
-                    doubleJumped = true;
+                if (TBS.config.equipment[1])
+                {
+                    if (!doubleJumped) {
+                        body.gravityScale = 1;
+                        body.velocity.Y = 0;
+                        body.AddImpulse(0, 300f, 0);
+                        isGrounded = false;
+                        doubleJumped = true;
+                    }
                 }
             }
         }
 
         public void MoveRight(float dt)
         {
+            
             facingRight = true;
             float moveSpeed = isGrounded ? speed : speed / 2;
-            body.AddImpulse(moveSpeed, 0, 0);
+            if (!dash) body.AddImpulse(moveSpeed, 0, 0);
+            if (TBS.config.equipment[0])
+            {
+                if (!dash)
+                {
+                    if (InputManager.JustPressedInput("d"))
+                    {
+                        if (dashRWindowActive)
+                        {
+                            body.AddImpulse(dashSpeed, 0, 0);
+                            dash = true;
+                            dashCD = 0;
+                            dashRWindowActive = false;
+                            dashRtimer = 0;
+                            Console.WriteLine("Dashed");
+                        }
+                        else
+                        {
+                            dashRWindowActive = true;
+                            dashRtimer = 0;
+                            dashLWindowActive = false;
+                            dashLtimer = 0;
+                            Console.WriteLine("Dash Window Active");
+                        }
+                    }
+                }
+            }
         }
 
         public void MoveLeft(float dt) {
             facingRight = false;
             float moveSpeed = isGrounded ? speed : speed / 2;
-            body.AddImpulse(-moveSpeed, 0, 0);
+            if (!dash) body.AddImpulse(-moveSpeed, 0, 0);
+            if (TBS.config.equipment[0])
+            {
+                if (!dash)
+                {
+                    if (InputManager.JustPressedInput("a"))
+                    {
+                        if (dashLWindowActive)
+                        {
+                            body.AddImpulse(-dashSpeed, 0, 0);
+                            dash = true;
+                            dashCD = 0;
+                            dashLWindowActive = false;
+                            dashLtimer = 0;
+                            Console.WriteLine("Dashed");
+                        }
+                        else
+                        {
+                            dashRWindowActive = false;
+                            dashRtimer = 0;
+                            dashLWindowActive = true;
+                            dashLtimer = 0;
+                        }
+                    }
+                }
+            }
         }
 
         public PlayerBullet Shoot(Camera c)
@@ -133,21 +248,25 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
             );
             b.SetCol();
             attackDelay = 0f;
-            if (TerrariaBattleSimulator.config.weapon == 3) AudioManager.PlaySFX("vortex");
+            if (TBS.config.weapon == 3) AudioManager.PlaySFX("vortex");
             else AudioManager.PlaySFX("gunshot");
             return b;
         }
 
-        public override void OnColiisionStay(GameObject c) {
+        public override void OnCollisionStay(GameObject c) {
             if (!(c is PlayerBullet))
             {
-                if (iFrames > 0.5f) {
+                if (iFrames > maxiFrames) {
+                    body.gravityScale = 1;
+                    isGrounded = false;
                     body.velocity = Vector3.Zero;
                     body.AddImpulse(position.X > c.position.X ? knockback : -knockback, knockback * 0.5f,0);
-                    if (c is Enemy e) hp -= e.dmg;
-                    if (c is Proyectile p) hp -= p.dmg;
+                    if (c is Enemy e) hp -= e.dmg - defense;
+                    if (c is Proyectile p) hp -= p.dmg - defense;
                     Console.WriteLine($"Player HP: {hp}");
                     iFrames = 0;
+                    panic = true;
+                    panicTimer = 0;
                 }
             }
         }

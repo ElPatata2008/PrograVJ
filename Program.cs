@@ -44,7 +44,7 @@ namespace PrograVJ
 
             // Proyectos
             //Game mp = new MoonPatrol((int)resolution.X, (int)resolution.Y, 60, Engine.CameraType.Orthographic); mp.StartGame();
-            Game tbs = new TerrariaBattleSimulator((int)resolution.X, (int)resolution.Y, 144, Engine.CameraType.Orthographic); tbs.StartGame();
+            Game tbs = new TBS((int)resolution.X, (int)resolution.Y, 144, Engine.CameraType.Orthographic); tbs.StartGame();
 
             //Game test = new TestGame((int)resolution.X, (int)resolution.Y, 120, Engine.CameraType.Orthographic); test.StartGame();
             Application.Run();
@@ -53,6 +53,7 @@ namespace PrograVJ
         private static void RegisterFonts()
         {
             FontManager.Load("ByteBounce.ttf", "byte");
+            FontManager.Load("andyBold.ttf", "andyBold");
         }
 
         private static void RegisterInputs()

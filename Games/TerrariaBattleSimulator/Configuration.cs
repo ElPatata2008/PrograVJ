@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using static PrograVJ.Games.Test.Objects.Player;
 
 namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
 {
@@ -20,11 +19,14 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
         public bool boss2Defeated = false;
         public List<bool> equipment = new List<bool>()
         {
-            false,
-            false,
-            false,
-            false,
-            false
+            false, // Tabi
+            false, // Cloud in a Bottle
+            false, // Anklet of the Wind
+            false, // Panic Necklace
+            false, // Band of Regeneration
+            false, // Shackle
+            false, // Cross Necklace
+            false, // Putrid Scent
         };
 
         public int weapon = 0;

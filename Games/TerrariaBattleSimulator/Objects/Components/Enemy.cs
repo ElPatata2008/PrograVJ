@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
 {
-    public class Enemy : Square
+    public abstract class Enemy : Square
     {
         public int hp;
         public int maxHp;
@@ -32,5 +32,6 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
         }
         public void UpdatePlayerPos(Vector3 pos) => playerPos = pos;
         public void SetStats(int hp, int dmg) { this.hp = hp; maxHp = hp; this.dmg = dmg; }
+        public abstract void InitStats();
     }
 }

@@ -21,7 +21,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
         public Boss1Battle(Camera c) : base(c)
         {
             Instantiate(boss = new Boss1(
-                new Vector3(200, 0, 0),
+                new Vector3(600, 0, 0),
                 Vector3.Zero,
                 new Vector3(200, 150, 0),
                 Color.Black, Color.DeepSkyBlue,
@@ -34,7 +34,8 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
 
         public override void Init()
         {
-            Console.WriteLine(TerrariaBattleSimulator.config.difficulty);
+            base.Init();
+            Console.WriteLine(TBS.config.difficulty);
             AudioManager.PlayMusic("boss1", true, 5000);
         }
 
