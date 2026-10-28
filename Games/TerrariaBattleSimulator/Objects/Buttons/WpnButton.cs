@@ -21,7 +21,11 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects.Buttons
         {
         }
 
-        public override void Update(float dt) => fillColor = TBS.config.weapon == idx ? Color.Green : Color.White;
+        public override void Update(float dt)
+        {
+            base.Update(dt);
+            fillColor = TBS.config.weapon == idx ? Color.Green : Color.White;
+        }
 
         public override void DoSomething() => TBS.config.weapon = idx;
     }

@@ -20,6 +20,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects.Components
         public Square img;
         public int idx = 0;
         public bool pressed = false;
+        public float delayTimer = 0;
 
         public SelectionButton(Vector3 position, Vector3 rotation, Vector3 size, Color color, Color fillColor,
             Bitmap acc, int idx,
@@ -41,14 +42,20 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects.Components
             img.Draw(g, c);
         }
 
+        public override void Update(float dt) => delayTimer += dt;
+
         public override void OnCollisionStay(GameObject c)
         {
             if (InputManager.MBL)
             {
                 if (!pressed)
                 {
-                    pressed = true;
-                    DoSomething();
+                    if (delayTimer > 0.25f)
+                    {
+                        pressed = true;
+                        DoSomething();
+                        delayTimer = 0f;
+                    }
                 }
             }
             else pressed = false;

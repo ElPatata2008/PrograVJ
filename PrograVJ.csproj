@@ -163,6 +163,7 @@
     <Compile Include="Games\TerrariaBattleSimulator\Scenes\BattleSelection.cs" />
     <Compile Include="Games\TerrariaBattleSimulator\Scenes\Battle.cs" />
     <Compile Include="Games\TerrariaBattleSimulator\Scenes\Boss2Battle.cs" />
+    <Compile Include="Games\TerrariaBattleSimulator\Scenes\TitleScreen.cs" />
     <Compile Include="Games\TerrariaBattleSimulator\Scenes\WeaponSelection.cs" />
     <Compile Include="Games\TerrariaBattleSimulator\TBS.cs" />
     <Compile Include="Games\TerrariaBattleSimulator\Objects\Bosses\Boss1.cs" />

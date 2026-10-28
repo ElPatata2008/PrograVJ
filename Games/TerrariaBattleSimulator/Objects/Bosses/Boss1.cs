@@ -97,13 +97,14 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
         Vector3 minSize;
         private int width = 48, height = 32;
         public bool release = false;
+        public Square crown;
 
         public Boss1(Vector3 position, Vector3 rotation, Vector3 size, Color color, Color fillColor, Collider collider = null, Rigidbody body = null, AIController controller = null, float borderWidth = 2, Bitmap fillTexture = null, WrapMode mode = WrapMode.Clamp, int repeatTileX = 1, int repeatTileY = 1, AnimationController animationController = null
             ) : base(position, rotation, size, color, fillColor, collider, body, controller, borderWidth, fillTexture, mode, repeatTileX, repeatTileY, animationController)
         {
 
             initSize = size;
-            minSize = size / 2;
+            minSize = size / 1.5f;
                 
             if (controller.brain is FSM fsm) {
                 fsm.AddState("Jump", new JumpState(controller));
@@ -124,6 +125,14 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
             animationController.AddAnimation("attackRelease", attackRelease);
 
             animationController.Play("idle");
+
+            crown = new Square(
+                position - new Vector3(0, size.Y / 2 - 100, 0),
+                Vector3.Zero,
+                new Vector3(100, 50, 0),
+                Color.Black, Color.Gold
+                //fillTexture: TextureManager.Get("crown")
+            );
         }
 
         public override void InitStats()
@@ -136,10 +145,18 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
             }
         }
 
+        public override void Draw(Graphics g, Camera c)
+        {
+            base.Draw(g, c);
+            crown.Draw(g, c);
+        }
+
         public override void Update(float dt)
         {
             base.Update(dt);
             animationController.Update(dt);
+
+            crown.position = position + new Vector3(0, size.Y / 5 + crown.size.Y / 2, 0);
 
             spawnChance = getChance(0.05f, 0.25f);
             size = ChangeSize();

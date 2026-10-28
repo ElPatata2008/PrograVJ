@@ -118,8 +118,8 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
                 {
                     panic = false;
                     panicTimer = 0;
-                    speed /= 2;
-                    maxSpeed /= 2;
+                    speed = panicSpeed / 2;
+                    maxSpeed = panicMaxSpeed / 2;
                 }
             }
 
@@ -187,7 +187,6 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
                             dashCD = 0;
                             dashRWindowActive = false;
                             dashRtimer = 0;
-                            Console.WriteLine("Dashed");
                         }
                         else
                         {
@@ -195,7 +194,6 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
                             dashRtimer = 0;
                             dashLWindowActive = false;
                             dashLtimer = 0;
-                            Console.WriteLine("Dash Window Active");
                         }
                     }
                 }

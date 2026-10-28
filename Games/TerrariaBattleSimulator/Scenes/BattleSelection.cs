@@ -32,30 +32,36 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
             ));
 
             Instantiate(boss1 = new UIButton(
-                new Vector3(0, -50, 0),
+                new Vector3(-200, 0, 0),
                 Vector3.Zero,
-                new Vector3(200, 50, 0),
+                new Vector3(144, 96, 0),
                 Color.Black, Color.LightGray,
                 () => { BattleSelected("boss1"); },
-                new BoxCollider2D(boss1)
+                new BoxCollider2D(boss1),
+                animationController: new AnimationController()
             ));
 
+            SpriteSheet b1 = new SpriteSheet(TextureManager.Get("boss1idle"), 48, 32, 0.15f, 5);
+            boss1.animationController.AddAnimation("default", b1);
+            boss1.animationController.Play("default");
+
             Instantiate(boss2 = new UIButton(
-                new Vector3(0, -125, 0),
-                Vector3.Zero,
-                new Vector3(200, 50, 0),
+                new Vector3(0, 0, 0),
+                new Vector3(0, 0, -90),
+                Vector3.One * 96,
                 Color.Black, Color.LightGray,
                 () => { BattleSelected("boss2"); },
-                new BoxCollider2D(boss2)
+                new BoxCollider2D(boss2),
+                fillTexture: TextureManager.Get("boss2phase1")
             ));
+
 
             Instantiate(goBack = new UIButton(
                 new Vector3(-sceneCamera.size.X / 2 + 150, -sceneCamera.size.Y / 2 + 50, 0),
                 Vector3.Zero,
                 new Vector3(200, 50, 0),
-                Color.Black, Color.White,
-                () =>
-                {
+                Color.Black, Color.LightGray,
+                () => {
                     SceneManager.SetActive("accessorySelection");
                     SaveManager.Save("config.json");
                 },
@@ -73,13 +79,15 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
         public override void PaintScreen(Graphics g)
         {
             g.Clear(Color.White);
+            DrawingUtils.DrawCenterText(g, "Choose your adversary", FontManager.Get("andyBold", 48), Color.Black, new PointF(sceneCamera.size.X / 2, 100));
             boss1.Draw(g, sceneCamera);
-            DrawingUtils.DrawCenterText(g, "King Slime", FontManager.Get("andyBold", 26), Color.Black, 
-                new PointF(sceneCamera.size.X / 2, sceneCamera.size.Y / 2 + 35));
+            DrawingUtils.DrawCenterText(g, "King Slime", FontManager.Get("andyBold", 26), Color.Black,
+                new PointF(sceneCamera.size.X / 2 - 200, sceneCamera.size.Y / 2 + 75));
             boss2.Draw(g, sceneCamera);
             DrawingUtils.DrawCenterText(g, "Giant Probe", FontManager.Get("andyBold", 26), Color.Black,
-                new PointF(sceneCamera.size.X / 2, sceneCamera.size.Y / 2 + 110));
+                new PointF(sceneCamera.size.X / 2, sceneCamera.size.Y / 2 + 75));
             goBack.Draw(g, sceneCamera);
+            DrawingUtils.DrawCenterText(g, "Back", FontManager.Get("andyBold", 26), Color.Black, new PointF(150, sceneCamera.size.Y - 65));
             cur.Draw(g, sceneCamera);
         }
 
@@ -90,6 +98,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
 
         public override void Update(float dt)
         {
+            boss1.animationController.Update(dt);
             Vector3 cursorPos = sceneCamera.GetCursorOnWorld();
             cur.position.X = cursorPos.X;
             cur.position.Y = cursorPos.Y;

@@ -17,6 +17,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator
         {
             SaveManager.Load("config.json");
             AudioManager.InitMixer();
+            FontManager.Load("andyBold.ttf", "andyBold");
 
             // Boss 1
             TextureManager.Load("boss1Jump.png", "boss1jump");
@@ -50,6 +51,10 @@ namespace PrograVJ.Games.TerrariaBattleSimulator
             TextureManager.Load("expert.png", "expert");
             TextureManager.Load("master.png", "master");
 
+            // Others
+            TextureManager.Load("title.png", "title");
+            TextureManager.Load("panic.png", "panic");
+
             AudioManager.LoadSFX("metalEnemyHit.wav", "meHit");
             AudioManager.LoadSFX("metalEnemyKill.wav", "meKill");
             AudioManager.LoadSFX("enemyHit.wav", "enemyHit");
@@ -65,13 +70,15 @@ namespace PrograVJ.Games.TerrariaBattleSimulator
             AudioManager.LoadMusic("boss2.mp3", "boss2");
             AudioManager.LoadMusic("boss1.mp3", "boss1");
 
+            SceneManager.Register(new TitleScreen(c), "titleScreen");
             SceneManager.Register(new WeaponSelection(c), "weaponSelection");
             SceneManager.Register(new AccessorySelection(c), "accessorySelection");
             SceneManager.Register(new BattleSelection(c), "battleSelection");
             SceneManager.Register(new Boss1Battle(c), "boss1");
             SceneManager.Register(new Boss2Battle(c), "boss2");
 
-            SceneManager.SetActive("weaponSelection");
+            AudioManager.PlayMusic("title", true, 0);
+            SceneManager.SetActive("boss1");
         }
     }
 }

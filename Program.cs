@@ -31,7 +31,7 @@ namespace PrograVJ
         static void Main(string[] args)
         {
             RegisterInputs();
-            RegisterFonts();
+            //RegisterFonts();
 
             // Laboratorios
             //Game pong = new Pong(800, 600, 60);
@@ -53,7 +53,6 @@ namespace PrograVJ
         private static void RegisterFonts()
         {
             FontManager.Load("ByteBounce.ttf", "byte");
-            FontManager.Load("andyBold.ttf", "andyBold");
         }
 
         private static void RegisterInputs()

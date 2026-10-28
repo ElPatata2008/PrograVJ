@@ -8,8 +8,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
 {
@@ -28,8 +30,12 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
         UIButton Continue;
         UIButton goBack;
 
+        
+
         public AccessorySelection(Camera c) : base(c)
         {
+            float col1Pos = -sceneCamera.size.X / 2 + 75;
+            float col2Pos = 60;
             Instantiate(cur = new Square(
                 new Vector3(InputManager.MouseLocation.X, InputManager.MouseLocation.Y, 0),
                 Vector3.Zero,
@@ -39,7 +45,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
             ));
 
             Instantiate(tabi = new AccButton(
-                new Vector3(-sceneCamera.size.X / 2 + 100, sceneCamera.size.Y / 2 - 100, 0),
+                new Vector3(col1Pos, sceneCamera.size.Y / 2 - 75, 0),
                 Vector3.Zero,
                 Vector3.One * 100,
                 Color.Black, Color.White,
@@ -48,7 +54,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
             ));
 
             Instantiate(ciab = new AccButton(
-                new Vector3(-sceneCamera.size.X / 2 + 250, sceneCamera.size.Y / 2 - 100, 0),
+                new Vector3(col1Pos, sceneCamera.size.Y / 2 - 200, 0),
                 Vector3.Zero,
                 Vector3.One * 100,
                 Color.Black, Color.White,
@@ -57,7 +63,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
             ));
 
             Instantiate(aotw = new AccButton(
-                new Vector3(-sceneCamera.size.X / 2 + 400, sceneCamera.size.Y / 2 - 100, 0),
+                new Vector3(col1Pos, sceneCamera.size.Y / 2 - 325, 0),
                 Vector3.Zero,
                 Vector3.One * 100,
                 Color.Black, Color.White,
@@ -66,7 +72,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
             ));
 
             Instantiate(panl = new AccButton(
-                new Vector3(-sceneCamera.size.X / 2 + 550, sceneCamera.size.Y / 2 - 100, 0),
+                new Vector3(col1Pos, sceneCamera.size.Y / 2 - 450, 0),
                 Vector3.Zero,
                 Vector3.One * 100,
                 Color.Black, Color.White,
@@ -75,7 +81,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
             ));
 
             Instantiate(breg = new AccButton(
-                new Vector3(-sceneCamera.size.X / 2 + 700, sceneCamera.size.Y / 2 - 100, 0),
+                new Vector3(col2Pos, sceneCamera.size.Y / 2 - 75, 0),
                 Vector3.Zero,
                 Vector3.One * 100,
                 Color.Black, Color.White,
@@ -84,7 +90,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
             ));
 
             Instantiate(shak = new AccButton(
-                new Vector3(-150, sceneCamera.size.Y / 2 - 250, 0),
+                new Vector3(col2Pos, sceneCamera.size.Y / 2 - 200, 0),
                 Vector3.Zero,
                 Vector3.One * 100,
                 Color.Black, Color.White,
@@ -93,7 +99,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
             ));
 
             Instantiate(cros = new AccButton(
-                new Vector3(0, sceneCamera.size.Y / 2 - 250, 0),
+                new Vector3(col2Pos, sceneCamera.size.Y / 2 - 325, 0),
                 Vector3.Zero,
                 Vector3.One * 100,
                 Color.Black, Color.White,
@@ -102,7 +108,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
             ));
 
             Instantiate(scen = new AccButton(
-                new Vector3(150, sceneCamera.size.Y / 2 - 250, 0),
+                new Vector3(col2Pos, sceneCamera.size.Y / 2 - 450, 0),
                 Vector3.Zero,
                 Vector3.One * 100,
                 Color.Black, Color.White,
@@ -114,7 +120,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
                 new Vector3(sceneCamera.size.X / 2 - 150, -sceneCamera.size.Y / 2 + 50, 0),
                 Vector3.Zero,
                 new Vector3(200, 50, 0),
-                Color.Black, Color.White,
+                Color.Black, Color.LightGray,
                 () =>
                 {
                     SceneManager.SetActive("battleSelection");
@@ -127,7 +133,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
                 new Vector3(- sceneCamera.size.X / 2 + 150, -sceneCamera.size.Y / 2 + 50, 0),
                 Vector3.Zero,
                 new Vector3(200, 50, 0),
-                Color.Black, Color.White,
+                Color.Black, Color.LightGray,
                 () =>
                 {
                     SceneManager.SetActive("weaponSelection");
@@ -143,22 +149,41 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
         {
             Continue.delayTimer = 0;
             goBack.delayTimer = 0;
+            tabi.delayTimer = 0;
+            ciab.delayTimer = 0;
+            aotw.delayTimer = 0;
+            panl.delayTimer = 0;
+            breg.delayTimer = 0;
+            shak.delayTimer = 0;
+            cros.delayTimer = 0;
+            scen.delayTimer = 0;
         }
 
         public override void PaintScreen(Graphics g)
         {
             g.Clear(Color.White);
             tabi.Draw(g, sceneCamera);
+            g.DrawString("Allows the ability to dash \nDouble tap a direction", FontManager.Get("andyBold", 18), Brushes.Black, new PointF(135, 65 - 15));
             ciab.Draw(g, sceneCamera);
+            g.DrawString("Allows the holder to double \njump", FontManager.Get("andyBold", 18), Brushes.Black, new PointF(135, 190 - 15));
             aotw.Draw(g, sceneCamera);
+            g.DrawString("10% increased movement \nspeed", FontManager.Get("andyBold", 18), Brushes.Black, new PointF(135, 315 - 15));
             panl.Draw(g, sceneCamera);
+            g.DrawString("Doubles movement speed \nafter taking damage", FontManager.Get("andyBold", 18), Brushes.Black, new PointF(135, 440 - 15));
             breg.Draw(g, sceneCamera);
+            g.DrawString("Triples natural health \nregeneration", FontManager.Get("andyBold", 18), Brushes.Black, new PointF(sceneCamera.size.X / 2 + 120, 65 - 15));
             shak.Draw(g, sceneCamera);
+            g.DrawString("Provides 5 Defense", FontManager.Get("andyBold", 18), Brushes.Black, new PointF(sceneCamera.size.X / 2 + 120, 190));
             cros.Draw(g, sceneCamera);
+            g.DrawString("Doubles length of invicibility \nafter taking damage", FontManager.Get("andyBold", 18), Brushes.Black, new PointF(sceneCamera.size.X / 2 + 120, 315 - 15));
             scen.Draw(g, sceneCamera);
+            g.DrawString("+10% increased damage \n+5% Crit Chance", FontManager.Get("andyBold", 18), Brushes.Black, new PointF(sceneCamera.size.X / 2 + 120, 440 - 15));
 
             Continue.Draw(g, sceneCamera);
+            DrawingUtils.DrawCenterText(g, "Continue", FontManager.Get("andyBold", 26), Color.Black, new PointF(sceneCamera.size.X - 150, sceneCamera.size.Y - 65));
             goBack.Draw(g, sceneCamera);
+            DrawingUtils.DrawCenterText(g, "Back", FontManager.Get("andyBold", 26), Color.Black, new PointF(150, sceneCamera.size.Y - 65));
+            DrawingUtils.DrawCenterText(g, "Max 4 Accessories", FontManager.Get("andyBold", 26), Color.Black, new PointF(sceneCamera.size.X / 2, sceneCamera.size.Y - 65));
 
             cur.Draw(g, sceneCamera);
         }
