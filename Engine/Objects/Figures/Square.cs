@@ -73,10 +73,6 @@ namespace PrograVJ.Engine.Figures
 
         public override void Draw(Graphics g, Camera c)
         {
-            //if (spriteSheet == null)
-            //{
-            //    Console.WriteLine("hola");
-            //}
             if (animationController != null)
             {
                 spriteSheet = animationController.currentAnimation;
@@ -127,13 +123,11 @@ namespace PrograVJ.Engine.Figures
                         attrs.SetWrapMode(mode);
                         if (animationController != null)
                         {
-                            Console.WriteLine("Drawing SpriteSheet Frame");
                             src = spriteSheet.GetCurrentSourceRect();
                             g.DrawImage(spriteSheet.GetCurrentFrame(), dest, src, GraphicsUnit.Pixel, attrs);
                         }
                         else
                         {
-                            Console.WriteLine("Drawing Sprite");
                             src = new RectangleF(0, 0,
                                 fillTexture.Width * repeatTileX,
                                 fillTexture.Height * repeatTileY);

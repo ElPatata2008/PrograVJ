@@ -13,6 +13,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator
     public class TBS : Game
     {
         public static Configuration config = new Configuration();
+        public static string bossName = string.Empty;
         public TBS(int w, int h, float fps, CameraType type) : base(w, h, fps, type)
         {
             SaveManager.Load("config.json");
@@ -78,7 +79,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator
             SceneManager.Register(new Boss2Battle(c), "boss2");
 
             AudioManager.PlayMusic("title", true, 0);
-            SceneManager.SetActive("boss1");
+            SceneManager.SetActive("battleSelection");
         }
     }
 }

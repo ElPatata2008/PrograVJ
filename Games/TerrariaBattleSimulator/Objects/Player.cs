@@ -81,7 +81,6 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
                     regenTimer = 0;
                     if (hp < 400) hp += regen;
                     if (hp > 400) hp = 400;
-                    Console.WriteLine($"HP | {hp}");
                 }
             }
 

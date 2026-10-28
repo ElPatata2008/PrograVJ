@@ -36,7 +36,10 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
                 Vector3.Zero,
                 new Vector3(144, 96, 0),
                 Color.Black, Color.LightGray,
-                () => { BattleSelected("boss1"); },
+                () => {
+                    TBS.bossName = "King Slime";
+                    BattleSelected("boss1"); 
+                },
                 new BoxCollider2D(boss1),
                 animationController: new AnimationController()
             ));
@@ -50,7 +53,10 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
                 new Vector3(0, 0, -90),
                 Vector3.One * 96,
                 Color.Black, Color.LightGray,
-                () => { BattleSelected("boss2"); },
+                () => {
+                    TBS.bossName = "Giant Probe";
+                    BattleSelected("boss2"); 
+                },
                 new BoxCollider2D(boss2),
                 fillTexture: TextureManager.Get("boss2phase1")
             ));

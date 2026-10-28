@@ -18,7 +18,9 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
     {
         bool explode = false;
         Random rnd = new Random();
-        public Boss1Battle(Camera c) : base(c)
+        public Boss1Battle(Camera c) : base(c) { }
+
+        public override void Init()
         {
             Instantiate(boss = new Boss1(
                 new Vector3(600, 0, 0),
@@ -30,10 +32,6 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
                 new AIController(bb, new FSM()),
                 animationController: new AnimationController()
             ));
-        }
-
-        public override void Init()
-        {
             base.Init();
             Console.WriteLine(TBS.config.difficulty);
             AudioManager.PlayMusic("boss1", true, 5000);
