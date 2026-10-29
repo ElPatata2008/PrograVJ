@@ -31,13 +31,17 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
 
         public override void Update(float dt) => delayTimer += dt;
 
-        public override void OnCollisionEnter(GameObject c) => fillColor = Color.White;
+        public override void OnCollisionEnter(GameObject c)
+        {
+            AudioManager.PlaySFX("select");
+            fillColor = Color.White;
+        }
 
         public override void OnCollisionStay(GameObject c)
         {
             if (InputManager.MBL) {
                 if (!pressed) {
-                    if (delayTimer > 1)
+                    if (delayTimer > 0.25f)
                     {
                         pressed = true;
                         action.Invoke();

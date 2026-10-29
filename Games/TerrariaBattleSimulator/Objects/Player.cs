@@ -44,7 +44,8 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
         public float panicMaxSpeed = 150f;
         public float attackDelay = 0;
 
-        public int regen = 1;
+        int regen = 1;
+        public float regenRate = 1f;
         float regenTimer = 0;
 
         public int defense = 0;
@@ -75,13 +76,11 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
             if (a && !d) MoveLeft(dt);
             if (!a && d) MoveRight(dt);
 
-            if (regen > 0) {
-                regenTimer += dt;
-                if (regenTimer >= 1f) {
-                    regenTimer = 0;
-                    if (hp < 400) hp += regen;
-                    if (hp > 400) hp = 400;
-                }
+            regenTimer += dt;
+            if (regenTimer >= regenRate) {
+                regenTimer = 0;
+                if (hp < 400) hp += 1;
+                if (hp > 400) hp = 400;
             }
 
             if (dash) {
@@ -131,7 +130,11 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
                 }
             }
 
-            if (position.Y - size.Y / 2 > -200) isGrounded = false;
+            if (position.Y - size.Y / 2 > -200)
+            {
+                isGrounded = false;
+                body.gravityScale = 1;
+            }
 
             if (position.Y - size.Y / 2 < -200)
             {
@@ -260,7 +263,10 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
                     body.AddImpulse(position.X > c.position.X ? knockback : -knockback, knockback * 0.5f,0);
                     if (c is Enemy e) hp -= e.dmg - defense;
                     if (c is Proyectile p) hp -= p.dmg - defense;
-                    Console.WriteLine($"Player HP: {hp}");
+                    if (hp > 0) {
+                        int i = rnd.Next(0, 3);
+                        AudioManager.PlaySFX("hit" + i);
+                    }
                     iFrames = 0;
                     panic = true;
                     panicTimer = 0;

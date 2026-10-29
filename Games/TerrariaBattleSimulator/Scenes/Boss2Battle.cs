@@ -17,7 +17,14 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
 {
     public class Boss2Battle : Battle
     {
-        public Boss2Battle(Camera c) : base(c) { }
+        public Boss2Battle(Camera c) : base(c) {
+            sky = new Square(
+                    Vector3.Zero, Vector3.Zero,
+                    sceneCamera.size,
+                    Color.White, Color.White,
+                    fillTexture: TextureManager.Get("skyNight")
+                );
+        }
 
         public override void Init()
         {

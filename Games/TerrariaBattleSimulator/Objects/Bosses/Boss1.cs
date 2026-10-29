@@ -130,8 +130,8 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
                 position - new Vector3(0, size.Y / 2 - 100, 0),
                 Vector3.Zero,
                 new Vector3(100, 50, 0),
-                Color.Black, Color.Gold
-                //fillTexture: TextureManager.Get("crown")
+                Color.Black, Color.Gold,
+                fillTexture: TextureManager.Get("crown")
             );
         }
 
@@ -156,7 +156,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
             base.Update(dt);
             animationController.Update(dt);
 
-            crown.position = position + new Vector3(0, size.Y / 5 + crown.size.Y / 2, 0);
+            crown.position = position + new Vector3(0, size.Y / 5 + crown.size.Y / 2 + (isGrounded ? 0 : 20), 0);
 
             spawnChance = getChance(0.05f, 0.25f);
             size = ChangeSize();
@@ -200,12 +200,13 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
             bool spiked = rnd.NextDouble() < 0.25;
             MinionBoss1 minion = new MinionBoss1(
                 position, rotation,
-                new Vector3(30, 20, 0),
+                Vector3.One * 32,
                 Color.Black, spiked ? Color.CadetBlue : Color.Blue, spiked,
                 body: new Rigidbody(RigidbodyType.Dynamic, 50, 1),
-                controller: new AIController(controller.bb, new FSM())
-                //animationController: new AnimationController()
+                controller: new AIController(controller.bb, new FSM()),
+                animationController: new AnimationController()
             );
+
             minion.InitStats();
             minion.SetCollision();
             if (facing) dir.X *= facingRight ? 1 : -1;
@@ -221,9 +222,10 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
                 Boss1Spike s = new Boss1Spike(
                     position,
                     new Vector3(0, 0, 18 * (i + 5)),
-                    new Vector3(10, 5, 0),
+                    new Vector3(24, 12, 0),
                     Color.Black, Color.BlueViolet,
-                    dmg * 2, 0, 250f * (1 + Math.Abs(i) / 10)
+                    dmg * 2, 0, 250f * (1 + Math.Abs(i) / 10),
+                    fillTexture: TextureManager.Get("boss1Spike")
                 )
                 { rotSpeed = 45f / Math.Abs(i) };
                 s.SetCol();

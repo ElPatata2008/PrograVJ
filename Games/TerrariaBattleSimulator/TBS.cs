@@ -25,6 +25,12 @@ namespace PrograVJ.Games.TerrariaBattleSimulator
             TextureManager.Load("boss1idle.png", "boss1idle");
             TextureManager.Load("boss1attackCharge.png", "boss1attackCharge");
             TextureManager.Load("boss1attackRelease.png", "boss1attackRelease");
+            TextureManager.Load("minionBoss1.png", "minionBoss1");
+            TextureManager.Load("minionBoss1_jump.png", "minionBoss1Jump");
+            TextureManager.Load("minionBoss1_spiked.png", "minionBoss1Spiked");
+            TextureManager.Load("minionBoss1_spiked_jump.png", "minionBoss1SpikedJump");
+            TextureManager.Load("boss1Spike.png", "boss1Spike");
+            TextureManager.Load("crown.png", "crown");
 
             // Boss 2
             TextureManager.Load("boss2phase1.png", "boss2phase1");
@@ -53,8 +59,17 @@ namespace PrograVJ.Games.TerrariaBattleSimulator
             TextureManager.Load("master.png", "master");
 
             // Others
+            TextureManager.Load("groundVanilla.png", "groundVanilla");
+            TextureManager.Load("treesVanilla.png", "treesVanilla");
+            TextureManager.Load("groundCrimson.png", "groundCrimson");
+            TextureManager.Load("treesCrimson.png", "treesCrimson");
+            TextureManager.Load("skyNight.png", "skyNight");
+            TextureManager.Load("skyDay.png", "skyDay");
+            TextureManager.Load("skyCrimson.png", "skyCrimson");
             TextureManager.Load("title.png", "title");
             TextureManager.Load("panic.png", "panic");
+            TextureManager.Load("bossIndicator.png", "bossIndicator");
+            TextureManager.Load("bossDefeated.png", "bossDefeated");
 
             AudioManager.LoadSFX("metalEnemyHit.wav", "meHit");
             AudioManager.LoadSFX("metalEnemyKill.wav", "meKill");
@@ -66,6 +81,15 @@ namespace PrograVJ.Games.TerrariaBattleSimulator
             AudioManager.LoadSFX("gunShot.wav", "gunshot");
             AudioManager.LoadSFX("shotgunShot.wav", "shotgunshot");
             AudioManager.LoadSFX("vortex.wav", "vortex");
+
+            AudioManager.LoadSFX("death.wav", "death");
+            AudioManager.LoadSFX("hit0.wav", "hit0");
+            AudioManager.LoadSFX("hit1.wav", "hit1");
+            AudioManager.LoadSFX("hit2.wav", "hit2");
+
+            AudioManager.LoadSFX("continue.wav", "continue");
+            AudioManager.LoadSFX("back.wav", "back");
+            AudioManager.LoadSFX("select.wav", "select");
 
             AudioManager.LoadMusic("title.mp3", "title");
             AudioManager.LoadMusic("boss2.mp3", "boss2");
@@ -79,7 +103,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator
             SceneManager.Register(new Boss2Battle(c), "boss2");
 
             AudioManager.PlayMusic("title", true, 0);
-            SceneManager.SetActive("battleSelection");
+            SceneManager.SetActive("titleScreen");
         }
     }
 }

@@ -5,6 +5,7 @@ using PrograVJ.Engine.Figures;
 using PrograVJ.Engine.Manager;
 using PrograVJ.GameObjects;
 using PrograVJ.Games.TerrariaBattleSimulator.Objects;
+using PrograVJ.Games.TerrariaBattleSimulator.Objects.Scenery;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -33,7 +34,13 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
         private float respawnTimer = 0;
         private float winTimer = 0;
         private float wepSizeY;
-        
+
+        Parallax bg;
+        Parallax trees;
+        Parallax bg2;
+        Parallax trees2;
+
+        public Square sky;
 
         public Battle(Camera c) : base(c)
         {
@@ -47,9 +54,9 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
             bossIndicator = new Square(
                 new Vector3(sceneCamera.position.X, sceneCamera.position.Y, 0),
                 Vector3.Zero,
-                Vector3.One * 50,
-                Color.Black, Color.White
-                //fillTexture: TextureManager.Get("bossIndicator")
+                Vector3.One * 25,
+                Color.Black, Color.White,
+                fillTexture: TextureManager.Get("bossIndicator")
             );
 
             weapon = new Square(
@@ -59,6 +66,41 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
                 fillTexture: TextureManager.Get("undertaker")
             );
             wepSizeY = 28;
+
+            bg = new Parallax(
+                TextureManager.Get("groundVanilla"),
+                new Vector3(0, -272.5f, 0),
+                new Vector3(400, 160, 0),
+                sceneCamera.position.X - sceneCamera.size.X / 2
+            );
+            trees = new Parallax(
+                TextureManager.Get("treesVanilla"),
+                new Vector3(0, -75, 0),
+                new Vector3(400, 240, 0),
+                -sceneCamera.size.X / 2
+            );
+
+            bg2 = new Parallax(
+                TextureManager.Get("groundVanilla"),
+                new Vector3(0, -200, 0),
+                new Vector3(600, 240, 0),
+                -sceneCamera.size.X / 2
+            );
+
+            trees2 = new Parallax(
+                TextureManager.Get("treesVanilla"),
+                new Vector3(0, 25, 0),
+                new Vector3(400, 240, 0),
+                -sceneCamera.size.X / 2
+            );
+
+            sky = new Square(
+                Vector3.Zero, Vector3.Zero,
+                sceneCamera.size,
+                Color.White, Color.White,
+                fillTexture: TextureManager.Get("skyNight")
+            );
+
         }
 
         public override void Init() {
@@ -92,7 +134,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
                 p.panicSpeed = p.speed * 2;
                 p.panicMaxSpeed = p.maxSpeed * 2;
             }
-            if (TBS.config.equipment[4]) p.regen += 2;
+            if (TBS.config.equipment[4]) p.regenRate /= 3;
             if (TBS.config.equipment
                 [5]) p.defense += 5;
             if (TBS.config.equipment[6]) p.maxiFrames *= 2;
@@ -112,15 +154,24 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
         public override void PaintScreen(Graphics g)
         {
             g.Clear(Color.White);
+            sky.Draw(g, sceneCamera);
+            trees2.RenderParallax(g, sceneCamera);
+            bg2.RenderParallax(g, sceneCamera);
+            trees.RenderParallax(g, sceneCamera);
+            bg.RenderParallax(g, sceneCamera);
             if (bullets.Count > 0) foreach (Proyectile b in bullets) b.Draw(g, sceneCamera);
-            ground.position.X = p.position.X;
-            ground.Draw(g, sceneCamera);
             if (!bossDefeated) boss.Draw(g, sceneCamera);
             if (minions.Count > 0) foreach (Enemy m in minions) m.Draw(g, sceneCamera);
+            if (!lost) {
+                p.Draw(g, sceneCamera);
+                weapon.Draw(g, sceneCamera);
+            }
+            if (boss is Boss2) g.FillRectangle(new SolidBrush(Color.FromArgb(100, 0, 0, 0)), new RectangleF(0, 0, sceneCamera.size.X, sceneCamera.size.Y));
+
             if (p.panic)
             {
                 panic.Draw(g, sceneCamera);
-                g.DrawString($"{5f - p.panicTimer:F1}", FontManager.Get("andyBold", 26), Brushes.Black, new PointF(25, 75));
+                g.DrawString($"{5f - p.panicTimer:F1}", FontManager.Get("andyBold", 26), (boss is Boss2) ? Brushes.White : Brushes.Black, new PointF(25, 75));
             }
 
             if (!lost)
@@ -129,10 +180,9 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
                 Point hpPos = new Point((int)sceneCamera.size.X / 2 + 75, 25);
                 g.FillRectangle(Brushes.Red, new RectangleF(hpPos.X, hpPos.Y, 300f * hpLeft, 40));
                 g.DrawRectangle(new Pen(Brushes.Black, 4f), new Rectangle(hpPos.X, hpPos.Y, 300, 40));
-                DrawingUtils.DrawCenterText(g, $"Health : {p.hp}/400", FontManager.Get("andyBold", 26), Color.Black,
+                DrawingUtils.DrawCenterText(g, $"Health : {p.hp}/400", FontManager.Get("andyBold", 26), (boss is Boss2) ? Color.White : Color.Black,
                     new PointF(sceneCamera.size.X / 1.5f + 100, 75));
-                p.Draw(g, sceneCamera);
-                weapon.Draw(g, sceneCamera);
+                
             } else
             {
                 DrawingUtils.DrawCenterText(g, "You were slain...", FontManager.Get("andyBold", 28), Color.Red,
@@ -154,7 +204,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
                 float dist = Vector3.Distance(p.position, boss.position);
                 if (dist > sceneCamera.size.X / 1.5f) {
                     bossIndicator.Draw(g, sceneCamera);
-                    DrawingUtils.DrawCenterText(g, $"{dist/30:F0} m", FontManager.Get("andyBold", 28), Color.Black,
+                    DrawingUtils.DrawCenterText(g, $"{dist/30:F0} m", FontManager.Get("andyBold", 28), (boss is Boss2) ? Color.White : Color.Black,
                         new PointF(sceneCamera.size.X / 2, sceneCamera.size.Y / 2));
                 }
             }else
@@ -188,6 +238,8 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
             bossIndicator.position.X = sceneCamera.position.X + dir.X * 100;
             bossIndicator.position.Y = sceneCamera.position.Y + dir.Y * 100;
 
+            List<GameObject> removeList = new List<GameObject>();
+
             if (!lost)
             {
                 if (!bossDefeated) boss.UpdatePlayerPos(p.position);
@@ -219,15 +271,25 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
                 respawnTimer += dt;
                 if (respawnTimer >= 10)
                 {
-                    SceneManager.SetActive("weaponSelection");
-                    AudioManager.PlayMusic("title", true, 5000);
                     respawnTimer = 0;
                     sceneCamera.position.X = 0;
                     sceneCamera.position.Y = 0;
+
+                    foreach (Proyectile b in bullets) removeList.Add(b);
+                    foreach (Enemy m in minions) removeList.Add(m);
+
+                    foreach (GameObject go in removeList)
+                    {
+                        if (go is Proyectile b) bullets.Remove(b);
+                        if (go is Enemy e) minions.Remove(e);
+                        Destroy(go);
+                    }
+                    removeList.Clear();
+
+                    AudioManager.PlayMusic("title", true, 5000);
+                    SceneManager.SetActive("weaponSelection");
                 }
             }
-
-            List<GameObject> removeList = new List<GameObject>();
 
             foreach (Proyectile b in bullets)
             {
@@ -248,6 +310,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
                 if (p.hp < 1) {
                     lost = true;
                     winTimer = 0;
+                    AudioManager.PlaySFX("death");
                     Destroy(p);
                 }
             }
@@ -271,14 +334,45 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
                         sceneCamera.position.Y = 0;
                         if (boss is Boss1) TBS.config.boss1Defeated = true;
                         if (boss is Boss2) TBS.config.boss2Defeated = true;
+
+                        foreach (Proyectile b in bullets) removeList.Add(b);
+                        foreach (Enemy m in minions) removeList.Add(m);
+
+                        foreach (GameObject go in removeList) {
+                            if (go is Proyectile b) bullets.Remove(b);
+                            if (go is Enemy e) minions.Remove(e);
+                            Destroy(go);
+                        }
+                        removeList.Clear();
+
+
                         SaveManager.Save("config.json");
-                        AudioManager.PlayMusic("title", true, 5000);
                         SceneManager.SetActive("titleScreen");
                     }
                 }
             }
 
             panic.position = sceneCamera.position + new Vector3(-sceneCamera.size.X / 2 + 50, sceneCamera.size.Y / 2 - 50, -sceneCamera.position.Z);
+
+            sky.position = sceneCamera.position - new Vector3(0, 0, sceneCamera.position.Z);
+
+            bg.limitsL = sceneCamera.position.X + sceneCamera.size.X / 2;
+            bg.limitsR = sceneCamera.position.X - sceneCamera.size.X / 2;
+
+            trees.limitsL = sceneCamera.position.X + sceneCamera.size.X / 2;
+            trees.limitsR = sceneCamera.position.X - sceneCamera.size.X / 2;
+
+            bg2.limitsL = sceneCamera.position.X + sceneCamera.size.X / 2;
+            bg2.limitsR = sceneCamera.position.X - sceneCamera.size.X / 2;
+
+            trees2.limitsL = sceneCamera.position.X + sceneCamera.size.X / 2;
+            trees2.limitsR = sceneCamera.position.X - sceneCamera.size.X / 2;
+
+
+            bg.UpdateParallax(0 * dt);
+            trees.UpdateParallax(0 * dt);
+            bg2.UpdateParallax(p.body.velocity.X * -0.5f * dt);
+            trees2.UpdateParallax(p.body.velocity.X * -0.4f * dt);
         }
     }
 }

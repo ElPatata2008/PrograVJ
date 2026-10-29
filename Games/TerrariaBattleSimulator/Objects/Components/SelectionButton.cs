@@ -55,6 +55,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects.Components
                         pressed = true;
                         DoSomething();
                         delayTimer = 0f;
+                        AudioManager.PlaySFX("select");
                     }
                 }
             }

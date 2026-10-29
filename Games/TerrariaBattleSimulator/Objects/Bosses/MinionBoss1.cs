@@ -45,8 +45,8 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
                         float finalJump = pawn.facingRight ? jumpStrenght : -jumpStrenght;
                         pawn.body.AddImpulse(finalJump, (pawn.jumpCount % 3 == 2) ? 250f : 200f, 0);
                         pawn.jumpCount++;
+                        pawn.animationController.Play("jump");
                     }
-                    
                 }
             }
         }
@@ -95,6 +95,18 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
                 fsm.AddState("Move", new MoveState(controller));
                 fsm.AddState("Shoot", new ShootState(controller));
             }
+
+            SpriteSheet idle = new SpriteSheet(
+                TextureManager.Get(spiked ? "minionBoss1Spiked" : "minionBoss1"), 
+                16, 16, 0.15f, 2);
+            animationController.AddAnimation("idle", idle);
+
+            SpriteSheet jump = new SpriteSheet(
+                TextureManager.Get(spiked ? "minionBoss1SpikedJump" : "minionBoss1Jump"), 
+                16, 16, 0.15f, 1);
+            animationController.AddAnimation("jump", jump);
+
+            animationController.Play("jump");
         }
         public void SetCollision() => collider = new BoxCollider2D(this);
         public override void InitStats()
@@ -110,6 +122,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
         public override void Update(float dt)
         {
             base.Update(dt);
+            animationController.Update(dt);
 
             facingRight = playerPos.X > position.X;
 
@@ -119,6 +132,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
                 body.velocity = Vector3.Zero;
                 isGrounded = true;
                 body.gravityScale = 0;
+                animationController.Play("idle");
             }
         }
 
@@ -129,9 +143,10 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Objects
             Boss1Spike s = new Boss1Spike(
                 position,
                 new Vector3(0, 0, angle),
-                new Vector3(10, 5, 0),
+                new Vector3(24, 12, 0),
                 Color.Black, Color.BlueViolet,
-                dmg * 2, 0, 175f
+                dmg * 2, 0, 175f,
+                fillTexture: TextureManager.Get("boss1Spike")
             );
             s.SetCol();
             return s;

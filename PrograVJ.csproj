@@ -159,6 +159,7 @@
     <Compile Include="Games\TerrariaBattleSimulator\Objects\Bosses\MinionBoss2.cs" />
     <Compile Include="Games\TerrariaBattleSimulator\Objects\PlayerBullet.cs" />
     <Compile Include="Games\TerrariaBattleSimulator\Objects\Components\Proyectile.cs" />
+    <Compile Include="Games\TerrariaBattleSimulator\Objects\Scenery\Parallax.cs" />
     <Compile Include="Games\TerrariaBattleSimulator\Scenes\AccessorySelection.cs" />
     <Compile Include="Games\TerrariaBattleSimulator\Scenes\BattleSelection.cs" />
     <Compile Include="Games\TerrariaBattleSimulator\Scenes\Battle.cs" />

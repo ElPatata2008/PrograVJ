@@ -4,6 +4,7 @@ using PrograVJ.Engine.Figures;
 using PrograVJ.Engine.Manager;
 using PrograVJ.Games.TerrariaBattleSimulator.Objects;
 using PrograVJ.Games.TerrariaBattleSimulator.Objects.Buttons;
+using PrograVJ.Games.TerrariaBattleSimulator.Objects.Scenery;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -30,6 +31,13 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
         UIButton goBack;
 
         int weaponfontSize = 16;
+
+        Parallax bg;
+        Parallax trees;
+        Parallax bg2;
+        Parallax trees2;
+
+        Square sky;
 
         public WeaponSelection(Camera c) : base(c)
         {
@@ -68,18 +76,6 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
                 new BoxCollider2D(minishark)
             ));
 
-            if (TBS.config.boss1Defeated && TBS.config.boss2Defeated)
-            {
-                Instantiate(vortex = new WpnButton(
-                    new Vector3(300, 150, 0),
-                    Vector3.Zero,
-                    new Vector3(100, 50, 0),
-                    Color.Black, Color.White,
-                    TextureManager.Get("vortex"), 3,
-                    new BoxCollider2D(vortex)
-                ));
-            }
-
             Instantiate(classic = new DifButton(
                 new Vector3(-150, -100, 0),
                 Vector3.Zero,
@@ -116,6 +112,7 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
                 {
                     SceneManager.SetActive("accessorySelection");
                     SaveManager.Save("config.json");
+                    AudioManager.PlaySFX("continue");
                 },
                 new BoxCollider2D(Continue)
             ));
@@ -128,13 +125,60 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
                 () => {
                     SceneManager.SetActive("titleScreen");
                     SaveManager.Save("config.json");
+                    AudioManager.PlaySFX("back");
                 },
                 new BoxCollider2D(goBack)
             ));
+
+            bg = new Parallax(
+                TextureManager.Get("groundVanilla"),
+                new Vector3(0, -250, 0),
+                new Vector3(400, 160, 0),
+                -sceneCamera.size.X
+            );
+            trees = new Parallax(
+                TextureManager.Get("treesVanilla"),
+                new Vector3(0, -50, 0),
+                new Vector3(400, 240, 0),
+                -sceneCamera.size.X
+            );
+
+            bg2 = new Parallax(
+                TextureManager.Get("groundVanilla"),
+                new Vector3(0, -150, 0),
+                new Vector3(600, 240, 0),
+                -sceneCamera.size.X
+            );
+
+            trees2 = new Parallax(
+                TextureManager.Get("treesVanilla"),
+                new Vector3(0, 50, 0),
+                new Vector3(400, 240, 0),
+                -sceneCamera.size.X
+            );
+
+            sky = new Square(
+                Vector3.Zero, Vector3.Zero,
+                sceneCamera.size,
+                Color.White, Color.White,
+                fillTexture: TextureManager.Get("skyDay")
+            );
+
         }
 
         public override void Init()
         {
+            if (TBS.config.boss1Defeated && TBS.config.boss2Defeated)
+            {
+                Instantiate(vortex = new WpnButton(
+                    new Vector3(300, 150, 0),
+                    Vector3.Zero,
+                    new Vector3(100, 50, 0),
+                    Color.Black, Color.White,
+                    TextureManager.Get("vortex"), 3,
+                    new BoxCollider2D(vortex)
+                ));
+            }
             Continue.delayTimer = 0;
             goBack.delayTimer = 0;
             undertaker.delayTimer = 0;
@@ -149,40 +193,44 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
         public override void PaintScreen(Graphics g)
         {
             g.Clear(Color.White);
-            DrawingUtils.DrawCenterText(g, "Weapons", FontManager.Get("andyBold", 36), Color.Black, new PointF(sceneCamera.size.X / 2, 50));
+            sky.Draw(g, sceneCamera);
+            trees2.RenderParallax(g, sceneCamera);
+            bg2.RenderParallax(g, sceneCamera);
+            trees.RenderParallax(g, sceneCamera);
+            bg.RenderParallax(g, sceneCamera);
+            g.FillRectangle(new SolidBrush(Color.FromArgb(100, 0, 0, 0)), new RectangleF(0, 0, sceneCamera.size.X, sceneCamera.size.Y));
+            DrawingUtils.DrawCenterText(g, "Weapons", FontManager.Get("andyBold", 36), Color.White, new PointF(sceneCamera.size.X / 2, 50));
             undertaker.Draw(g,sceneCamera);
-            DrawingUtils.DrawCenterText(g, "Damage : 26", FontManager.Get("andyBold", weaponfontSize), Color.Black, new PointF(sceneCamera.size.X / 2 - 150, sceneCamera.size.Y / 2 - 120));
-            DrawingUtils.DrawCenterText(g, "Crit % : 4%", FontManager.Get("andyBold", weaponfontSize), Color.Black, new PointF(sceneCamera.size.X / 2 - 150, sceneCamera.size.Y / 2 - 100));
-            DrawingUtils.DrawCenterText(g, "Fire Rate : 0.33s", FontManager.Get("andyBold", weaponfontSize), Color.Black, new PointF(sceneCamera.size.X / 2 - 150, sceneCamera.size.Y / 2 - 80));
+            DrawingUtils.DrawCenterText(g, "Damage : 26", FontManager.Get("andyBold", weaponfontSize), Color.White, new PointF(sceneCamera.size.X / 2 - 150, sceneCamera.size.Y / 2 - 120));
+            DrawingUtils.DrawCenterText(g, "Crit % : 4%", FontManager.Get("andyBold", weaponfontSize), Color.White, new PointF(sceneCamera.size.X / 2 - 150, sceneCamera.size.Y / 2 - 100));
+            DrawingUtils.DrawCenterText(g, "Fire Rate : 0.33s", FontManager.Get("andyBold", weaponfontSize), Color.White, new PointF(sceneCamera.size.X / 2 - 150, sceneCamera.size.Y / 2 - 80));
             musket.Draw(g, sceneCamera);
-            DrawingUtils.DrawCenterText(g, "Damage : 38", FontManager.Get("andyBold", weaponfontSize), Color.Black, new PointF(sceneCamera.size.X / 2, sceneCamera.size.Y / 2 - 120));
-            DrawingUtils.DrawCenterText(g, "Crit % : 12%", FontManager.Get("andyBold", weaponfontSize), Color.Black, new PointF(sceneCamera.size.X / 2, sceneCamera.size.Y / 2 - 100));
-            DrawingUtils.DrawCenterText(g, "Fire Rate : 0.53s", FontManager.Get("andyBold", weaponfontSize), Color.Black, new PointF(sceneCamera.size.X / 2, sceneCamera.size.Y / 2 - 80));
+            DrawingUtils.DrawCenterText(g, "Damage : 38", FontManager.Get("andyBold", weaponfontSize), Color.White, new PointF(sceneCamera.size.X / 2, sceneCamera.size.Y / 2 - 120));
+            DrawingUtils.DrawCenterText(g, "Crit % : 12%", FontManager.Get("andyBold", weaponfontSize), Color.White, new PointF(sceneCamera.size.X / 2, sceneCamera.size.Y / 2 - 100));
+            DrawingUtils.DrawCenterText(g, "Fire Rate : 0.53s", FontManager.Get("andyBold", weaponfontSize), Color.White, new PointF(sceneCamera.size.X / 2, sceneCamera.size.Y / 2 - 80));
             minishark.Draw(g, sceneCamera);
-            DrawingUtils.DrawCenterText(g, "Damage : 13", FontManager.Get("andyBold", weaponfontSize), Color.Black, new PointF(sceneCamera.size.X / 2 + 150, sceneCamera.size.Y / 2 - 120));
-            DrawingUtils.DrawCenterText(g, "Crit % : 4%", FontManager.Get("andyBold", weaponfontSize), Color.Black, new PointF(sceneCamera.size.X / 2 + 150, sceneCamera.size.Y / 2 - 100));
-            DrawingUtils.DrawCenterText(g, "Fire Rate : 0.13s", FontManager.Get("andyBold", weaponfontSize), Color.Black, new PointF(sceneCamera.size.X / 2 + 150, sceneCamera.size.Y / 2 - 80));
+            DrawingUtils.DrawCenterText(g, "Damage : 13", FontManager.Get("andyBold", weaponfontSize), Color.White, new PointF(sceneCamera.size.X / 2 + 150, sceneCamera.size.Y / 2 - 120));
+            DrawingUtils.DrawCenterText(g, "Crit % : 4%", FontManager.Get("andyBold", weaponfontSize), Color.White, new PointF(sceneCamera.size.X / 2 + 150, sceneCamera.size.Y / 2 - 100));
+            DrawingUtils.DrawCenterText(g, "Fire Rate : 0.13s", FontManager.Get("andyBold", weaponfontSize), Color.White, new PointF(sceneCamera.size.X / 2 + 150, sceneCamera.size.Y / 2 - 80));
             if (vortex != null) { 
                 vortex.Draw(g, sceneCamera);
-                DrawingUtils.DrawCenterText(g, "Damage : 57", FontManager.Get("andyBold", weaponfontSize), Color.Black, new PointF(sceneCamera.size.X / 2 + 300, sceneCamera.size.Y / 2 - 120));
-                DrawingUtils.DrawCenterText(g, "Crit % : 4%", FontManager.Get("andyBold", weaponfontSize), Color.Black, new PointF(sceneCamera.size.X / 2 + 300, sceneCamera.size.Y / 2 - 100));
-                DrawingUtils.DrawCenterText(g, "Fire Rate : 0.083s", FontManager.Get("andyBold", weaponfontSize), Color.Black, new PointF(sceneCamera.size.X / 2 + 300, sceneCamera.size.Y / 2 - 80));
+                DrawingUtils.DrawCenterText(g, "Damage : 57", FontManager.Get("andyBold", weaponfontSize), Color.White, new PointF(sceneCamera.size.X / 2 + 300, sceneCamera.size.Y / 2 - 120));
+                DrawingUtils.DrawCenterText(g, "Crit % : 4%", FontManager.Get("andyBold", weaponfontSize), Color.White, new PointF(sceneCamera.size.X / 2 + 300, sceneCamera.size.Y / 2 - 100));
+                DrawingUtils.DrawCenterText(g, "Fire Rate : 0.083s", FontManager.Get("andyBold", weaponfontSize), Color.White, new PointF(sceneCamera.size.X / 2 + 300, sceneCamera.size.Y / 2 - 80));
             }
 
-            DrawingUtils.DrawCenterText(g, "Difficulty", FontManager.Get("andyBold", 36), Color.Black, new PointF(sceneCamera.size.X / 2, sceneCamera.size.Y / 2 - 25));
+            DrawingUtils.DrawCenterText(g, "Difficulty", FontManager.Get("andyBold", 36), Color.White, new PointF(sceneCamera.size.X / 2, sceneCamera.size.Y / 2 - 25));
             classic.Draw(g, sceneCamera);
-            DrawingUtils.DrawCenterText(g, "Classic", FontManager.Get("andyBold", 20), Color.Black, new PointF(sceneCamera.size.X / 2 - 150, sceneCamera.size.Y / 2 + 165));
+            DrawingUtils.DrawCenterText(g, "Classic", FontManager.Get("andyBold", 20), Color.White, new PointF(sceneCamera.size.X / 2 - 150, sceneCamera.size.Y / 2 + 165));
             expert.Draw(g, sceneCamera);
-            DrawingUtils.DrawCenterText(g, "Expert", FontManager.Get("andyBold", 20), Color.Black, new PointF(sceneCamera.size.X / 2, sceneCamera.size.Y / 2 + 165));
+            DrawingUtils.DrawCenterText(g, "Expert", FontManager.Get("andyBold", 20), Color.White, new PointF(sceneCamera.size.X / 2, sceneCamera.size.Y / 2 + 165));
             master.Draw(g, sceneCamera);
-            DrawingUtils.DrawCenterText(g, "Master", FontManager.Get("andyBold", 20), Color.Black, new PointF(sceneCamera.size.X / 2 + 150, sceneCamera.size.Y / 2 + 165));
+            DrawingUtils.DrawCenterText(g, "Master", FontManager.Get("andyBold", 20), Color.White, new PointF(sceneCamera.size.X / 2 + 150, sceneCamera.size.Y / 2 + 165));
 
             Continue.Draw(g, sceneCamera);
             DrawingUtils.DrawCenterText(g, "Continue", FontManager.Get("andyBold", 26), Color.Black, new PointF(sceneCamera.size.X - 150, sceneCamera.size.Y - 65));
             goBack.Draw(g, sceneCamera);
             DrawingUtils.DrawCenterText(g, "Back", FontManager.Get("andyBold", 26), Color.Black, new PointF(150, sceneCamera.size.Y - 65));
-
-            cur.Draw(g, sceneCamera);
         }
 
         public override void ProcessInput()
@@ -195,6 +243,11 @@ namespace PrograVJ.Games.TerrariaBattleSimulator.Scenes
             Vector3 cursorPos = sceneCamera.GetCursorOnWorld();
             cur.position.X = cursorPos.X;
             cur.position.Y = cursorPos.Y;
+
+            bg.UpdateParallax(100 * dt);
+            trees.UpdateParallax(75 * dt);
+            bg2.UpdateParallax(50 * dt);
+            trees2.UpdateParallax(25 * dt);
         }
     }
 }
